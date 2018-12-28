@@ -532,8 +532,12 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .modal-overlay {
+  align-items: center;
   bottom: 0;
   left: 0;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 3rem 6rem;
   position: fixed;
   right: 0;
   opacity: 0;
@@ -556,23 +560,22 @@ input[type=range]:focus::-ms-fill-upper {
 .modal {
   background-color: #fff;
   box-shadow: 0 0 5rem rgba(0,0,0,.4);
-  bottom: auto;
-  left: 50%;
-  height: 60%;
-  max-height: 62rem;
+  margin: auto;
+  max-height: 50vh;
   max-width: 62rem;
-  margin-right: -50%;
-  outline: none;
+  padding: 3rem;
   overflow: auto;
-  right: auto;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  position: absolute;
+  outline: none;
+  position: relative;
   width: 100%;
 }
 
-.modal-content {
-  padding: 3rem;
+.modal-content a {
+  color: #000;
+}
+
+.modal-content a:hover {
+  text-decoration: none;
 }
 
 .modal-title {
@@ -588,12 +591,8 @@ input[type=range]:focus::-ms-fill-upper {
   white-space: pre-wrap;
 }
 
-.modal-url a {
-  color: #000;
-}
-
-.modal-url a:hover {
-  text-decoration: none;
+.modal-url {
+  margin-bottom: 0;
 }
 
 .modal-close {
@@ -603,7 +602,8 @@ input[type=range]:focus::-ms-fill-upper {
   color: #000;
   cursor: pointer;
   display: flex;
-  font-size: 1.6rem;
+  font-family: var(--body-font);
+  font-size: 1.8rem;
   font-weight: bold;
   height: 3rem;
   justify-content: center;

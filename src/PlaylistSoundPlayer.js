@@ -16,6 +16,37 @@ import './PlaylistSoundPlayer.scss';
 
 Modal.setAppElement('#root');
 
+const processString = require('react-process-string');
+/*eslint-disable */
+let processStringConfig = [{
+  regex: /(http|https):\/\/(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
+  fn: (key, result) => (
+    <span key={key}>
+      <a 
+        target="_blank"
+        rel="noopener noreferrer"
+        href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`}>
+          {result[2]}.{result[3]}{result[4]}
+        </a>
+        {result[5]}
+    </span>
+  )
+}, {
+  regex: /(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
+  fn: (key, result) => (
+    <span key={key}>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href={`http://${result[1]}.${result[2]}${result[3]}`}>
+          {result[1]}.{result[2]}{result[3]}
+        </a>
+        {result[4]}
+    </span>
+  )
+}];
+/*eslint-enable */
+
 class PlaylistSoundPlayer extends Component {
   constructor() {
     super();
@@ -40,8 +71,8 @@ class PlaylistSoundPlayer extends Component {
     soundCloudAudio && soundCloudAudio.play({ playlistIndex: soundCloudAudio._playlistIndex+1 });
   }
 
+  /*eslint-disable */
   slugify = (text) => {
-    // eslint-disable-next-line
     return text
     .toString()
     .toLowerCase()
@@ -51,6 +82,7 @@ class PlaylistSoundPlayer extends Component {
     .replace(/^-+/, '')
     .replace(/-+$/, '');
   }
+  /*eslint-enable */
 
   afterOpenModal = () => {
     
@@ -118,8 +150,6 @@ class PlaylistSoundPlayer extends Component {
   renderTrackList() {
     const { playlist } = this.props;
 
-    console.log(playlist);
-
     const tracks = playlist.tracks.map((track, i) => {
       const classNames = ClassNames('playlist-track-button', {
         'active-track': this.props.soundCloudAudio._playlistIndex === i
@@ -154,6 +184,7 @@ class PlaylistSoundPlayer extends Component {
     const currentTrack = playlist ? playlist.tracks[soundCloudAudio._playlistIndex] : '';
     const currentTrackClass = currentTrack ? this.slugify(currentTrack.title) : '';
     const waveFormUrl = currentTrack ? currentTrack.waveform_url : '';
+    const modalDescription = processString(processStringConfig)(modalTrack.description);
 
     if (!playlist) {
       return (
@@ -217,7 +248,7 @@ class PlaylistSoundPlayer extends Component {
         >
           <div className="modal-content">
             <h1 className="modal-title">{ modalTrack.title }</h1>
-            <pre className="modal-description">{ modalTrack.description }</pre>
+            <pre className="modal-description">{ modalDescription }</pre>
             <p className="modal-url"><a href={ modalTrack.permalink_url }>View track on Soundcloud</a></p>
             <button onClick={this.closeModal} className="modal-close" aria-label="Close Modal">x</button>
           </div>
