@@ -522,6 +522,10 @@ input[type=range]:focus::-ms-fill-upper {
   @include colour-scheme(linear-gradient(-45deg, #BD3F32, #CB356B), #ffffff);
 }
 
+.ok-sessions-29 {
+  @include colour-scheme(linear-gradient(-45deg, #2657eb, #de6161), #ffffff);
+}
+
 
 // Modal window
 
