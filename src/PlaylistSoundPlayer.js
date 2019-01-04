@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Modal from 'react-modal';
 import PropTypes from 'prop-types';
 import ClassNames from 'classnames';
+import processString from 'react-process-string';
 import { withSoundCloudAudio } from 'react-soundplayer/addons';
 import {
   PlayButton,
@@ -11,12 +12,11 @@ import {
   Timer,
   VolumeControl
 } from 'react-soundplayer/components';
-import { ReactComponent as Logo } from './logo.svg'
+import { ReactComponent as Logo } from './logo.svg';
 import './PlaylistSoundPlayer.scss';
 
 Modal.setAppElement('#root');
 
-const processString = require('react-process-string');
 /*eslint-disable */
 let processStringConfig = [{
   regex: /(http|https):\/\/(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
@@ -83,10 +83,6 @@ class PlaylistSoundPlayer extends Component {
     .replace(/-+$/, '');
   }
   /*eslint-enable */
-
-  afterOpenModal = () => {
-    
-  }
 
   openModal = (track) => {
     this.setState({
