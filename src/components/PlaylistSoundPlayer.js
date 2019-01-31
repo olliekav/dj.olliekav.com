@@ -8,12 +8,12 @@ import {
   PlayButton,
   PrevButton,
   NextButton,
-  Progress,
   Timer,
   VolumeControl
 } from 'react-soundplayer/components';
-import { ReactComponent as Logo } from './logo.svg';
-import './PlaylistSoundPlayer.scss';
+import WaveformProgress from './WaveformProgress';
+import { ReactComponent as Logo } from '../images/logo.svg';
+import '../styles/PlaylistSoundPlayer.scss';
 
 Modal.setAppElement('#root');
 
@@ -175,6 +175,7 @@ class PlaylistSoundPlayer extends Component {
   }
 
   render() {
+    const setTime = 0;
     let { playlist, currentTime, duration, soundCloudAudio } = this.props;
     const { modalTrack } = this.state;
     const currentTrack = playlist ? playlist.tracks[soundCloudAudio._playlistIndex] : '';
@@ -219,14 +220,13 @@ class PlaylistSoundPlayer extends Component {
               onNextClick={this.nextIndex} />
           </div>
           <div className="player-progress">
-            <Progress
+            <WaveformProgress
               className="player-progress-wrapper"
+              currentTrack={currentTrack}
               innerClassName="player-progress-bar"
               value={(currentTime / duration) * 100 || 0}
-              {...this.props} />
-            <div
-              className="player-waveform"
-              style={{ backgroundImage: `url(${waveFormUrl})` }} />
+              {...this.props}
+            />
           </div>
           <div className="player-volume">
             <VolumeControl

@@ -283,11 +283,14 @@ input[type=range]:focus::-ms-fill-upper {
   background-color: #fff;
   cursor: pointer;
   height: 100%;
+  position: relative;
   width: 100%;
+  z-index: 10;
 }
 
 .player-progress-bar {
   background-color: #000;
+  background-clip: border-box;
   height: 100%;
   transition: all .1s ease-in-out;
 }

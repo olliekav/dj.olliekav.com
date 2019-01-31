@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PlaylistSoundPlayer from './PlaylistSoundPlayer';
+import PlaylistSoundPlayer from './components/PlaylistSoundPlayer';
 
 const clientId = process.env.REACT_APP_SC_CLIENT_ID;
 const resolveUrl = process.env.REACT_APP_SC_RESOLVE_URL;
