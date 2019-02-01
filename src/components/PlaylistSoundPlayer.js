@@ -225,6 +225,7 @@ class PlaylistSoundPlayer extends Component {
               currentTrack={currentTrack}
               innerClassName="player-progress-bar"
               value={(currentTime / duration) * 100 || 0}
+              key={soundCloudAudio._playlistIndex}
               {...this.props}
             />
           </div>
