@@ -285,7 +285,6 @@ input[type=range]:focus::-ms-fill-upper {
   height: 100%;
   position: relative;
   width: 100%;
-  z-index: 10;
 }
 
 .player-progress-bar {
@@ -409,7 +408,7 @@ input[type=range]:focus::-ms-fill-upper {
     fill: $color;
   }
   .player-progress-bar {
-    background: $bg-color;
+    background: #ffffff;
   }
 }
 

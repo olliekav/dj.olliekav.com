@@ -8,6 +8,7 @@ import {
   PlayButton,
   PrevButton,
   NextButton,
+  Progress,
   Timer,
   VolumeControl
 } from 'react-soundplayer/components';
@@ -54,10 +55,9 @@ class PlaylistSoundPlayer extends Component {
     this.state = {
       activeIndex: 0,
       modalIsOpen: false,
-      modalTrack: ''
+      modalTrack: '',
+      isWaveformReady: false
     };
-
-    this.onAudioEnded =  this.onAudioEnded.bind(this)
   }
 
   componentDidMount() {
@@ -66,7 +66,7 @@ class PlaylistSoundPlayer extends Component {
     soundCloudAudio.on('ended', () => this.onAudioEnded());
   }
 
-  onAudioEnded() {
+  onAudioEnded = () => {
     const { soundCloudAudio } = this.props;
     soundCloudAudio && soundCloudAudio.play({ playlistIndex: soundCloudAudio._playlistIndex+1 });
   }
@@ -92,7 +92,9 @@ class PlaylistSoundPlayer extends Component {
   }
 
   closeModal = () => {
-    this.setState({modalIsOpen: false});
+    this.setState({ 
+      modalIsOpen: false
+    });
   }
 
   playTrackAtIndex = (playlistIndex, track) => {
@@ -102,8 +104,12 @@ class PlaylistSoundPlayer extends Component {
       activeIndex: playlistIndex
     });
 
-    soundCloudAudio.play({ playlistIndex });
-    
+    soundCloudAudio._playlistIndex = playlistIndex;
+
+    // Delay the playing to let wavesurfer initialise
+    setTimeout(function(){
+      soundCloudAudio && soundCloudAudio.play({ playlistIndex });
+    }, 500);
   }
 
   nextIndex = (event) => {
@@ -115,11 +121,16 @@ class PlaylistSoundPlayer extends Component {
     }
 
     if (activeIndex || activeIndex === 0) {
-      this.setState({activeIndex: ++activeIndex});
+      this.setState({ activeIndex: ++activeIndex });
+
+      soundCloudAudio._playlistIndex = ++soundCloudAudio._playlistIndex;
+      
       if(playing) {
-        soundCloudAudio.next();
-      } else {
-        soundCloudAudio._playlistIndex = ++soundCloudAudio._playlistIndex;
+        soundCloudAudio.stop();
+        // Delay the playing to let wavesurfer initialise
+        setTimeout(function(){
+          soundCloudAudio && soundCloudAudio.play({ playlistIndex: soundCloudAudio._playlistIndex });
+        }, 500);
       }
     }
   }
@@ -133,22 +144,32 @@ class PlaylistSoundPlayer extends Component {
     }
 
     if (activeIndex || activeIndex === 0) {
-      this.setState({activeIndex: --activeIndex});
+      this.setState({ activeIndex: --activeIndex });
+
+      soundCloudAudio._playlistIndex = --soundCloudAudio._playlistIndex;
 
       if(playing) {
-        soundCloudAudio.prev();
-      } else {
-        soundCloudAudio._playlistIndex = --soundCloudAudio._playlistIndex;
+        soundCloudAudio.stop();
+        // Delay the playing to let wavesurfer initialise
+        setTimeout(function(){
+          soundCloudAudio && soundCloudAudio.play({ playlistIndex: soundCloudAudio._playlistIndex });
+        }, 500);
       }
     }
   }
 
+  isWaveformReady = (state) => {
+    this.setState({
+      isWaveformReady: state
+    })
+  }
+
   renderTrackList() {
-    const { playlist } = this.props;
+    const { playlist, soundCloudAudio } = this.props;
 
     const tracks = playlist.tracks.map((track, i) => {
       const classNames = ClassNames('playlist-track-button', {
-        'active-track': this.props.soundCloudAudio._playlistIndex === i
+        'active-track': soundCloudAudio._playlistIndex === i
       });
 
       const trackTitle = this.slugify(track.title);
@@ -175,12 +196,10 @@ class PlaylistSoundPlayer extends Component {
   }
 
   render() {
-    const setTime = 0;
     let { playlist, currentTime, duration, soundCloudAudio } = this.props;
     const { modalTrack } = this.state;
     const currentTrack = playlist ? playlist.tracks[soundCloudAudio._playlistIndex] : '';
     const currentTrackClass = currentTrack ? this.slugify(currentTrack.title) : '';
-    const waveFormUrl = currentTrack ? currentTrack.waveform_url : '';
     const modalDescription = processString(processStringConfig)(modalTrack.description);
 
     if (!playlist) {
@@ -205,8 +224,13 @@ class PlaylistSoundPlayer extends Component {
           </div>
           <div className="player-track-details">
             <h2 className="player-track-title">{currentTrack ? currentTrack.title : ''}</h2>
-            <Timer duration={currentTrack ? currentTrack.duration / 1000 : 0} currentTime={currentTime} />
-            <button className="player-track-info-button" onClick={() => this.openModal(currentTrack)} aria-label="Track Info">i</button>
+            <Timer
+              duration={currentTrack ? currentTrack.duration / 1000 : 0}
+              currentTime={currentTime} />
+            <button
+              className="player-track-info-button"
+              onClick={() => this.openModal(currentTrack)}
+              aria-label="Track Info">i</button>
           </div>
           <div className="player-controls">
             <PrevButton
@@ -220,12 +244,15 @@ class PlaylistSoundPlayer extends Component {
               onNextClick={this.nextIndex} />
           </div>
           <div className="player-progress">
-            <WaveformProgress
+            <Progress
               className="player-progress-wrapper"
-              currentTrack={currentTrack}
               innerClassName="player-progress-bar"
               value={(currentTime / duration) * 100 || 0}
-              key={soundCloudAudio._playlistIndex}
+              {...this.props}
+            />
+            <WaveformProgress
+              currentTrack={currentTrack}
+              isWaveformReady={this.isWaveformReady}
               {...this.props}
             />
           </div>
@@ -246,8 +273,17 @@ class PlaylistSoundPlayer extends Component {
           <div className="modal-content">
             <h1 className="modal-title">{ modalTrack.title }</h1>
             <pre className="modal-description">{ modalDescription }</pre>
-            <p className="modal-url"><a href={ modalTrack.permalink_url }>View track on Soundcloud</a></p>
-            <button onClick={this.closeModal} className="modal-close" aria-label="Close Modal">x</button>
+            <p className="modal-url">
+              <a href={ modalTrack.permalink_url }>
+                View track on Soundcloud
+              </a>
+            </p>
+            <button
+              onClick={this.closeModal}
+              className="modal-close"
+              aria-label="Close Modal">
+              x
+            </button>
           </div>
         </Modal>
       </div>
