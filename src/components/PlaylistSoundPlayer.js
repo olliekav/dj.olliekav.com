@@ -68,7 +68,11 @@ class PlaylistSoundPlayer extends Component {
 
   onAudioEnded = () => {
     const { soundCloudAudio } = this.props;
-    soundCloudAudio && soundCloudAudio.play({ playlistIndex: soundCloudAudio._playlistIndex+1 });
+    soundCloudAudio._playlistIndex = ++soundCloudAudio._playlistIndex;
+    soundCloudAudio.stop();
+    setTimeout(function(){
+      soundCloudAudio && soundCloudAudio.play({ playlistIndex: soundCloudAudio._playlistIndex+1 });
+    }, 500);
   }
 
   /*eslint-disable */
