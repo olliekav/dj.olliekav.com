@@ -26,7 +26,7 @@
   box-shadow: 0 -.2rem 2rem rgba(0,0,0,.3);
   display: flex;
   flex-flow: row wrap;
-  height: 8rem;
+  height: 10rem;
   position: relative;
 
   @media screen and (min-width: 700px) {
@@ -40,6 +40,7 @@
   display: flex;
   flex: 0 0 6rem;
   flex-direction: column;
+  height: 6rem;
   justify-content: center;
   width: 6rem;
 }
@@ -49,6 +50,7 @@
   display: flex;
   flex: 1 1 13rem;
   flex-direction: column;
+  height: 6rem;
   justify-content: center;
   padding: 0 1rem;
   position: relative;
@@ -105,6 +107,7 @@
   border-right: 1px solid #000;
   display: flex;
   flex-flow: row nowrap;
+  height: 6rem;
 }
 
 .player-control {
@@ -121,6 +124,7 @@
 
 .player-volume {
   display: flex;
+  height: 6rem;
   width: 4rem;
 }
 
@@ -267,6 +271,7 @@ input[type=range]:focus::-ms-fill-upper {
   align-items: center;
   border-top: 1px solid #000;
   display: flex;
+  height: 4rem;
   order: 6;
   position: relative;
   width: 100%;
@@ -275,6 +280,7 @@ input[type=range]:focus::-ms-fill-upper {
     border-top: 0;
     border-right: 1px solid #000;
     flex: 1;
+    height: 6rem;
     order: initial;
     width: auto;
   }
@@ -598,7 +604,9 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .modal-title {
+  font-size: 2.6rem;
   margin-top: 0;
+  padding-right: 4rem;
 }
 
 .modal-description {
