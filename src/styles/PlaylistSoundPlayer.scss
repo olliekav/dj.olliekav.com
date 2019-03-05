@@ -3,7 +3,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(50vw, 1fr));
   flex: 1;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   width: 100%;
 
