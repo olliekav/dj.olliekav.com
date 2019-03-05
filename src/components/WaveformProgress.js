@@ -53,7 +53,7 @@ class WaveformProgress extends Component {
         color = '#FF8300';
         break;
       case 9:
-        color = '#FFFFE3';
+        color = '#007E7F';
         break;
       case 10:
         color = '#48FFE8';
@@ -83,7 +83,7 @@ class WaveformProgress extends Component {
         color = '#00AAAD';
         break;
       case 19:
-        color = '#D0D2D3';
+        color = '#D91C5C';
         break;
       case 20:
         color = '#353F29';
