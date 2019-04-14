@@ -121,11 +121,14 @@ class WaveformProgress extends Component {
       case 31:
         color = '#ccff00';
         break;
-      case 31:
-        color = '#ccff00';
+      case 32:
+        color = '#15f4ee';
+        break;
+      case 32:
+        color = '#15f4ee';
         break;
       default:
-        color = '#15f4ee';
+        color = '#f4158b';
     }
     this.wavesurfer.params.progressColor = color;
   }
