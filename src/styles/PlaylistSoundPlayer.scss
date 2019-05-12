@@ -563,6 +563,10 @@ input[type=range]:focus::-ms-fill-upper {
   @include colour-scheme(#b400ff, #000000);
 }
 
+.ok-sessions-37 {
+  @include colour-scheme(#0066ff, #000000);
+}
+
 // Modal window
 
 .modal-body-open {

@@ -6,7 +6,7 @@
     "d3-array": "^2.0.3",
     "d3-scale": "^2.2.2",
     "lodash": "^4.17.11",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-modal": "^3.8.1",
