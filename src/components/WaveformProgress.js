@@ -8,13 +8,15 @@ class WaveformProgress extends Component {
     super(props);
   
     this.state = {
-      peaks: []
+      peaks: [],
+      waveColor: '#cccccc'
     };
   }
 
   componentDidMount() {
     this.initWaveSurfer();
     this.getWaveFormJSON();
+    this.setColorScheme();
   }
 
   componentDidUpdate(prevProps) {
@@ -176,19 +178,52 @@ class WaveformProgress extends Component {
         color = '#ff6d00';
     }
     this.wavesurfer.params.progressColor = color;
+    this.wavesurfer.params.cursorColor = color;
+  }
+
+  setColorScheme = () => {
+    const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    // Listen initially on load
+    if(darkMode.matches) {
+      this.setDarkMode();
+    } else {
+      this.setLightMode();
+    }
+
+    // Listen for system changes
+    darkMode.addListener(e => {
+      if(e.matches) {
+        this.setDarkMode()
+      } else {
+        this.setLightMode()
+      }
+    })
+  }
+
+  setDarkMode = () => {
+    this.wavesurfer.params.waveColor = '#262626';
+    this.wavesurfer.params.backgroundColor = '#101010';
+    this.wavesurfer.drawBuffer();
+  }
+
+  setLightMode = () => {
+    this.wavesurfer.params.waveColor = '#CCCCCC';
+    this.wavesurfer.params.backgroundColor = '#ffffff';
+    this.wavesurfer.drawBuffer();
   }
 
   initWaveSurfer = () => {
     this.wavesurfer = WaveSurfer.create({
       backend: 'MediaElement',
       barWidth: 2,
+      cursorWidth: 0,
       closeAudioContext: true,
       container: this.waveRef,
       height: 60,
       normalize: true,
       progressColor: 'red',
-      responsive: true,
-      waveColor: '#ccc'
+      responsive: true
     });
   }
 

@@ -13,6 +13,7 @@
     "react-process-string": "^1.2.0",
     "react-scripts": "2.1.1",
     "react-soundplayer": "^1.0.4",
+    "soundcloud-audio": "github:olliekav/soundcloud-audio.js",
     "wavesurfer.js": "^2.1.3"
   },
   "scripts": {

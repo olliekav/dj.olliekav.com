@@ -6,4 +6,13 @@
   right: 0;
   top: 0;
   width: 100%;
+  
+  // Hack to set background color of progress
+  > wave > wave {
+    background-color: var(--light-color);
+
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--dark-color);
+    }
+  }
 }
