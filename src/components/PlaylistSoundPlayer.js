@@ -172,8 +172,6 @@ class PlaylistSoundPlayer extends Component {
   renderTrackList() {
     const { playlist, soundCloudAudio } = this.props;
 
-    console.log(playlist)
-
     const tracks = playlist.tracks.map((track, i) => {
       const classNames = ClassNames('playlist-track-button', {
         'active-track': soundCloudAudio._playlistIndex === i
