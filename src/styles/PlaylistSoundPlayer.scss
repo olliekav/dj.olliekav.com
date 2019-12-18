@@ -48,6 +48,10 @@
   height: 6rem;
   justify-content: center;
   width: 6rem;
+
+  // @media (prefers-color-scheme: dark) {
+  //   filter: brightness(90%);
+  // }
 }
 
 .player-track-details {
