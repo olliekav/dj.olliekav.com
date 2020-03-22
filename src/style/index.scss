@@ -1,0 +1,77 @@
+@import url("https://use.typekit.net/gmc4yrr.css");
+
+:root {
+  --body-bg-color: #ffffff;
+  --body-font: ff-din-round-web, sans-serif;
+  --dark-color: #101010;
+  --light-color: #ffffff;
+}
+
+html,
+body {
+  background-color: var(--body-bg-color);
+  color: var(--dark-color);
+  height: 100%;
+  width: 100%;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--dark-color);
+    color: #fff;
+  }
+}
+
+html {
+  font-size: 62.5%;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  font-family: var(--body-font);
+  font-size: 1.6rem;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  display: flex;
+  width: 100%;
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.wrapper {
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100%;
+}
+
+.wrapper.loaded {
+  animation: fadein .3s linear;
+}

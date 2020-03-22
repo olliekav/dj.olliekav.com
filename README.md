@@ -1,5 +1,22 @@
-## React Soundcloud playlist player
+# ollie
 
-Using the awesome [React Sound Player](http://labs.voronianski.com/react-soundplayer) library. Little experimental React SPA to showcase my DJ mixes [dj.olliekav.com](https://dj.olliekav.com) and learn a little bit more React. Hosted on [netlify](https://netlify.com) of course :)
+## CLI Commands
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+``` bash
+# install dependencies
+npm install
+
+# serve with hot reload at localhost:8080
+npm run dev
+
+# build for production with minification
+npm run build
+
+# test the production build locally
+npm run serve
+
+# run tests with jest and preact-render-spy 
+npm run test
+```
+
+For detailed explanation on how things work, checkout the [CLI Readme](https://github.com/developit/preact-cli/blob/master/README.md).

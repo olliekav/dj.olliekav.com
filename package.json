@@ -1,38 +1,56 @@
 {
-  "name": "dj-olliekav",
-  "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "d3-array": "^2.4.0",
-    "d3-scale": "^3.2.1",
-    "js-levenshtein": "^1.1.6",
-    "lodash": "^4.17.15",
-    "node-sass": "^4.13.1",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
-    "react-modal": "^3.11.2",
-    "react-process-string": "^1.2.0",
-    "react-scripts": "3.4.0",
-    "react-soundplayer": "^1.0.4",
-    "soundcloud-audio": "github:olliekav/soundcloud-audio.js",
-    "wavesurfer.js": "^3.3.1"
-  },
-  "resolutions": {
-    "soundcloud-audio": "github:olliekav/soundcloud-audio.js"
-  },
+  "name": "ollie",
+  "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "per-env",
+    "start:production": "npm run -s serve",
+    "start:development": "npm run -s dev",
+    "build": "preact build",
+    "serve": "preact build && sirv build --cors --single",
+    "dev": "preact watch --https --key /usr/local/etc/httpd/server.key --cert /usr/local/etc/httpd/server.crt",
+    "lint": "eslint src",
+    "test": "jest"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "preact",
+    "ignorePatterns": [
+      "build/"
+    ]
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "devDependencies": {
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-preact-pure": "^2.0.0",
+    "eslint": "^6.0.1",
+    "eslint-config-preact": "^1.1.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^24.9.0",
+    "jest-preset-preact": "^1.0.0",
+    "node-sass": "^4.13.1",
+    "per-env": "^1.0.2",
+    "preact-cli": "^3.0.0-rc.6",
+    "preact-render-spy": "^1.2.1",
+    "sass-loader": "^8.0.2",
+    "sirv-cli": "^0.4.5"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "css-loader": "^3.4.2",
+    "lodash": "^4.17.15",
+    "preact": "^10.3.2",
+    "preact-render-to-string": "^5.1.4",
+    "preact-router": "^3.2.1",
+    "react-modal": "^3.11.2",
+    "react-process-string": "^1.2.0",
+    "rss-parser": "^3.7.6",
+    "wavesurfer.js": "^3.3.1"
+  },
+  "jest": {
+    "preset": "jest-preset-preact",
+    "setupFiles": [
+      "<rootDir>/tests/__mocks__/browserMocks.js",
+      "<rootDir>/tests/__mocks__/setupTests.js"
+    ]
+  }
 }
