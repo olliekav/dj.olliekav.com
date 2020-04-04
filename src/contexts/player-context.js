@@ -1,12 +1,9 @@
 import { h, Component, createContext, createRef } from 'preact';
 import { forwardRef } from "preact/compat";
-import Parser from 'rss-parser';
 import WaveSurfer from 'wavesurfer.js';
 
 import Player from '../components/player';
 import Loader from '../components/loader';
-
-// const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
 
 export const PlayerContext = createContext();
 
