@@ -1,12 +1,17 @@
 import { h, Component, Fragment } from 'preact';
 import Modal from 'react-modal';
 import processString from 'react-process-string';
+
+import withPlayer from '../../contexts/withPlayer';
+import { PlayerContext } from '../../contexts/player-context';
 import Logo from '../../components/logo';
 import Timer from '../../components/player/timer';
+import PlayButton from '../../components/player/play-button';
+import NextButton from '../../components/player/next-button';
+import PrevButton from '../../components/player/prev-button';
+import VolumeControl from '../../components/player/volume-control';
 import WaveformProgress from '../../components/waveform';
 import { slugify } from '../../utilities';
-
-Modal.setAppElement('#app');
 
 let processStringConfig = [{
   regex: /(http|https):\/\/(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
@@ -36,22 +41,18 @@ let processStringConfig = [{
   )
 }];
 
-export default class Player extends Component {
-  state = {
-    currentTime: 0
-  };
-
-  componentDidMount() {
-    this.updateTimer();
+class Player extends Component {
+  
+  constructor() {
+    super();
+    this.state = {
+      modalIsOpen: false,
+      modalTrack: ''
+    };
   }
 
-  updateTimer = () => {
-    const { audio } = this.props;
-    audio.addEventListener('timeupdate', () => {
-      this.setState({
-        currentTime: audio.currentTime
-      });
-    });
+  componentDidMount() {
+    Modal.setAppElement('#app');
   }
 
   openModal = (track) => {
@@ -64,60 +65,79 @@ export default class Player extends Component {
   closeModal = () => {
     this.setState({ 
       modalIsOpen: false,
-      modalTrack: null
+      modalTrack: ''
     });
   }
 
-  render({ audio, currentTrack }, { currentTime }) {
+  playPause = () => {
+    const { playPause } = this.props.context;
+    playPause();
+  }
+
+  prevTrackAtIndex = () => {
+    const { activeIndex, playlist, playTrackAtIndex } = this.props.context;
+    const prevTrack = playlist[activeIndex-1];
+    const i = activeIndex-1;
+    playTrackAtIndex(i, prevTrack);
+  }
+
+  nextTrackAtIndex = () => {
+    const { activeIndex, playlist, playTrackAtIndex } = this.props.context;
+    const nextTrack = playlist[activeIndex+1];
+    const i = activeIndex+1;
+    playTrackAtIndex(i, nextTrack);
+  }
+
+  changeVolume = (event) => {
+    const { changeVolume } = this.props.context;
+    changeVolume(event.target.value);
+  }
+
+  render(props, state) {
+    const { activeIndex, currentTrack, wavesurfer } = props.context;
+    const { modalTrack } = state;
     const currentTrackClass = currentTrack ? slugify(currentTrack.title) : '';
     const modalDescription = processString(processStringConfig)(currentTrack.content);
     return (
       <Fragment>
-        <div className={'player ' + currentTrackClass}>
-          <div className="player-artwork">
-            <Logo className="player-artwork-icon"/>
+        <div class={'player ' + currentTrackClass}>
+          <div class="player-artwork">
+            <Logo class="player-artwork-icon"/>
           </div>
-          <div className="player-track-details">
-            <h2 className="player-track-title">{currentTrack ? currentTrack.title : ''}</h2>
-            <Timer
-              duration={currentTrack ? currentTrack.itunes.duration : '0'}
-              currentTime={currentTime}
-            />
+          <div class="player-track-details">
+            <h2 class="player-track-title">{currentTrack ? currentTrack.title : ''}</h2>
+            <Timer />
             <button
-              className="player-track-info-button"
+              class="player-track-info-button"
               onClick={() => this.openModal(currentTrack)}
               aria-label="Track Info">i</button>
           </div>
-          <div className="player-controls">
+          <div class="player-controls">
+            <PrevButton onClick={() => this.prevTrackAtIndex()} />
+            <PlayButton onClick={() => this.playPause()}/>
+            <NextButton onClick={() => this.nextTrackAtIndex()}/>
           </div>
-          <div className="player-progress">
-            <WaveformProgress
-              audio={audio}
-              currentTrack={currentTrack}
-              isWaveformReady={this.isWaveformReady}
-            />
-          </div>
-          <div className="player-volume">
-          </div>
+          <WaveformProgress waveformChildRef={props.waveformChildRef}/>
+          <VolumeControl onChange={() => this.changeVolume(event)}/>
         </div>
         <Modal
           isOpen={this.state.modalIsOpen}
           onRequestClose={this.closeModal}
-          className="modal"
+          class="modal"
           overlayClassName="modal-overlay"
           bodyOpenClassName="modal-body-open"
         >
-          <div className="modal-content">
-            <h1 className="modal-title">{ currentTrack.title }</h1>
-            <pre className="modal-description">{ modalDescription }</pre>
-            <p className="modal-url">
-              <a href={ currentTrack.link }>
+          <div class="modal-content">
+            <h1 class="modal-title">{ currentTrack.title }</h1>
+            <pre class="modal-description">{ modalDescription }</pre>
+            <p class="modal-url">
+              <a href={ currentTrack.link } target="_blank">
                 View track on Soundcloud
               </a>
             </p>
             <button
               onClick={this.closeModal}
-              className="modal-close"
+              class="modal-close"
               aria-label="Close Modal">
               x
             </button>
@@ -127,3 +147,5 @@ export default class Player extends Component {
     );
   }
 }
+
+export default withPlayer(Player);

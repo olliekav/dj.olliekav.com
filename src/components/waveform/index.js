@@ -1,32 +1,38 @@
 import { h, Component } from 'preact';
 import WaveSurfer from 'wavesurfer.js';
 import _ from 'lodash';
+
+import withPlayer from '../../contexts/withPlayer';
+import { PlayerContext } from '../../contexts/player-context';
+import '../../utilities/soundcloud-api';
 import style from './style';
 
-const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
-
 class WaveformProgress extends Component {
-  state = {
-    peaks: [],
-    waveColor: '#cccccc'
-  };
 
-  componentDidMount() {
-    console.log('Audio', this.props.audio);
-    this.initWaveSurfer();
-    this.getWaveForm();
-    this.setColorScheme();
+  static contextType = PlayerContext;
+  
+  constructor() {
+    super();
+    this.state = {
+      iframeLoaded: false,
+      peaks: [],
+      waveColor: '#cccccc'
+    };
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.currentTrack !== prevProps.currentTrack) {
+  componentDidMount() {
+    this.getWaveForm();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(prevProps.context.currentTrack !== this.props.context.currentTrack) {
+      this.props.context.wavesurfer.empty();
       this.getWaveForm();
-      this.wavesurfer.empty();
     }
   }
 
   setWaveProgressColor = () => {
-    const currentTrackIndex = this.props.soundCloudAudio._playlistIndex+1;
+    const currentTrackIndex = this.props.context.activeIndex+1;
     let color = '';
     switch(currentTrackIndex) {
       case 1:
@@ -185,11 +191,14 @@ class WaveformProgress extends Component {
       case 52:
         color = '#CD4B53';
         break;
+      case 53:
+        color = '#544550';
+        break;
       default:
         color = '#ff6d00';
     }
-    this.wavesurfer.params.progressColor = color;
-    this.wavesurfer.params.cursorColor = color;
+    this.props.context.wavesurfer.params.progressColor = color;
+    this.props.context.wavesurfer.params.cursorColor = color;
   }
 
   setColorScheme = () => {
@@ -213,70 +222,72 @@ class WaveformProgress extends Component {
   }
 
   setDarkMode = () => {
-    this.wavesurfer.params.waveColor = '#262626';
-    this.wavesurfer.params.backgroundColor = '#101010';
-    this.wavesurfer.drawBuffer();
+    this.props.context.wavesurfer.params.waveColor = '#262626';
+    this.props.context.wavesurfer.params.backgroundColor = '#101010';
+    this.props.context.wavesurfer.drawBuffer();
   }
 
   setLightMode = () => {
-    this.wavesurfer.params.waveColor = '#CCCCCC';
-    this.wavesurfer.params.backgroundColor = '#ffffff';
-    this.wavesurfer.drawBuffer();
+    this.props.context.wavesurfer.params.waveColor = '#CCCCCC';
+    this.props.context.wavesurfer.params.backgroundColor = '#ffffff';
+    this.props.context.wavesurfer.drawBuffer();
   }
 
-  initWaveSurfer = () => {
-    this.wavesurfer = WaveSurfer.create({
-      backend: 'MediaElement',
-      barWidth: 2,
-      cursorWidth: 0,
-      closeAudioContext: true,
-      container: this.waveRef,
-      height: 60,
-      normalize: true,
-      progressColor: 'red',
-      responsive: true
-    });
-  }
-
-  getWaveForm = async () => {
-    console.log('Audio:', this.props.audio.src);
-    this.wavesurfer.load(CORS_PROXY + this.props.audio.src);
-  }
-
-  getWaveFormJSON = async () => {
-    this.props.isWaveformReady(false);
-    try {
-      const response = await fetch(this.props.currentTrack.waveform_url.replace('png', 'json'));
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      const responseData = await response.json();
+  getWaveForm = () => {
+    const { currentTrack } = this.props.context;
+    const iframe = document.querySelector('iframe');
+    const trackId = currentTrack.guid.split("/");
+    iframe.src = `https://w.soundcloud.com/player/?url=http://api.soundcloud.com/tracks/${trackId[1]}&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true`;
+    iframe.onload = () => {
       this.setState({
-        peaks: responseData.samples
+        iframeLoaded: true
       }, () => {
-        this.generateWaveForm();
+        const widget = SC.Widget(iframe);
+        widget.getCurrentSound(async info => {
+          try {
+            const response = await fetch(info.waveform_url);
+            if (!response.ok) {
+              throw Error(response.statusText);
+            }
+            const responseData = await response.json();
+            this.setState({
+              peaks: responseData.samples
+            }, () => {
+              this.generateWaveForm();
+            });
+          } catch(error) {
+            console.log('Error fetching and parsing data', error);
+          }
+        });
       });
-    } catch(error) {
-      console.log('Error fetching and parsing data', error);
     }
   }
 
   generateWaveForm = () => {
+    const { currentTrack } = this.props.context;
     const peaks = _.toArray(this.state.peaks);
-    const audioElement = this.props.soundCloudAudio.audio;
-    this.wavesurfer.load(audioElement, peaks);
+    this.props.context.wavesurfer.load(currentTrack.enclosure.url, peaks);
+    this.setColorScheme();
     this.setWaveProgressColor();
-    this.wavesurfer.drawBuffer();
+    this.props.context.wavesurfer.drawBuffer();
   }
 
-  render() {
+  render(props, state) {
     return (
-      <div
-        className="waveform-wrapper"
-        ref={waveRef => this.waveRef = waveRef}
-      />
+      <div class="player-progress">
+        <div
+          ref={props.waveformChildRef}
+          className="waveform-wrapper"
+        />
+        <iframe
+          class="soundcloud-iframe"
+          id="sc-widget"
+          frameborder="no"
+          scrolling="no"
+        ></iframe>
+      </div>
     );
   }
 }
 
-export default WaveformProgress;
+export default withPlayer(WaveformProgress);

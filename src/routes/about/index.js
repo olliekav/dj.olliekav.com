@@ -2,10 +2,14 @@ import { h, Component } from 'preact';
 import style from './style';
 
 export default class Profile extends Component {
-	state = {
-		time: Date.now(),
-		count: 10
-	};
+	
+	constructor() {
+    super();
+    this.state = {
+    	count: 10,
+      time: Date.now()
+    };
+  }
 
 	// update the current time
 	updateTime = () => {
