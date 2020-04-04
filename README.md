@@ -1,4 +1,4 @@
-# ollie
+# DJ Site showcasing my OK Sessions Mix series
 
 ## CLI Commands
 

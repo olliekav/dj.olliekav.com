@@ -66,7 +66,7 @@ class PlayerProvider extends Component {
   // update the current time
   getPlaylist = async () => {
     let parser = new Parser();
-    let feed = await parser.parseURL(CORS_PROXY + 'https://feeds.soundcloud.com/users/soundcloud:users:1394765/sounds.rss');
+    let feed = await parser.parseURL('https://feeds.soundcloud.com/users/soundcloud:users:1394765/sounds.rss');
     // let feed = await parser.parseURL('../../playlist-test.rss');
     // console.log('Feed:', feed);
     let playlist = feed.items.reverse();
