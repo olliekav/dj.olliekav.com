@@ -1,6 +1,5 @@
 import { h, Component, Fragment, useContext } from 'preact';
 import { contextType } from 'preact/compat';
-import Parser from 'rss-parser';
 import ClassNames from 'classnames';
 import processString from 'react-process-string';
 
