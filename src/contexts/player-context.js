@@ -6,7 +6,7 @@ import WaveSurfer from 'wavesurfer.js';
 import Player from '../components/player';
 import Loader from '../components/loader';
 
-const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
+// const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
 
 export const PlayerContext = createContext();
 
@@ -65,19 +65,19 @@ class PlayerProvider extends Component {
 
   // update the current time
   getPlaylist = async () => {
-    let parser = new Parser();
-    let feed = await parser.parseURL('https://feeds.soundcloud.com/users/soundcloud:users:1394765/sounds.rss');
-    // let feed = await parser.parseURL('../../playlist-test.rss');
-    // console.log('Feed:', feed);
-    let playlist = feed.items.reverse();
-    this.setState({
-      activeIndex: 0,
-      currentTrack: playlist[0],
-      isLoaded: true,
-      playlist: playlist
-    }, () => {
-      this.initWaveSurfer();
-    });
+    const response = await fetch("./.netlify/functions/node-fetch");
+    if(response.ok) {
+      const feed = await response.json();
+      const playlist = feed.feed.reverse();
+      this.setState({
+        activeIndex: 0,
+        currentTrack: playlist[0],
+        isLoaded: true,
+        playlist: playlist
+      }, () => {
+        this.initWaveSurfer();
+      });
+    }
   };
 
   playTrackAtIndex = (index, track) => {
