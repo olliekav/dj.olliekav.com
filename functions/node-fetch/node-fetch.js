@@ -4,6 +4,7 @@ const fetch = require('node-fetch')
 let parser = new Parser();
 exports.handler = async function(event, context) {
   try {
+    // const response = await fetch('http://0.0.0.0:8080/playlist-test.rss')
     const response = await fetch('https://feeds.soundcloud.com/users/soundcloud:users:1394765/sounds.rss')
     if (!response.ok) {
       // NOT res.status >= 200 && res.status < 300

@@ -9,7 +9,8 @@
     "start:development": "npm run -s dev",
     "build": "preact build --no-prerender",
     "serve": "preact build && sirv build --cors --single",
-    "dev": "preact watch --https --key /usr/local/etc/httpd/server.key --cert /usr/local/etc/httpd/server.crt",
+    "dev": "preact watch",
+    "dev-https": "preact watch --https --key /usr/local/etc/httpd/server.key --cert /usr/local/etc/httpd/server.crt",
     "lint": "eslint src",
     "test": "jest"
   },

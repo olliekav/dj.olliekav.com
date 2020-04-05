@@ -21,6 +21,7 @@ class PlayerProvider extends Component {
       playlist: [],
       setWaveform: false,
       wavesurfer: undefined,
+      wavesurferReady: false,
       volume: 0.5
     };
     
@@ -101,7 +102,8 @@ class PlayerProvider extends Component {
   setTimers = () => {
     this.setState({
       currentTime: this.wavesurfer.getCurrentTime(),
-      duration: this.wavesurfer.getDuration()
+      duration: this.wavesurfer.getDuration(),
+      wavesurferReady: true
     });
     this.wavesurfer.on("audioprocess", this.updateTimer);
     this.wavesurfer.on("seek", this.updateTimer);
