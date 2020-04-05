@@ -28,12 +28,16 @@
 }
 
 .player-volume {
-  display: flex;
+  display: none;
   flex: 0;
   flex-flow: row nowrap;
   justify-content: center;
   position: relative;
-  width: 4rem;
+  width: 5rem;
+
+  @media screen and (min-width: 500px) {
+    display: flex;
+  }
 }
 
 .player-volume > button {
@@ -84,9 +88,11 @@ input[type=range] {
     background: var(--dark-color);
   }
 }
+
 input[type=range]:focus {
   outline: none;
 }
+
 input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 5px;
@@ -97,6 +103,7 @@ input[type=range]::-webkit-slider-runnable-track {
   border-radius: 3rem;
   border: 0px solid var(--dark-color);
 }
+
 input[type=range]::-webkit-slider-thumb {
   background: var(--dark-color);
   box-shadow: 0px 0px 0px var(--dark-color);
@@ -113,6 +120,7 @@ input[type=range]::-webkit-slider-thumb {
     border-color: var(--dark-color);
   }
 }
+
 input[type=range]:focus::-webkit-slider-runnable-track {
   background: var(--dark-color);
 
@@ -120,6 +128,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
     background: var(--light-color);
   }
 }
+
 input[type=range]::-moz-range-track {
   width: 100%;
   height: 5px;
@@ -135,6 +144,7 @@ input[type=range]::-moz-range-track {
     border-color: var(--light-color);
   }
 }
+
 input[type=range]::-moz-range-thumb {
   box-shadow: 0px 0px 0px var(--dark-color);
   border: 1px solid var(--light-color);
@@ -149,6 +159,7 @@ input[type=range]::-moz-range-thumb {
     border-color: var(--dark-color);
   }
 }
+
 input[type=range]::-ms-track {
   width: 100%;
   height: 5px;
@@ -158,18 +169,21 @@ input[type=range]::-ms-track {
   border-color: transparent;
   color: transparent;
 }
+
 input[type=range]::-ms-fill-lower {
   background: var(--dark-color);
   border: 0px solid var(--dark-color);
   border-radius: 2px;
   box-shadow: 0px 0px 0px var(--dark-color);
 }
+
 input[type=range]::-ms-fill-upper {
   background: var(--dark-color);
   border: 0px solid var(--dark-color);
   border-radius: 2px;
   box-shadow: 0px 0px 0px var(--dark-color);
 }
+
 input[type=range]::-ms-thumb {
   margin-top: 1px;
   box-shadow: 0px 0px 0px var(--dark-color);
@@ -180,9 +194,11 @@ input[type=range]::-ms-thumb {
   background: var(--dark-color);
   cursor: pointer;
 }
+
 input[type=range]:focus::-ms-fill-lower {
   background: var(--dark-color);
 }
+
 input[type=range]:focus::-ms-fill-upper {
   background: var(--dark-color);
 }
