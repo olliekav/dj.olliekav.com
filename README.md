@@ -1,22 +1,11 @@
-# DJ Site showcasing my OK Sessions Mix series
+# Readme
 
-## CLI Commands
+[![Netlify Status](https://api.netlify.com/api/v1/badges/221a1872-d36b-48af-9ceb-f4a73d37d3da/deploy-status)](https://app.netlify.com/sites/djolliekav/deploys)
 
-``` bash
-# install dependencies
-npm install
+This is a showcase site for my [OK Sessions DJ mixes](https://soundcloud.com/olliekav/sets/ok-sessions), due to Soundcloud locking down their API it uses their public RSS feeds to drive the content and stream the MP3s.
 
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# test the production build locally
-npm run serve
-
-# run tests with jest and preact-render-spy 
-npm run test
-```
-
-For detailed explanation on how things work, checkout the [CLI Readme](https://github.com/developit/preact-cli/blob/master/README.md).
+## Tech Stack
+- [Preact](https://preactjs.com/)
+- [Wavesurfer](https://wavesurfer-js.org/) - Audio Player & Waveforms
+- [RSS](https://github.com/rbren/rss-parser/) - Generating JSON from the RSS Feeds
+- [Netlify](https://www.netlify.com/) = Hosting + Netlify Functions
