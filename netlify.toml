@@ -1,7 +1,7 @@
 [build]
   command = "npm run build && cd functions/node-fetch && npm i"
   functions = "functions"
-  publish = "build"
+  publish = "build/"
 
 [dev]
   command = "npm run dev"
