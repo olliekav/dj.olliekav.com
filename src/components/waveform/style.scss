@@ -1,11 +1,10 @@
 .waveform-wrapper {
   bottom: 0;
   height: 100%;
-  left: 0;
+  left: .3rem;
   position: absolute;
-  right: 0;
+  right: .3rem;
   top: 0;
-  width: 100%;
   
   // Hack to set background color of progress
   > wave > wave {

@@ -1,6 +1,5 @@
 import { h, Component } from 'preact';
 import WaveSurfer from 'wavesurfer.js';
-import _ from 'lodash';
 
 import withPlayer from '../../contexts/withPlayer';
 import { PlayerContext } from '../../contexts/player-context';
@@ -268,8 +267,7 @@ class WaveformProgress extends Component {
 
   generateWaveForm = () => {
     const { currentTrack } = this.props.context;
-    const peaks = _.toArray(this.state.peaks);
-    this.props.context.wavesurfer.load(currentTrack.enclosure.url, peaks);
+    this.props.context.wavesurfer.load(currentTrack.enclosure.url, this.state.peaks);
     this.setColorScheme();
     this.setWaveProgressColor();
     this.props.context.wavesurfer.drawBuffer();

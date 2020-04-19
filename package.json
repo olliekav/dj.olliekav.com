@@ -38,7 +38,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "css-loader": "^3.4.2",
-    "lodash": "^4.17.15",
+    "netlify-cli": "^2.47.0",
     "preact": "^10.3.2",
     "preact-render-to-string": "^5.1.4",
     "preact-router": "^3.2.1",
