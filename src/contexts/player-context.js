@@ -86,16 +86,16 @@ class PlayerProvider extends Component {
       activeIndex: index,
       currentTime: 0,
       currentTrack: track,
-      duration: 0
+      duration: 0,
+      wavesurferReady: false
     });
 
-    this.wavesurfer.on("ready", () => {
+    this.wavesurfer.on('waveform-ready', () => {
       this.setState({
         duration: this.wavesurfer.getDuration(),
-        isPlaying: true
+        wavesurferReady: true
       });
       this.updateTimer();
-      this.wavesurfer.playPause();
     });
   }
 
@@ -105,8 +105,8 @@ class PlayerProvider extends Component {
       duration: this.wavesurfer.getDuration(),
       wavesurferReady: true
     });
-    this.wavesurfer.on("audioprocess", this.updateTimer);
-    this.wavesurfer.on("seek", this.updateTimer);
+    this.wavesurfer.on('audioprocess', this.updateTimer);
+    this.wavesurfer.on('seek', this.updateTimer);
   }
 
   updateTimer = () => {

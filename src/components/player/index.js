@@ -1,7 +1,6 @@
 import { h, Component, Fragment } from 'preact';
 import Modal from 'react-modal';
 import processString from 'react-process-string';
-
 import withPlayer from '../../contexts/withPlayer';
 import { PlayerContext } from '../../contexts/player-context';
 import Logo from '../../components/logo';
@@ -94,7 +93,7 @@ class Player extends Component {
   }
 
   render(props, state) {
-    const { activeIndex, currentTrack, wavesurfer } = props.context;
+    const { activeIndex, currentTrack, wavesurfer, wavesurferReady } = props.context;
     const { modalTrack } = state;
     const currentTrackClass = currentTrack ? slugify(currentTrack.title) : '';
     const modalDescription = processString(processStringConfig)(currentTrack.content);
@@ -106,7 +105,11 @@ class Player extends Component {
           </div>
           <div class="player-track-details">
             <h2 class="player-track-title">{currentTrack ? currentTrack.title : ''}</h2>
-            <Timer />
+            { wavesurferReady ? (
+              <Timer />
+            ) : (
+              <Fragment>Buffering...</Fragment>
+            )}
             <button
               class="player-track-info-button"
               onClick={() => this.openModal(currentTrack)}
