@@ -12,33 +12,19 @@ import VolumeControl from '../../components/player/volume-control';
 import WaveformProgress from '../../components/waveform';
 import { slugify } from '../../utilities';
 
-let processStringConfig = [{
-  regex: /(http|https):\/\/(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
-  fn: (key, result) => (
-    <span key={key}>
-      <a 
-        target="_blank"
-        rel="noopener noreferrer"
-        href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`}>
-          {result[2]}.{result[3]}{result[4]}
-        </a>
-        {result[5]}
-    </span>
-  )
-}, {
-  regex: /(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
-  fn: (key, result) => (
-    <span key={key}>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href={`http://${result[1]}.${result[2]}${result[3]}`}>
-          {result[1]}.{result[2]}{result[3]}
-        </a>
-        {result[4]}
-    </span>
-  )
-}];
+String.prototype.parseURL = function() {
+  return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function( url ) {
+    return url.link( url );
+  });
+};
+
+String.prototype.parseUsername = function() {
+  return this.replace(/[@]+[A-Za-z0-9-_]+/g, function( u ) {
+    var username = u.replace("@","");
+    
+    return u.link( 'https://soundcloud.com/' + username );
+  });
+};
 
 class Player extends Component {
   
@@ -96,7 +82,8 @@ class Player extends Component {
     const { activeIndex, currentTrack, wavesurfer, wavesurferReady } = props.context;
     const { modalTrack } = state;
     const currentTrackClass = currentTrack ? slugify(currentTrack.title) : '';
-    const modalDescription = processString(processStringConfig)(currentTrack.content);
+    console.log(currentTrack.content);
+    const modalDescription = currentTrack.content.parseURL().parseUsername();
     return (
       <Fragment>
         <div class={'player ' + currentTrackClass}>
@@ -132,7 +119,12 @@ class Player extends Component {
         >
           <div class="modal-content">
             <h1 class="modal-title">{ currentTrack.title }</h1>
-            <pre class="modal-description">{ modalDescription }</pre>
+            <div
+              class="modal-description"
+              dangerouslySetInnerHTML={
+                {__html: modalDescription}
+              }
+            />
             <p class="modal-url">
               <a href={ currentTrack.link } target="_blank">
                 View track on Soundcloud
