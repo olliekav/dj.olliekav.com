@@ -278,6 +278,10 @@ input[type=range]::-webkit-slider-runnable-track {
   background: var(--dark-color);
   border-radius: 3rem;
   border: 0px solid var(--dark-color);
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--light-color);
+  }
 }
 
 input[type=range]::-webkit-slider-thumb {
