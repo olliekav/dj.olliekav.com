@@ -82,7 +82,6 @@ class Player extends Component {
     const { activeIndex, currentTrack, wavesurfer, wavesurferReady } = props.context;
     const { modalTrack } = state;
     const currentTrackClass = currentTrack ? slugify(currentTrack.title) : '';
-    console.log(currentTrack.content);
     const modalDescription = currentTrack.content.parseURL().parseUsername();
     return (
       <Fragment>
