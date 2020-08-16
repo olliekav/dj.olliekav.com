@@ -42,7 +42,7 @@ class PlayerProvider extends Component {
     this.wavesurfer = WaveSurfer.create({
       backend: 'MediaElement',
       barRadius: 3,
-      barWidth: 6,
+      barWidth: 4,
       cursorWidth: 0,
       closeAudioContext: true,
       container: this.waveformRef.current,
