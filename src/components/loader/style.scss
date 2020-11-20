@@ -9,6 +9,13 @@
   width: 10rem;
 }
 
+.loader--inline {
+  height: 3rem;
+  margin: -1.5rem 0 0 -2.5rem;
+  position: absolute;
+  width: 5rem;
+}
+
 .loader > span {
   display: none;
 }
@@ -27,6 +34,11 @@
   @media (prefers-color-scheme: dark) {
     background-color: #fff;
   }
+}
+
+.loader--inline > div {
+  margin-right: .15rem;
+  width: 0.5rem;
 }
 
 .loader > div:last-of-type {

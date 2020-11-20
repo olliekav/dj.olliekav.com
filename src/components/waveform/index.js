@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import WaveSurfer from 'wavesurfer.js';
-
+import Loader from '../../components/loader';
 import withPlayer from '../../contexts/withPlayer';
 import { PlayerContext } from '../../contexts/player-context';
 import '../../utilities/soundcloud-api';
@@ -15,7 +15,8 @@ class WaveformProgress extends Component {
     this.state = {
       iframeLoaded: false,
       peaks: [],
-      waveColor: '#cccccc'
+      waveColor: '#cccccc',
+      isLoaded: false
     };
   }
 
@@ -277,6 +278,7 @@ class WaveformProgress extends Component {
             }
             const responseData = await response.json();
             this.setState({
+              isLoaded: true,
               peaks: responseData.samples
             }, () => {
               this.generateWaveForm();
@@ -299,17 +301,22 @@ class WaveformProgress extends Component {
 
   render(props, state) {
     return (
-      <div class="player-progress">
+      <div className="player-progress">
         <div
           ref={props.waveformChildRef}
-          className="waveform-wrapper"
+          className={`waveform-wrapper ${ state.isLoaded ? 'loaded' : ''}`}
         />
         <iframe
-          class="soundcloud-iframe"
+          className="soundcloud-iframe"
           id="sc-widget"
           frameborder="no"
           scrolling="no"
         ></iframe>
+        { !state.isLoaded &&
+          <div class="player-progress-loader">
+            <Loader inline="true"/>
+          </div>
+        }
       </div>
     );
   }
