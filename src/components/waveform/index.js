@@ -214,11 +214,14 @@ class WaveformProgress extends Component {
       case 60:
         color = '#2A9368';
         break;
-      case 60:
+      case 61:
         color = '#1B85DD';
         break;
+      case 62:
+        color = '#6A3C6D';
+        break;
       default:
-        color = '#ff6d00';
+        color = '#101010';
     }
     this.props.context.wavesurfer.params.progressColor = color;
     this.props.context.wavesurfer.params.cursorColor = color;
