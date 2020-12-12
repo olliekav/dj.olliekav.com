@@ -221,6 +221,9 @@ class WaveformProgress extends Component {
       case 62:
         color = '#6A3C6D';
         break;
+      case 63:
+        color = '#167382';
+        break;
       default:
         color = '#101010';
     }
