@@ -1,4 +1,5 @@
 import { h, Component, Fragment } from 'preact';
+import { useState, useContext, useEffect, useReducer } from 'preact/hooks';
 import Modal from 'react-modal';
 import processString from 'react-process-string';
 import withPlayer from '../../contexts/withPlayer';
@@ -26,120 +27,108 @@ String.prototype.parseUsername = function() {
   });
 };
 
-class Player extends Component {
-  
-  constructor() {
-    super();
-    this.state = {
+const Player = props => {
+
+  const { player, playPause, playTrackAtIndex, changeVolume, wavesurfer } = useContext(PlayerContext);
+  const [modal, setModal] = useReducer(
+    (state, newState) => ({...state, ...newState}),
+    {
       modalIsOpen: false,
       modalTrack: ''
-    };
-  }
+    }
+  );
 
-  componentDidMount() {
+  useEffect(() => {
     Modal.setAppElement('#app');
-  }
+  }), [];
 
-  openModal = (track) => {
-    this.setState({
+  const openModal = (track) => {
+    setModal({
       modalIsOpen: true,
       modalTrack: track
     });
   }
 
-  closeModal = () => {
-    this.setState({ 
+  const closeModal = () => {
+    setModal({
       modalIsOpen: false,
       modalTrack: ''
     });
   }
 
-  playPause = () => {
-    const { playPause } = this.props.context;
-    playPause();
-  }
-
-  prevTrackAtIndex = () => {
-    const { activeIndex, playlist, playTrackAtIndex } = this.props.context;
-    const prevTrack = playlist[activeIndex-1];
-    const i = activeIndex-1;
+  const prevTrackAtIndex = () => {
+    const prevTrack = player.playlist[player.activeIndex-1];
+    const i = player.activeIndex-1;
     playTrackAtIndex(i, prevTrack);
   }
 
-  nextTrackAtIndex = () => {
-    const { activeIndex, playlist, playTrackAtIndex } = this.props.context;
-    const nextTrack = playlist[activeIndex+1];
-    const i = activeIndex+1;
+  const nextTrackAtIndex = () => {
+    const nextTrack = player.playlist[player.activeIndex+1];
+    const i = player.activeIndex+1;
     playTrackAtIndex(i, nextTrack);
   }
 
-  changeVolume = (event) => {
-    const { changeVolume } = this.props.context;
-    changeVolume(event.target.value);
-  }
+  const { modalIsOpen, modalTrack } = modal;
+  const { currentTrack, wavesurferReady } = player;
+  const currentTrackClass = currentTrack ? slugify(currentTrack.title) : '';
+  const modalDescription = currentTrack.content.parseURL().parseUsername();
 
-  render(props, state) {
-    const { activeIndex, currentTrack, wavesurfer, wavesurferReady } = props.context;
-    const { modalTrack } = state;
-    const currentTrackClass = currentTrack ? slugify(currentTrack.title) : '';
-    const modalDescription = currentTrack.content.parseURL().parseUsername();
-    return (
-      <Fragment>
-        <div class={'player ' + currentTrackClass}>
-          <div class="player-artwork">
-            <Logo class="player-artwork-icon"/>
-          </div>
-          <div class="player-track-details">
-            <h2 class="player-track-title">{currentTrack ? currentTrack.title : ''}</h2>
-            { wavesurferReady ? (
-              <Timer />
-            ) : (
-              <Fragment>Buffering...</Fragment>
-            )}
-            <button
-              class="player-track-info-button"
-              onClick={() => this.openModal(currentTrack)}
-              aria-label="Track Info">i</button>
-          </div>
-          <div class="player-controls">
-            <PrevButton onClick={() => this.prevTrackAtIndex()} />
-            <PlayButton onClick={() => this.playPause()}/>
-            <NextButton onClick={() => this.nextTrackAtIndex()}/>
-          </div>
-          <WaveformProgress waveformChildRef={props.waveformChildRef}/>
-          <VolumeControl onChange={() => this.changeVolume(event)}/>
+  return (
+    <Fragment>
+      <div class={'player ' + currentTrackClass}>
+        <div class="player-artwork">
+          <Logo class="player-artwork-icon"/>
         </div>
-        <Modal
-          isOpen={this.state.modalIsOpen}
-          onRequestClose={this.closeModal}
-          class="modal"
-          overlayClassName="modal-overlay"
-          bodyOpenClassName="modal-body-open"
-        >
-          <div class="modal-content">
-            <h1 class="modal-title">{ currentTrack.title }</h1>
-            <div
-              class="modal-description"
-              dangerouslySetInnerHTML={
-                {__html: modalDescription}
-              }
-            />
-            <p class="modal-url">
-              <a href={ currentTrack.link } target="_blank">
-                View track on Soundcloud
-              </a>
-            </p>
-            <button
-              onClick={this.closeModal}
-              class="modal-close"
-              aria-label="Close Modal">
-              x
-            </button>
-          </div>
-        </Modal>
-      </Fragment>
-    );
-  }
+        <div class="player-track-details">
+          <h2 class="player-track-title">{currentTrack ? currentTrack.title : ''}</h2>
+          { wavesurferReady ? (
+            <Timer />
+          ) : (
+            <span class="loading-text">Buffering</span>
+          )}
+          <button
+            class="player-track-info-button"
+            onClick={() => openModal(currentTrack)}
+            aria-label="Track Info">i</button>
+        </div>
+        <div class="player-controls">
+          <PrevButton onClick={() => prevTrackAtIndex()} />
+          <PlayButton onClick={() => playPause()}/>
+          <NextButton onClick={() => nextTrackAtIndex()}/>
+        </div>
+        <WaveformProgress waveformChildRef={props.waveformChildRef}/>
+        <VolumeControl onChange={() => changeVolume(event.target.value)}/>
+      </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        class="modal"
+        overlayClassName="modal-overlay"
+        bodyOpenClassName="modal-body-open"
+      >
+        <div class="modal-content">
+          <h1 class="modal-title">{ currentTrack.title }</h1>
+          <div
+            class="modal-description"
+            dangerouslySetInnerHTML={
+              {__html: modalDescription}
+            }
+          />
+          <p class="modal-url">
+            <a href={ currentTrack.link } target="_blank">
+              View track on Soundcloud
+            </a>
+          </p>
+          <button
+            onClick={closeModal}
+            class="modal-close"
+            aria-label="Close Modal">
+            x
+          </button>
+        </div>
+      </Modal>
+    </Fragment>
+  );
 }
 
 export default withPlayer(Player);

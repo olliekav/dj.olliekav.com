@@ -1,5 +1,6 @@
 import { h, Component, createContext, createRef } from 'preact';
 import { forwardRef } from "preact/compat";
+import { useState, useRef, useEffect, useReducer, useCallback } from 'preact/hooks';
 import WaveSurfer from 'wavesurfer.js';
 
 import Player from '../components/player';
@@ -7,11 +8,10 @@ import Loader from '../components/loader';
 
 export const PlayerContext = createContext();
 
-class PlayerProvider extends Component {
-
-  constructor() {
-    super();
-    this.state = {
+const PlayerProvider = props => {
+  const [player, setPlayer] = useReducer(
+    (state, newState) => ({...state, ...newState}),
+    {
       activeIndex: 0,
       currentTrack: [],
       currentTime: 0,
@@ -19,136 +19,118 @@ class PlayerProvider extends Component {
       isLoaded: false,
       isPlaying: false,
       playlist: [],
-      setWaveform: false,
-      wavesurfer: undefined,
       wavesurferReady: false,
       volume: 0.5
-    };
-    
-    this.wavesurfer = WaveSurfer.create({
-      container: document.createElement('div')
-    });
+    }
+  );
+  const [wavesurfer, setWavesurfer] = useState(undefined);
 
-    this.playerRef = createRef();
-    this.waveformRef = createRef();
-  }
+  const waveformRef = useCallback(node => {
+    if(node !== null) {
+      initWaveSurfer(node);
+    }
+  }, []);
 
-  componentDidMount(){
-    this.getPlaylist();
-  }
+  useEffect(() => {
+    getPlaylist();
+  }, []);
 
-  initWaveSurfer = () => {
-    // Re-render the waveform when the dom is ready
-    this.wavesurfer = WaveSurfer.create({
+  const getPlaylist = async () => {
+    const response = await fetch("./.netlify/functions/node-fetch");
+    if(response.ok) {
+      const feed = await response.json();
+      const playlist = feed.feed.reverse();
+      setPlayer({
+        activeIndex: 0,
+        currentTrack: playlist[0],
+        isLoaded: true,
+        playlist: playlist
+      });
+    }
+  };
+
+  const initWaveSurfer = (node) => {
+    const wavesurfer = WaveSurfer.create({
       backend: 'MediaElement',
       barRadius: 3,
       barWidth: 4,
       cursorWidth: 0,
       closeAudioContext: true,
-      container: this.waveformRef.current,
+      container: node,
       height: 60,
       mediaControls: false,
       normalize: true,
       progressColor: 'red',
       responsive: true
     });
-    this.setState({
-      setWaveform: true
-    }, () => {
-      this.wavesurfer.on('ready', () => {
-        this.setTimers();
-      });
-    })
+
+    setWavesurfer(wavesurfer);
   }
 
-  // update the current time
-  getPlaylist = async () => {
-    const response = await fetch("./.netlify/functions/node-fetch");
-    if(response.ok) {
-      const feed = await response.json();
-      const playlist = feed.feed.reverse();
-      this.setState({
-        activeIndex: 0,
-        currentTrack: playlist[0],
-        isLoaded: true,
-        playlist: playlist
-      }, () => {
-        this.initWaveSurfer();
-      });
-    }
-  };
-
-  playTrackAtIndex = (index, track) => {
-    const { activeIndex, isPlaying } = this.state;
+  const playTrackAtIndex = (index, track) => {
+    const { isPlaying, activeIndex } = player;
     const isCurrentTrack = isPlaying && activeIndex === index;
 
-    this.setState({
+    setPlayer({
       activeIndex: index,
       currentTime: 0,
       currentTrack: track,
       duration: 0,
+      isPlaying: false,
       wavesurferReady: false
     });
-
-    this.wavesurfer.on('waveform-ready', () => {
-      this.setState({
-        duration: this.wavesurfer.getDuration(),
-        wavesurferReady: true
-      });
-      this.updateTimer();
-    });
   }
 
-  setTimers = () => {
-    this.setState({
-      currentTime: this.wavesurfer.getCurrentTime(),
-      duration: this.wavesurfer.getDuration(),
+  const setTimers = () => {
+    setPlayer({
+      currentTime: wavesurfer.getCurrentTime(),
+      duration: wavesurfer.getDuration(),
       wavesurferReady: true
     });
-    this.wavesurfer.on('audioprocess', this.updateTimer);
-    this.wavesurfer.on('seek', this.updateTimer);
+    wavesurfer.on('audioprocess', updateTimer);
+    wavesurfer.on('seek', updateTimer);
   }
 
-  updateTimer = () => {
-    this.setState({
-      currentTime: this.wavesurfer.getCurrentTime()
+  const updateTimer = () => {
+    setPlayer({
+      currentTime: wavesurfer.getCurrentTime()
     });
   }
 
-  playPause = () => {
-    this.setState({ isPlaying: !this.state.isPlaying });
-    this.wavesurfer.playPause();
+  const playPause = () => {
+    const { isPlaying } = player;
+    setPlayer({ isPlaying: !isPlaying });
+    wavesurfer.playPause();
   }
 
-  changeVolume = (value) => {
-    this.setState({ volume: value });
-    this.wavesurfer.setVolume(value);
+  const changeVolume = (value) => {
+    setPlayer({ volume: value });
+    wavesurfer.setVolume(value);
   }
 
-  render({ children }, { isLoaded }) {
-    if (!isLoaded) {
-      return (
-        <Loader />
-      )
-    }
+  if (!player.isLoaded) {
     return (
-      <PlayerContext.Provider value={{
-        ...this.state,
-        changeVolume: this.changeVolume,
-        playTrackAtIndex: this.playTrackAtIndex,
-        playPause: this.playPause,
-        wavesurfer: this.wavesurfer
-      }}>
-        <div class="wrapper loaded">
-          {children}
-          <Player
-            ref={this.playerRef}
-            waveformChildRef={this.waveformRef}
-          />
-        </div>
-      </PlayerContext.Provider>
-    );
+      <Loader />
+    )
   }
-}
+
+  return (
+    <PlayerContext.Provider value={{
+      player,
+      wavesurfer,
+      changeVolume: changeVolume,
+      playTrackAtIndex: playTrackAtIndex,
+      playPause: playPause,
+      setTimers: setTimers
+    }}>
+      <div class="wrapper loaded">
+        {props.children}
+        <Player
+          waveformChildRef={waveformRef}
+        />
+      </div>
+    </PlayerContext.Provider>
+  );
+};
 
 export default PlayerProvider;

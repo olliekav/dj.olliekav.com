@@ -4,10 +4,10 @@ import { useContext } from "preact/hooks";
 import { PlayerContext } from '../../contexts/player-context';
 
 const Timer = (props) => {
-  const { currentTime, duration } = useContext(PlayerContext);
+  const { player } = useContext(PlayerContext);
   return (
     <Fragment>
-      {prettyTime(currentTime)} / {prettyTime(duration)}
+      {prettyTime(player.currentTime)} / {prettyTime(player.duration)}
     </Fragment>
   )
 }

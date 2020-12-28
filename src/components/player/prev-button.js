@@ -3,8 +3,8 @@ import { useContext } from "preact/hooks";
 import { PlayerContext } from '../../contexts/player-context';
 
 const PrevButton = (props) => {
-  const { activeIndex, wavesurferReady } = useContext(PlayerContext);
-  const disabled = activeIndex === 0 || !wavesurferReady;
+  const { player } = useContext(PlayerContext);
+  const disabled = player.activeIndex === 0 || !player.wavesurferReady;
   return (
     <button class="player-button" {...props} disabled={disabled}>
       <svg viewBox="0 0 53 30" version="1.1" xmlns="http://www.w3.org/2000/svg">

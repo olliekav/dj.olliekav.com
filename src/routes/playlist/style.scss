@@ -1,9 +1,11 @@
 .playlist {
   counter-reset: session;
+  list-style: none;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(50vw, 1fr));
   flex: 1;
-  margin-bottom: -1rem;
+  margin: 0 0 -1rem;
+  padding: 0;
   overflow-x: hidden;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
@@ -24,6 +26,8 @@
 
 .playlist-track {
   display: flex;
+  margin: 0;
+  padding: 0;
   width: 100%;
 }
 
@@ -53,6 +57,10 @@
   @media (prefers-color-scheme: dark) {
     color: var(--dark-color);
   }
+}
+
+.playlist-track-button:focus {
+  outline: none;
 }
 
 .playlist-track-icon {
@@ -123,7 +131,7 @@
 
 /* Colours for the tracks */
 
-@mixin colour-scheme($bg-color, $color) {
+@mixin colour-scheme($bg-color, $color, $dark-background: false) {
   .playlist-track-button,
   .player-artwork {
     background: $bg-color;
@@ -138,11 +146,15 @@
   }
   .player-button:hover > svg {
     fill: $bg-color;
+
+    @if $dark-background {
+      fill: $color;
+    }
   }
 }
 
 .ok-sessions-1 {
-  @include colour-scheme(#2A10A6, #EC00A5);
+  @include colour-scheme(#2A10A6, #EC00A5, true);
 }
 
 .ok-sessions-2 {
@@ -154,7 +166,7 @@
 }
 
 .ok-sessions-4 {
-  @include colour-scheme(#333131, #08F9A9);
+  @include colour-scheme(#333131, #08F9A9, true);
 }
 
 .ok-sessions-5 {
@@ -190,7 +202,7 @@
 }
 
 .ok-sessions-13 {
-  @include colour-scheme(#000000, #FF0004);
+  @include colour-scheme(#000000, #FF0004, true);
 }
 
 .ok-sessions-14 {
@@ -218,7 +230,7 @@
 }
 
 .ok-sessions-20 {
-  @include colour-scheme(#353F29, #FD8E8D);
+  @include colour-scheme(#353F29, #FD8E8D, true);
 }
 
 .ok-sessions-21 {
@@ -350,7 +362,7 @@
 }
 
 .ok-sessions-53 {
-  @include colour-scheme(#544550, #FFA666);
+  @include colour-scheme(#544550, #FFA666, true);
 }
 
 .ok-sessions-54 {
@@ -358,7 +370,7 @@
 }
 
 .ok-sessions-55 {
-  @include colour-scheme(#484652, #BAFBC7);
+  @include colour-scheme(#484652, #BAFBC7, true);
 }
 
 .ok-sessions-56 {
@@ -374,7 +386,7 @@
 }
 
 .ok-sessions-59 {
-  @include colour-scheme(#636D6A, #DCBB9A);
+  @include colour-scheme(#636D6A, #DCBB9A, true);
 }
 
 .ok-sessions-60 {

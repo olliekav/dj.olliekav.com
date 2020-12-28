@@ -4,8 +4,8 @@ import { PlayerContext } from '../../contexts/player-context';
 import style from './style';
 
 const NextButton = (props) => {
-  const { activeIndex, playlist, wavesurferReady } = useContext(PlayerContext);
-  const disabled = activeIndex === playlist.length-1 || !wavesurferReady;
+  const { player } = useContext(PlayerContext);
+  const disabled = player.activeIndex === player.playlist.length-1 || !player.wavesurferReady;
   return (
     <button class="player-button" {...props} disabled={disabled}>
       <svg viewBox="0 0 53 30" version="1.1" xmlns="http://www.w3.org/2000/svg">

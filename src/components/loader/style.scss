@@ -1,19 +1,20 @@
 .loader {
+  display: flex;
   font-size: 1rem;
-  height: 8rem;
+  height: 80px;
   left: 50%;
-  margin: -4rem 0 0 -5rem;
+  margin: -40px 0 0 -28px;
   position: fixed;
   text-align: center;
   top: 50%;
-  width: 10rem;
+  width: 56px;
 }
 
 .loader--inline {
-  height: 3rem;
-  margin: -1.5rem 0 0 -2.5rem;
+  height: 30px;
+  margin: -15px 0 0 -14px;
   position: absolute;
-  width: 5rem;
+  width: 28px;
 }
 
 .loader > span {
@@ -22,11 +23,10 @@
 
 .loader > div {
   background-color: var(--dark-color);
-  border-radius: .3rem;
+  border-radius: 8px;
   height: 100%;
-  display: inline-block;
-  margin-right: .3rem;
-  width: 1rem;
+  margin-right: 4px;
+  width: 8px;
   
   -webkit-animation: volume 1.2s infinite ease-in-out;
   animation: volume 1.2s infinite ease-in-out;
@@ -34,11 +34,16 @@
   @media (prefers-color-scheme: dark) {
     background-color: #fff;
   }
+
+  &:last-child {
+    margin-right: 0;
+  }
 }
 
 .loader--inline > div {
-  margin-right: .15rem;
-  width: 0.5rem;
+  border-radius: 2px;
+  margin-right: 2px;
+  width: 4px;
 }
 
 .loader > div:last-of-type {

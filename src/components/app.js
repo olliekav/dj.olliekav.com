@@ -1,10 +1,8 @@
 import { h, Component } from 'preact';
 import { Router } from 'preact-router';
-
 import Player from '../components/player';
 import PlayerProvider from '../contexts/player-context';
 import Playlist from '../routes/playlist';
-import Profile from '../routes/about';
 
 export default class App extends Component {
 	
@@ -18,7 +16,6 @@ export default class App extends Component {
 				<PlayerProvider>
 					<Router onChange={this.handleRoute}>
 						<Playlist path="/" />
-						<Profile path="/about/" />
 					</Router>
 				</PlayerProvider>
 			</div>

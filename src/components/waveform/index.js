@@ -1,4 +1,5 @@
-import { h, Component } from 'preact';
+import { h, Component, createRef } from 'preact';
+import { useState, useContext, useEffect, useReducer, useRef } from 'preact/hooks';
 import WaveSurfer from 'wavesurfer.js';
 import Loader from '../../components/loader';
 import withPlayer from '../../contexts/withPlayer';
@@ -6,33 +7,25 @@ import { PlayerContext } from '../../contexts/player-context';
 import '../../utilities/soundcloud-api';
 import style from './style';
 
-class WaveformProgress extends Component {
-
-  static contextType = PlayerContext;
-  
-  constructor() {
-    super();
-    this.state = {
+const WaveformProgress = props => {
+  const iframe = createRef();
+  const { player, wavesurfer, setTimers } = useContext(PlayerContext);
+  const [state, setState] = useReducer(
+    (state, newState) => ({...state, ...newState}),
+    {
       iframeLoaded: false,
       peaks: [],
       waveColor: '#cccccc',
       isLoaded: false
-    };
-  }
-
-  componentDidMount() {
-    this.getWaveForm();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if(prevProps.context.currentTrack !== this.props.context.currentTrack) {
-      this.props.context.wavesurfer.empty();
-      this.getWaveForm();
     }
-  }
+  );
 
-  setWaveProgressColor = () => {
-    const currentTrackIndex = this.props.context.activeIndex+1;
+  useEffect(() => {
+    getWaveForm();
+  }, [player.currentTrack]);
+
+  const setWaveProgressColor = () => {
+    const currentTrackIndex = player.activeIndex+1;
     let color = '';
     switch(currentTrackIndex) {
       case 1:
@@ -227,102 +220,105 @@ class WaveformProgress extends Component {
       default:
         color = '#101010';
     }
-    this.props.context.wavesurfer.params.progressColor = color;
-    this.props.context.wavesurfer.params.cursorColor = color;
+    wavesurfer.params.progressColor = color;
+    wavesurfer.params.cursorColor = color;
   }
 
-  setColorScheme = () => {
+  const setColorScheme = () => {
     const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
     
     // Listen initially on load
     if(darkMode.matches) {
-      this.setDarkMode();
+      setDarkMode();
     } else {
-      this.setLightMode();
+      setLightMode();
     }
 
     // Listen for system changes
     darkMode.addListener(e => {
       if(e.matches) {
-        this.setDarkMode()
+        setDarkMode()
       } else {
-        this.setLightMode()
+        setLightMode()
       }
     })
   }
 
-  setDarkMode = () => {
-    this.props.context.wavesurfer.params.waveColor = '#262626';
-    this.props.context.wavesurfer.params.backgroundColor = '#101010';
-    this.props.context.wavesurfer.drawBuffer();
+  const setDarkMode = () => {
+    wavesurfer.params.waveColor = '#262626';
+    wavesurfer.params.backgroundColor = '#101010';
+    wavesurfer.drawBuffer();
   }
 
-  setLightMode = () => {
-    this.props.context.wavesurfer.params.waveColor = '#CCCCCC';
-    this.props.context.wavesurfer.params.backgroundColor = '#ffffff';
-    this.props.context.wavesurfer.drawBuffer();
+  const setLightMode = () => {
+    wavesurfer.params.waveColor = '#CCCCCC';
+    wavesurfer.params.backgroundColor = '#ffffff';
+    wavesurfer.drawBuffer();
   }
 
-  getWaveForm = () => {
-    const { currentTrack } = this.props.context;
-    const iframe = document.querySelector('iframe');
-    const trackId = currentTrack.guid.split("/");
-    iframe.src = `https://w.soundcloud.com/player/?url=http://api.soundcloud.com/tracks/${trackId[1]}&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true`;
-    iframe.onload = () => {
-      this.setState({
+  const getWaveForm = () => {
+    const trackId = player.currentTrack.guid.split("/");
+    iframe.current.src = `https://w.soundcloud.com/player/?url=http://api.soundcloud.com/tracks/${trackId[1]}&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true`;
+    iframe.current.onload = (event) => {
+      setState({
         iframeLoaded: true
-      }, () => {
-        const widget = SC.Widget(iframe);
-        widget.getCurrentSound(async info => {
-          try {
-            const response = await fetch(info.waveform_url);
-            if (!response.ok) {
-              throw Error(response.statusText);
-            }
-            const responseData = await response.json();
-            this.setState({
-              isLoaded: true,
-              peaks: responseData.samples
-            }, () => {
-              this.generateWaveForm();
-            });
-          } catch(error) {
-            console.log('Error fetching and parsing data', error);
+      });
+      const widget = SC.Widget(event.target);
+      widget.getCurrentSound(async info => {
+        try {
+          const response = await fetch(info.waveform_url);
+          if (!response.ok) {
+            throw Error(response.statusText);
           }
-        });
+          const responseData = await response.json();
+          setState({
+            isLoaded: true,
+            peaks: responseData.samples
+          });
+        } catch(error) {
+          console.log('Error fetching and parsing data', error);
+        }
       });
     }
   }
 
-  generateWaveForm = () => {
-    const { currentTrack } = this.props.context;
-    this.props.context.wavesurfer.load(currentTrack.enclosure.url, this.state.peaks);
-    this.setColorScheme();
-    this.setWaveProgressColor();
-    this.props.context.wavesurfer.drawBuffer();
+  useEffect(() => {
+    generateWaveForm();
+  }, [state.peaks]);
+
+  const generateWaveForm = () => {
+    if(wavesurfer) {
+      wavesurfer.load(player.currentTrack.enclosure.url, state.peaks);
+      setColorScheme();
+      setWaveProgressColor();
+      wavesurfer.drawBuffer();
+      wavesurfer.on('ready', () => {
+        setTimers();
+      });
+    }
   }
 
-  render(props, state) {
-    return (
-      <div className="player-progress">
-        <div
-          ref={props.waveformChildRef}
-          className={`waveform-wrapper ${ state.isLoaded ? 'loaded' : ''}`}
-        />
-        <iframe
-          className="soundcloud-iframe"
-          id="sc-widget"
-          frameborder="no"
-          scrolling="no"
-        ></iframe>
-        { !state.isLoaded &&
-          <div class="player-progress-loader">
-            <Loader inline="true"/>
-          </div>
-        }
-      </div>
-    );
-  }
+  return (
+    <div className="player-progress">
+      <div
+        ref={props.waveformChildRef}
+        className={`waveform-wrapper ${ state.isLoaded ? 'loaded' : ''}`}
+      />
+      <iframe
+        ref={iframe}
+        className="soundcloud-iframe"
+        id="sc-widget"
+        frameborder="no"
+        scrolling="no"
+      ></iframe>
+      { !state.isLoaded &&
+        <div class="player-progress-loader">
+          <Loader inline="true"/>
+        </div>
+      }
+    </div>
+  );
+
 }
 
 export default withPlayer(WaveformProgress);
