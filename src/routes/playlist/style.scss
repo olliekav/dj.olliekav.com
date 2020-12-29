@@ -114,7 +114,7 @@
   visibility: hidden;
 
   @media screen and (min-width: 700px) {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
   }
 }
 
@@ -481,6 +481,7 @@
 .modal-description {
   font-family: var(--body-font);
   font-size: 1.6rem;
+  font-weight: 500;
   line-height: 1.5;
   margin: 0;
   padding: 0;

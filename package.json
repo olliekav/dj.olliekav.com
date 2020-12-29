@@ -1,16 +1,16 @@
 {
   "private": true,
-  "name": "ollie",
+  "name": "dj.olliekav.com",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "start": "per-env",
     "start:production": "npm run -s serve",
     "start:development": "npm run -s dev",
-    "build": "preact build --no-prerender",
+    "build": "preact build --no-prerender --template src/template.html",
     "serve": "preact build && sirv build --cors --single",
-    "dev": "preact watch",
-    "dev-https": "preact watch --https --key /usr/local/etc/httpd/server.key --cert /usr/local/etc/httpd/server.crt",
+    "dev": "preact watch --template src/template.html",
+    "dev-https": "preact watch --https --key /usr/local/etc/httpd/server.key --cert /usr/local/etc/httpd/server.crt --template src/template.html",
     "lint": "eslint src",
     "test": "jest"
   },

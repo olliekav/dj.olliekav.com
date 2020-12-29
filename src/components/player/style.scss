@@ -35,6 +35,7 @@
   border-right: 1px solid var(--dark-color);
   display: flex;
   flex: 1 1 13rem;
+  font-weight: 500;
   flex-direction: column;
   height: 6rem;
   justify-content: center;
@@ -55,6 +56,7 @@
 
 .player-track-title { 
   font-size: 1.4rem;
+  font-weight: 700;
   margin: 0 0 .4rem;
 
   @media screen and (min-width: 700px) {
@@ -71,7 +73,7 @@
   display: flex;
   font-family: var(--body-font);
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 700;
   height: 1.8rem;
   justify-content: center;
   margin: 0;
