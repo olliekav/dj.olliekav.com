@@ -29,9 +29,9 @@ const VolumeControl = (props) => {
           { player.volume >= 0.4 && <VolumeMid /> }
           { player.volume >= 0.7 && <VolumeFull /> }
           </svg>
-          <span class="sr-only">Change Volume</span>
       </button>
       <div>
+        <label for="volume-control" class="sr-only">Change Volume</label>
         <input
           type="range"
           onChange={props.onChange}
@@ -39,6 +39,7 @@ const VolumeControl = (props) => {
           max="1"
           step="0.01"
           defaultValue={player.volume}
+          id="volume-control"
         />
       </div>
     </div>
