@@ -38,8 +38,8 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "css-loader": "^3.6.0",
-    "netlify-cli": "^2.69.11",
-    "preact": "^10.5.7",
+    "netlify-cli": "^2.70.0",
+    "preact": "^10.5.9",
     "preact-render-to-string": "^5.1.12",
     "preact-router": "^3.2.1",
     "react-modal": "^3.12.1",

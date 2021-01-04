@@ -124,7 +124,7 @@ const PlayerProvider = props => {
       setTimers: setTimers
     }}>
       <div class="wrapper loaded">
-        <>{props.children}</>
+        {props.children}
         <Player
           waveformChildRef={waveformRef}
         />
