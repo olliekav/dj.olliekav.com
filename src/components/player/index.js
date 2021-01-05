@@ -96,7 +96,7 @@ const Player = props => {
           <PlayButton onClick={() => playPause()}/>
           <NextButton onClick={() => nextTrackAtIndex()}/>
         </div>
-        <WaveformProgress waveformChildRef={props.waveformChildRef}/>
+        <WaveformProgress />
         <VolumeControl onChange={() => changeVolume(event.target.value)}/>
       </div>
       <Modal

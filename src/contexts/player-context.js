@@ -25,18 +25,12 @@ const PlayerProvider = props => {
   );
   const [wavesurfer, setWavesurfer] = useState(undefined);
 
-  const waveformRef = useCallback(node => {
-    if(node !== null) {
-      initWaveSurfer(node);
-    }
-  }, []);
-
   useEffect(() => {
     getPlaylist();
   }, []);
 
   const getPlaylist = async () => {
-    const response = await fetch("./.netlify/functions/node-fetch");
+    const response = await fetch('./.netlify/functions/node-fetch');
     if(response.ok) {
       const feed = await response.json();
       const playlist = feed.feed.reverse();
@@ -49,7 +43,7 @@ const PlayerProvider = props => {
     }
   };
 
-  const initWaveSurfer = (node) => {
+  const initWavesurfer = (node) => {
     const wavesurfer = WaveSurfer.create({
       backend: 'MediaElement',
       barRadius: 3,
@@ -63,7 +57,6 @@ const PlayerProvider = props => {
       progressColor: 'red',
       responsive: true
     });
-
     setWavesurfer(wavesurfer);
   }
 
@@ -118,16 +111,16 @@ const PlayerProvider = props => {
     <PlayerContext.Provider value={{
       player,
       wavesurfer,
+      setWavesurfer,
       changeVolume: changeVolume,
       playTrackAtIndex: playTrackAtIndex,
       playPause: playPause,
-      setTimers: setTimers
+      setTimers: setTimers,
+      initWavesurfer: initWavesurfer
     }}>
       <div class="wrapper loaded">
         {props.children}
-        <Player
-          waveformChildRef={waveformRef}
-        />
+        <Player />
       </div>
     </PlayerContext.Provider>
   );

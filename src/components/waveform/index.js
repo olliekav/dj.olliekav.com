@@ -9,7 +9,7 @@ import style from './style';
 
 const WaveformProgress = props => {
   const iframe = createRef();
-  const { player, wavesurfer, setTimers } = useContext(PlayerContext);
+  const { player, wavesurfer, setTimers, initWavesurfer } = useContext(PlayerContext);
   const [state, setState] = useReducer(
     (state, newState) => ({...state, ...newState}),
     {
@@ -19,6 +19,13 @@ const WaveformProgress = props => {
       isLoaded: false
     }
   );
+
+  const waveformRef = useRef();
+  useEffect(() => {
+    if(waveformRef.current) {
+      initWavesurfer(waveformRef.current);
+    }
+  }, []);
 
   useEffect(() => {
     getWaveForm();
@@ -306,7 +313,7 @@ const WaveformProgress = props => {
   return (
     <div className="player-progress">
       <div
-        ref={props.waveformChildRef}
+        ref={waveformRef}
         className={`waveform-wrapper ${ state.isLoaded ? 'loaded' : ''}`}
       />
       <iframe
