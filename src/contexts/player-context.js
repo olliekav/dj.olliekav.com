@@ -119,7 +119,9 @@ const PlayerProvider = props => {
       initWavesurfer: initWavesurfer
     }}>
       <div class="wrapper loaded">
-        {props.children}
+        <main class="main">
+          {props.children}
+        </main>
         <Player />
       </div>
     </PlayerContext.Provider>

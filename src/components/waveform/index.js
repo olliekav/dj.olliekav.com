@@ -333,4 +333,4 @@ const WaveformProgress = props => {
 
 }
 
-export default withPlayer(WaveformProgress);
+export default WaveformProgress;

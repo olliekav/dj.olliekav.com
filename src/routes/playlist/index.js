@@ -32,9 +32,10 @@ const Playlist = props => {
       </li>
     );
   });
+
   return (
     <ol class="playlist">{tracks}</ol>
   );
 }
 
-export default withPlayer(Playlist);
+export default Playlist;

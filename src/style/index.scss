@@ -75,6 +75,13 @@ body {
   animation: fadein .3s linear;
 }
 
+.main {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
 .sr-only {
   clip: rect(0 0 0 0); 
   clip-path: inset(50%);

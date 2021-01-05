@@ -3,12 +3,8 @@
   list-style: none;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(50vw, 1fr));
-  flex: 1;
   margin: 0 0 -1rem;
   padding: 0;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
   width: 100%;
 
   @media screen and (min-width: 700px) {
