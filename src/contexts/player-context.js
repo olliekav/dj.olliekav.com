@@ -111,7 +111,6 @@ const PlayerProvider = props => {
     <PlayerContext.Provider value={{
       player,
       wavesurfer,
-      setWavesurfer,
       changeVolume: changeVolume,
       playTrackAtIndex: playTrackAtIndex,
       playPause: playPause,
