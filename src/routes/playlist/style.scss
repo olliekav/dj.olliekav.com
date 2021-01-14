@@ -407,6 +407,10 @@
   @include colour-scheme(#9DCF83, #1865B2);
 }
 
+.ok-sessions-65 {
+  @include colour-scheme(#38464c, #ccbe7a, true);
+}
+
 // Modal window
 
 .modal-body-open {
