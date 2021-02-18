@@ -236,6 +236,9 @@ const WaveformProgress = props => {
       case 67:
         color = '#514c6f';
         break;
+      case 68:
+        color = '#ab597d';
+        break;
       default:
         color = '#101010';
     }
