@@ -3,6 +3,7 @@ import { forwardRef } from "preact/compat";
 import { useState, useRef, useEffect, useReducer, useCallback } from 'preact/hooks';
 import WaveSurfer from 'wavesurfer.js';
 
+import useDidMountEffect from '../utilities/useDidMountEffect';
 import Player from '../components/player';
 import Loader from '../components/loader';
 
@@ -16,6 +17,7 @@ const PlayerProvider = props => {
       currentTrack: [],
       currentTime: 0,
       duration: 0,
+      hasMounted: false,
       isLoaded: false,
       isPlaying: false,
       playlist: [],
@@ -37,6 +39,7 @@ const PlayerProvider = props => {
       setPlayer({
         activeIndex: 0,
         currentTrack: playlist[0],
+        hasMounted: true,
         isLoaded: true,
         playlist: playlist
       });
@@ -72,7 +75,7 @@ const PlayerProvider = props => {
       isPlaying: false,
       wavesurferReady: false
     });
-  }
+  } 
 
   const setTimers = () => {
     setPlayer({
