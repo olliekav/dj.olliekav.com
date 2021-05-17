@@ -283,7 +283,7 @@ const WaveformProgress = props => {
 
   const getWaveForm = () => {
     const trackId = player.currentTrack.guid.split('/');
-    iframe.current.src = `https://w.soundcloud.com/player/?url=http://api.soundcloud.com/tracks/${trackId[1]}&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true`;
+    iframe.current.src = `https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/${trackId[1]}&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true`;
     iframe.current.onload = (event) => {
       setState({
         iframeLoaded: true
