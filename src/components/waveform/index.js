@@ -283,30 +283,42 @@ const WaveformProgress = props => {
 
   const getWaveForm = () => {
     const trackId = player.currentTrack.guid.split('/');
-    iframe.current.src = `https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/${trackId[1]}&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true`;
-    iframe.current.onload = (event) => {
-      setState({
-        iframeLoaded: true
-      });
-      const widget = SC.Widget(event.target);
-      widget.bind(SC.Widget.Events.READY, () => {
-        widget.getCurrentSound(async info => {
-          try {
-            const response = await fetch(info.waveform_url);
-            if (!response.ok) {
-              throw Error(response.statusText);
-            }
-            const responseData = await response.json();
-            setState({
-              isLoaded: true,
-              peaks: responseData.samples
-            });
-          } catch(error) {
-            console.log('Error fetching and parsing data', error);
+    const url = `https://api.soundcloud.com/tracks/${trackId[1]}`;
+    const widget = SC.Widget('sc-widget');
+    const options = {
+      show_artwork: false,
+      auto_play: false,
+      buying: false,
+      liking: false,
+      download: false,
+      sharing: false,
+      show_comments: false,
+      show_playcount: false,
+      show_user: false,
+      hide_related: false, 
+      visual: true,
+      start_track: 0
+    };
+    widget.load(url, options, (load) => {
+      console.log('loaded');
+    });
+    widget.bind(SC.Widget.Events.READY, () => {
+      widget.getCurrentSound(async info => {
+        try {
+          const response = await fetch(info.waveform_url);
+          if (!response.ok) {
+            throw Error(response.statusText);
           }
-        });
+          const responseData = await response.json();
+          setState({
+            isLoaded: true,
+            peaks: responseData.samples
+          });
+        } catch(error) {
+          console.log('Error fetching and parsing data', error);
+        }
       });
-    }
+    });
   }
 
   useEffect(() => {
@@ -333,6 +345,7 @@ const WaveformProgress = props => {
       />
       <iframe
         ref={iframe}
+        src="https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/338578337&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true"
         className="soundcloud-iframe"
         id="sc-widget"
         frameborder="no"

@@ -410,7 +410,7 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .loading-text {
-  display: block;
+  display: flex;
 
   &:after {
     animation: loadingDots 2s linear infinite;

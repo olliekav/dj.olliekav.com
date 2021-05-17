@@ -9,6 +9,7 @@ exports.handler = async function(event, context) {
       RSS_RESOLVE_URL,
       RSS_RESOLVE_URL_DEV
     } = process.env;
+    console.log(RSS_RESOLVE_URL_DEV);
     const response = await fetch(NETLIFY_DEV ? RSS_RESOLVE_URL_DEV : RSS_RESOLVE_URL)
     if (!response.ok) {
       // NOT res.status >= 200 && res.status < 300
