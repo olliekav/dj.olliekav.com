@@ -36,7 +36,7 @@ const WaveformProgress = props => {
     let color = '';
     switch(currentTrackIndex) {
       case 1:
-        color = '#2A10A6';
+        color = '#EC00A5';
         break;
       case 2:
         color = '#EC1C24';
@@ -282,6 +282,9 @@ const WaveformProgress = props => {
   }
 
   const getWaveForm = () => {
+    setState({
+      isLoaded: false
+    });
     const trackId = player.currentTrack.guid.split('/');
     const url = `https://api.soundcloud.com/tracks/${trackId[1]}`;
     const widget = SC.Widget('sc-widget');
@@ -299,12 +302,13 @@ const WaveformProgress = props => {
       visual: true,
       start_track: 0
     };
-    widget.load(url, options, (load) => {
+    widget.load(url, options, () => {
       console.log('loaded');
     });
     widget.bind(SC.Widget.Events.READY, () => {
       widget.getCurrentSound(async info => {
         try {
+          console.log(info);
           const response = await fetch(info.waveform_url);
           if (!response.ok) {
             throw Error(response.statusText);
@@ -341,7 +345,7 @@ const WaveformProgress = props => {
     <div className="player-progress">
       <div
         ref={waveformRef}
-        className={`waveform-wrapper ${ state.isLoaded ? 'loaded' : ''}`}
+        class={`waveform-wrapper ${ state.isLoaded ? 'loaded' : ''}`}
       />
       <iframe
         ref={iframe}

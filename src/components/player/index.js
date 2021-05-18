@@ -79,12 +79,19 @@ const Player = props => {
         <div class="player-artwork">
           <Logo class="player-artwork-icon"/>
         </div>
-        <div class="player-track-details">
-          <h2 class="player-track-title">{currentTrack ? currentTrack.title : ''}</h2>
+        <div class={`player-track-details ${ wavesurferReady ? 'loaded' : ''}`}>
+          <h2 class="player-track-title">
+            {currentTrack ? currentTrack.title : ''}
+          </h2>
           { wavesurferReady ? (
             <Timer />
           ) : (
-            <span class="loading-text">Buffering</span>
+            <span class="loading-text">
+              Buffering
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </span>
           )}
           <button
             class="player-track-info-button"

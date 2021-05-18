@@ -6,9 +6,9 @@ import { PlayerContext } from '../../contexts/player-context';
 const Timer = (props) => {
   const { player } = useContext(PlayerContext);
   return (
-    <Fragment>
+    <span class="player-track-timer">
       {prettyTime(player.currentTime)} / {prettyTime(player.duration)}
-    </Fragment>
+    </span>
   )
 }
 

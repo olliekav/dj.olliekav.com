@@ -149,6 +149,27 @@
       fill: $color;
     }
   }
+  input[type=range]::-webkit-slider-thumb {
+    background: $bg-color;
+
+    @if $dark-background {
+      background: $color;
+    }
+  }
+  input[type=range]::-moz-range-thumb {
+    background: $bg-color;
+
+    @if $dark-background {
+      background: $color;
+    }
+  }
+  input[type=range]::-ms-thumb {
+    background: $bg-color;
+
+    @if $dark-background {
+      background: $color;
+    }
+  }
 }
 
 .ok-sessions-1 {
