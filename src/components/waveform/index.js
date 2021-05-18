@@ -308,7 +308,6 @@ const WaveformProgress = props => {
     widget.bind(SC.Widget.Events.READY, () => {
       widget.getCurrentSound(async info => {
         try {
-          console.log(info);
           const response = await fetch(info.waveform_url);
           if (!response.ok) {
             throw Error(response.statusText);
