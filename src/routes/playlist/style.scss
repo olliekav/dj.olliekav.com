@@ -489,7 +489,7 @@
 }
 
 .ok-sessions-80 {
-  @include colour-scheme(#ccaf81, #3c456b);
+  @include colour-scheme(#ccaf81, #3c456b, true);
 }
 
 // Modal window
