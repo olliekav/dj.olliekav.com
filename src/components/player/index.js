@@ -12,6 +12,7 @@ import PrevButton from '../../components/player/prev-button';
 import VolumeControl from '../../components/player/volume-control';
 import WaveformProgress from '../../components/waveform';
 import { slugify } from '../../utilities';
+import { usePlayerStore } from '../store';
 
 String.prototype.parseURL = function() {
   return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function( url ) {

@@ -44,7 +44,8 @@
     "react-modal": "^3.13.1",
     "react-process-string": "^1.2.0",
     "rss-parser": "^3.12.0",
-    "wavesurfer.js": "^6.0.1"
+    "wavesurfer.js": "^6.0.1",
+    "zustand": "^3.7.0"
   },
   "jest": {
     "preset": "jest-preset-preact",
