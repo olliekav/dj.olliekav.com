@@ -99,9 +99,9 @@ const Player = props => {
             aria-label="Track Info">i</button>
         </div>
         <div class="player-controls">
-          <PrevButton onClick={() => prevTrackAtIndex()} />
-          <PlayButton onClick={() => playPause()}/>
-          <NextButton onClick={() => nextTrackAtIndex()}/>
+          <PrevButton onClickCapture={() => prevTrackAtIndex()} />
+          <PlayButton onClickCapture={() => playPause()}/>
+          <NextButton onClickCapture={() => nextTrackAtIndex()}/>
         </div>
         <WaveformProgress />
         <VolumeControl onChange={() => changeVolume(event.target.value)}/>

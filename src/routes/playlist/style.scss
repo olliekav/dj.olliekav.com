@@ -602,10 +602,18 @@
   top: 2rem;
   width: 3rem;
 
+  svg {
+    fill: var(--dark-color);
+  }
+
   @media (prefers-color-scheme: dark) {
     background-color: var(--dark-color);
     border-color: var(--light-color);
     color: var(--light-color);
+
+    svg {
+      fill: var(--light-color);
+    }
   }
 }
 

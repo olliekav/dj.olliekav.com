@@ -23,7 +23,7 @@ const Playlist = props => {
         class={'playlist-track ' + trackTitle}>
         <button
           class={classNames}
-          onClick={() => playTrackAtIndex(i, track)}>
+          onClickCapture={() => playTrackAtIndex(i, track)}>
           <Logo class="playlist-track-icon"/>
           <h2 class="playlist-track-title">#{i+1}</h2>
           <span class="playlist-track-time">{track.itunes.duration}</span>
