@@ -2,8 +2,8 @@ import { h, Component, createContext, createRef } from 'preact';
 import { forwardRef } from "preact/compat";
 import { useState, useRef, useEffect, useReducer, useCallback } from 'preact/hooks';
 import WaveSurfer from 'wavesurfer.js';
+import { isSafari } from 'react-device-detect';
 
-import useDidMountEffect from '../utilities/useDidMountEffect';
 import Player from '../components/player';
 import Loader from '../components/loader';
 
@@ -22,7 +22,8 @@ const PlayerProvider = props => {
       isPlaying: false,
       playlist: [],
       wavesurferReady: false,
-      volume: 0.5
+      volume: 0.5,
+      userInitiated: false
     }
   );
   const [wavesurfer, setWavesurfer] = useState(undefined);
@@ -67,24 +68,47 @@ const PlayerProvider = props => {
     const { isPlaying, activeIndex } = player;
     const isCurrentTrack = isPlaying && activeIndex === index;
 
+    // Handle user gestures not propagating in Safari
+    if(isSafari) {
+      wavesurfer.play()
+      .then(data => wavesurfer.pause())
+      .catch(err => reject(err));;
+    }
+
     setPlayer({
       activeIndex: index,
       currentTime: 0,
       currentTrack: track,
       duration: 0,
       isPlaying: false,
-      wavesurferReady: false
+      wavesurferReady: false,
+      userInitiated: true
     });
   } 
 
   const setTimers = () => {
+    const { userInitiated, isPlaying } = player;
     setPlayer({
       currentTime: wavesurfer.getCurrentTime(),
       duration: wavesurfer.getDuration(),
       wavesurferReady: true
     });
     wavesurfer.on('audioprocess', updateTimer);
-    wavesurfer.on('seek', updateTimer);
+    wavesurfer.on('seek', seek);
+
+    if (userInitiated) {
+      playPause();
+    }
+  }
+
+  const seek = () => {
+    const { isPlaying } = player;
+
+    updateTimer();
+    
+    if(!isPlaying) {
+      playPause();
+    }
   }
 
   const updateTimer = () => {
@@ -114,11 +138,11 @@ const PlayerProvider = props => {
     <PlayerContext.Provider value={{
       player,
       wavesurfer,
-      changeVolume: changeVolume,
-      playTrackAtIndex: playTrackAtIndex,
-      playPause: playPause,
-      setTimers: setTimers,
-      initWavesurfer: initWavesurfer
+      changeVolume,
+      playTrackAtIndex,
+      playPause,
+      setTimers,
+      initWavesurfer
     }}>
       <div class="wrapper loaded">
         <main class="main">

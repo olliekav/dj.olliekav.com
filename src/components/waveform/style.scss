@@ -8,6 +8,10 @@
   top: 0;
   transition: all .3s ease-in-out;
   visibility: hidden;
+
+  > wave {
+    cursor: pointer !important;
+  }
   
   // Hack to set background color of progress
   > wave > wave {
