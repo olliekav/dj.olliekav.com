@@ -384,11 +384,12 @@ const WaveformProgress = props => {
       />
       <iframe
         ref={iframe}
-        src="https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/338578337&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true"
-        className="soundcloud-iframe"
         id="sc-widget"
+        className="soundcloud-iframe"
+        src="https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/338578337&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true"
         frameborder="no"
         scrolling="no"
+        allow="autoplay"
       ></iframe>
       { !state.isLoaded &&
         <div class="player-progress-loader">

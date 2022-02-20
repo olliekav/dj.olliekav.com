@@ -8,20 +8,18 @@ const Timer = (props) => {
   const [ currentTime, setCurrentTime ] = useState(0);
 
   useEffect(() => {
-    if (wavesurfer) {
-      const currentTime = (e) => {
-        setCurrentTime(wavesurfer.getCurrentTime())
-      };
-      wavesurfer.on('audioprocess', currentTime);
-    }
+    const currentTime = () => {
+      setCurrentTime(wavesurfer.getCurrentTime())
+    };
+    wavesurfer.on('audioprocess', currentTime);
     return () => {
-       wavesurfer.un('audioprocess', currentTime);
+      wavesurfer.un('audioprocess', currentTime);
     };
   }), [wavesurfer, setCurrentTime];
 
   return (
     <span class="player-track-timer">
-      {prettyTime(currentTime)} / {prettyTime(player.duration)}
+      {prettyTime(currentTime)} / {player.duration}
     </span>
   )
 }

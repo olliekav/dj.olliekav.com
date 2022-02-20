@@ -39,6 +39,7 @@ const PlayerProvider = props => {
       setPlayer({
         activeIndex: 0,
         currentTrack: playlist[0],
+        duration: playlist[0].itunes.duration,
         hasMounted: true,
         isLoaded: true,
         playlist: playlist
@@ -60,6 +61,7 @@ const PlayerProvider = props => {
       progressColor: 'red',
       responsive: true
     });
+    wavesurfer.backend.ac.resume();
     setWavesurfer(wavesurfer);
   }
 
@@ -77,7 +79,7 @@ const PlayerProvider = props => {
     setPlayer({
       activeIndex: index,
       currentTrack: track,
-      duration: 0,
+      duration: track.itunes.duration,
       isPlaying: false,
       wavesurferReady: false,
       userInitiated: true
@@ -85,25 +87,26 @@ const PlayerProvider = props => {
   } 
 
   const setTimers = () => {
-    const { userInitiated, isPlaying } = player;
+    const { userInitiated, isPlaying, currentTrack } = player;
+    
     setPlayer({
-      duration: wavesurfer.getDuration(),
       wavesurferReady: true
     });
     
-    wavesurfer.on('seek', seek);
+    wavesurfer.drawer.on('click', (event, progress) => {
+      if(!isPlaying) {
+        play();
+      }
+    });
 
     if (userInitiated) {
-      wavesurfer.play();
+      play();
     }
   }
 
-  const seek = () => {
-    const { isPlaying } = player;
-    
-    if(!isPlaying) {
-      playPause();
-    }
+  const play = () => {
+    setPlayer({ isPlaying: true });
+    wavesurfer.play();
   }
 
   const playPause = () => {
