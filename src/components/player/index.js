@@ -73,6 +73,8 @@ const Player = props => {
   const currentTrackClass = currentTrack ? slugify(currentTrack.title) : '';
   const modalDescription = currentTrack.content.parseURL().parseUsername();
 
+  console.log('Rendering');
+
   return (
     <Fragment>
       <div class={'player ' + currentTrackClass}>

@@ -1,13 +1,27 @@
 import { h, Fragment } from 'preact';
 import { prettyTime } from '../../utilities';
-import { useContext } from "preact/hooks";
+import { useContext, useEffect, useState } from "preact/hooks";
 import { PlayerContext } from '../../contexts/player-context';
 
 const Timer = (props) => {
-  const { player } = useContext(PlayerContext);
+  const { player, wavesurfer } = useContext(PlayerContext);
+  const [ currentTime, setCurrentTime ] = useState(0);
+
+  useEffect(() => {
+    if (wavesurfer) {
+      const currentTime = (e) => {
+        setCurrentTime(wavesurfer.getCurrentTime())
+      };
+      wavesurfer.on('audioprocess', currentTime);
+    }
+    return () => {
+       wavesurfer.un('audioprocess', currentTime);
+    };
+  }), [wavesurfer, setCurrentTime];
+
   return (
     <span class="player-track-timer">
-      {prettyTime(player.currentTime)} / {prettyTime(player.duration)}
+      {prettyTime(currentTime)} / {prettyTime(player.duration)}
     </span>
   )
 }

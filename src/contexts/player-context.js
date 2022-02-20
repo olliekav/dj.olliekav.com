@@ -15,7 +15,6 @@ const PlayerProvider = props => {
     {
       activeIndex: 0,
       currentTrack: [],
-      currentTime: 0,
       duration: 0,
       hasMounted: false,
       isLoaded: false,
@@ -77,7 +76,6 @@ const PlayerProvider = props => {
 
     setPlayer({
       activeIndex: index,
-      currentTime: 0,
       currentTrack: track,
       duration: 0,
       isPlaying: false,
@@ -89,32 +87,23 @@ const PlayerProvider = props => {
   const setTimers = () => {
     const { userInitiated, isPlaying } = player;
     setPlayer({
-      currentTime: wavesurfer.getCurrentTime(),
       duration: wavesurfer.getDuration(),
       wavesurferReady: true
     });
-    wavesurfer.on('audioprocess', updateTimer);
+    
     wavesurfer.on('seek', seek);
 
     if (userInitiated) {
-      playPause();
+      wavesurfer.play();
     }
   }
 
   const seek = () => {
     const { isPlaying } = player;
-
-    updateTimer();
     
     if(!isPlaying) {
       playPause();
     }
-  }
-
-  const updateTimer = () => {
-    setPlayer({
-      currentTime: wavesurfer.getCurrentTime()
-    });
   }
 
   const playPause = () => {
