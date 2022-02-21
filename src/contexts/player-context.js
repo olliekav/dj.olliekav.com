@@ -2,7 +2,7 @@ import { h, Component, createContext, createRef } from 'preact';
 import { forwardRef } from "preact/compat";
 import { useState, useRef, useEffect, useReducer, useCallback } from 'preact/hooks';
 import WaveSurfer from 'wavesurfer.js';
-import { isSafari } from 'react-device-detect';
+import { isSafari, isMobile } from 'react-device-detect';
 
 import Player from '../components/player';
 import Loader from '../components/loader';
@@ -26,6 +26,8 @@ const PlayerProvider = props => {
     }
   );
   const [wavesurfer, setWavesurfer] = useState(undefined);
+  const isMobileSafari = isSafari && isMobile;
+  const isDesktopSafari = isSafari && !isMobile;
 
   useEffect(() => {
     getPlaylist();
@@ -70,10 +72,10 @@ const PlayerProvider = props => {
     const isCurrentTrack = isPlaying && activeIndex === index;
 
     // Handle user gestures not propagating in Safari
-    if(isSafari) {
+    if(isDesktopSafari) {
       wavesurfer.play()
       .then(data => wavesurfer.pause())
-      .catch(err => reject(err));;
+      .catch(err => reject(err));
     }
 
     setPlayer({
@@ -87,10 +89,18 @@ const PlayerProvider = props => {
   } 
 
   const setTimers = () => {
-    const { userInitiated, isPlaying, currentTrack } = player;
+    const { userInitiated, isPlaying, currentTrack, playlist, activeIndex } = player;
     
     setPlayer({
       wavesurferReady: true
+    });
+
+    wavesurfer.on('finish', () => {
+      const nextTrack = playlist[activeIndex+1];
+      const i = activeIndex+1;
+      if (i < playlist.length) {
+        playTrackAtIndex(i, nextTrack);
+      }
     });
     
     wavesurfer.drawer.on('click', (event, progress) => {
@@ -99,7 +109,7 @@ const PlayerProvider = props => {
       }
     });
 
-    if (userInitiated) {
+    if (userInitiated && !isMobileSafari) {
       play();
     }
   }
