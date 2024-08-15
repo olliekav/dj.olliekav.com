@@ -1,8 +1,6 @@
-import { h, Component, Fragment } from 'preact';
-import { useState, useContext, useEffect, useReducer } from 'preact/hooks';
+import { Fragment } from 'preact';
+import { useContext, useEffect, useReducer } from 'preact/hooks';
 import Modal from 'react-modal';
-import processString from 'react-process-string';
-import withPlayer from '../../contexts/withPlayer';
 import { PlayerContext } from '../../contexts/player-context';
 import Logo from '../../components/logo';
 import Timer from '../../components/player/timer';
