@@ -4,7 +4,6 @@ import WaveSurfer from 'wavesurfer.js';
 import Loader from '../../components/loader';
 import withPlayer from '../../contexts/withPlayer';
 import { PlayerContext } from '../../contexts/player-context';
-import '../../utilities/soundcloud-api';
 import style from './style';
 
 const WaveformProgress = props => {
