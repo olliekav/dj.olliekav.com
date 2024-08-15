@@ -1,6 +1,5 @@
-import { h, Component, createContext, createRef } from 'preact';
-import { forwardRef } from "preact/compat";
-import { useState, useRef, useEffect, useReducer, useCallback } from 'preact/hooks';
+import { createContext } from 'preact';
+import { useState, useEffect, useReducer } from 'preact/hooks';
 import WaveSurfer from 'wavesurfer.js';
 import { isSafari, isMobile } from 'react-device-detect';
 
