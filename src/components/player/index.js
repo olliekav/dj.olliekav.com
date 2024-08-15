@@ -23,7 +23,7 @@ String.prototype.parseUsername = function() {
   return this.replace(/[@]+[A-Za-z0-9-_]+/g, function( u ) {
     var username = u.replace("@","");
     
-    return u.link( 'https://soundcloud.com/' + username );
+    return u.link( 'https://mixlr.com/' + username );
   });
 };
 
@@ -123,7 +123,7 @@ const Player = props => {
           />
           <p class="modal-url">
             <a href={ currentTrack.link } target="_blank">
-              View track on Soundcloud
+              View track on Mixlr
             </a>
           </p>
           <button
