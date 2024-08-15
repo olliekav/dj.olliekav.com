@@ -1,10 +1,6 @@
-import { h, Component, createRef } from 'preact';
-import { useState, useContext, useEffect, useReducer, useRef } from 'preact/hooks';
-import WaveSurfer from 'wavesurfer.js';
+import { useContext, useEffect, useReducer, useRef } from 'preact/hooks';
 import Loader from '../../components/loader';
-import withPlayer from '../../contexts/withPlayer';
 import { PlayerContext } from '../../contexts/player-context';
-import style from './style';
 
 const WaveformProgress = props => {
   const { player, wavesurfer, setTimers, initWavesurfer } = useContext(PlayerContext);
