@@ -279,7 +279,7 @@
 input[type=range] {
   background: var(--light-color);
   height: 17px;
-  -webkit-appearance: none;
+  appearance: none;
   margin: 50px 0;
   width: 100px;
   transform: rotate(270deg);
@@ -316,7 +316,7 @@ input[type=range]::-webkit-slider-thumb {
   width: 16px;
   border-radius: 50%;
   cursor: pointer;
-  -webkit-appearance: none;
+  appearance: none;
   margin-top: -5px;
 
   @media (prefers-color-scheme: dark) {

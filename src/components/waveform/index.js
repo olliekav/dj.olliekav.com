@@ -320,8 +320,10 @@ const WaveformProgress = props => {
       default:
         color = '#5d3fa0';
     }
-    wavesurfer.params.progressColor = color;
-    wavesurfer.params.cursorColor = color;
+    wavesurfer.setOptions({
+      progressColor: color,
+      cursorColor: color
+    });
   }
 
   const setColorScheme = () => {
@@ -345,15 +347,15 @@ const WaveformProgress = props => {
   }
 
   const setDarkMode = () => {
-    wavesurfer.params.waveColor = '#262626';
-    wavesurfer.params.backgroundColor = '#101010';
-    wavesurfer.drawBuffer();
+    wavesurfer.setOptions({
+      waveColor: '#262626'
+    });
   }
 
   const setLightMode = () => {
-    wavesurfer.params.waveColor = '#CCCCCC';
-    wavesurfer.params.backgroundColor = '#ffffff';
-    wavesurfer.drawBuffer();
+    wavesurfer.setOptions({
+      waveColor: '#CCCCCC'
+    });
   }
 
   const getWaveForm = () => {
@@ -378,7 +380,7 @@ const WaveformProgress = props => {
       start_track: 0
     };
     widget.load(url, options, () => {
-      console.log('loaded');
+      console.log('[Soundcloud] - Widget loaded');
     });
     widget.bind(SC.Widget.Events.READY, () => {
       widget.getCurrentSound(async info => {
@@ -389,11 +391,10 @@ const WaveformProgress = props => {
           }
           const responseData = await response.json();
           setState({
-            isLoaded: true,
             peaks: responseData.samples
           });
         } catch(error) {
-          console.log('Error fetching and parsing data', error);
+          console.log('[Soundcloud] -  Error fetching and parsing data', error);
         }
       });
     });
@@ -408,9 +409,11 @@ const WaveformProgress = props => {
       wavesurfer.load(player.currentTrack.enclosure.url, state.peaks);
       setColorScheme();
       setWaveProgressColor();
-      wavesurfer.drawBuffer();
       wavesurfer.on('ready', () => {
         setTimers();
+        setState({
+          isLoaded: true
+        });
       });
     }
   }
