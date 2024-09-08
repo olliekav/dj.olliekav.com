@@ -205,7 +205,7 @@
 }
 
 .ok-sessions-9 {
-  @include colour-scheme(#FFFFE3, #007E7F);
+  @include colour-scheme(#FFFFE3, #007E7F, true);
 }
 
 .ok-sessions-10 {
@@ -245,7 +245,7 @@
 }
 
 .ok-sessions-19 {
-  @include colour-scheme(#D0D2D3, #D91C5C);
+  @include colour-scheme(#D0D2D3, #D91C5C, true);
 }
 
 .ok-sessions-20 {
@@ -397,7 +397,7 @@
 }
 
 .ok-sessions-57 {
-  @include colour-scheme(#D3D5D2, #F45922);
+  @include colour-scheme(#D3D5D2, #F45922, true);
 }
 
 .ok-sessions-58 {
@@ -421,7 +421,7 @@
 }
 
 .ok-sessions-63 {
-  @include colour-scheme(#E7B89D, #167382);
+  @include colour-scheme(#E7B89D, #167382, true);
 }
 
 .ok-sessions-64 {

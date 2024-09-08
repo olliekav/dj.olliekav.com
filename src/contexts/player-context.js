@@ -51,7 +51,6 @@ const PlayerProvider = props => {
 
   const initWavesurfer = (node) => {
     const wavesurfer = WaveSurfer.create({
-      backend: 'MediaElement',
       barRadius: 3,
       barWidth: 4,
       cursorWidth: 0,
@@ -60,10 +59,8 @@ const PlayerProvider = props => {
       height: 60,
       mediaControls: false,
       normalize: true,
-      progressColor: 'red',
-      responsive: true
+      progressColor: 'red'
     });
-    wavesurfer.backend.ac.resume();
     setWavesurfer(wavesurfer);
   }
 
@@ -103,7 +100,7 @@ const PlayerProvider = props => {
       }
     });
     
-    wavesurfer.drawer.on('click', (event, progress) => {
+    wavesurfer.on('click', (event, progress) => {
       if(!isPlaying) {
         play();
       }
