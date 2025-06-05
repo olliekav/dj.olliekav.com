@@ -11,7 +11,7 @@ const WaveformProgress = props => {
   const iframe = createRef();
   const { player, wavesurfer, setTimers, initWavesurfer } = useContext(PlayerContext);
   const [state, setState] = useReducer(
-    (state, newState) => ({...state, ...newState}),
+    (state, newState) => ({ ...state, ...newState }),
     {
       iframeLoaded: false,
       peaks: [],
@@ -22,7 +22,7 @@ const WaveformProgress = props => {
 
   const waveformRef = useRef();
   useEffect(() => {
-    if(waveformRef.current) {
+    if (waveformRef.current) {
       initWavesurfer(waveformRef.current);
     }
   }, []);
@@ -32,9 +32,9 @@ const WaveformProgress = props => {
   }, [player.currentTrack]);
 
   const setWaveProgressColor = () => {
-    const currentTrackIndex = player.activeIndex+1;
+    const currentTrackIndex = player.activeIndex + 1;
     let color = '';
-    switch(currentTrackIndex) {
+    switch (currentTrackIndex) {
       case 1:
         color = '#EC00A5';
         break;
@@ -338,6 +338,9 @@ const WaveformProgress = props => {
       case 101:
         color = '#EF1063';
         break;
+      case 102:
+        color = '#DBC43E';
+        break;
       default:
         color = '#5d3fa0';
     }
@@ -349,9 +352,9 @@ const WaveformProgress = props => {
 
   const setColorScheme = () => {
     const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     // Listen initially on load
-    if(darkMode.matches) {
+    if (darkMode.matches) {
       setDarkMode();
     } else {
       setLightMode();
@@ -359,7 +362,7 @@ const WaveformProgress = props => {
 
     // Listen for system changes
     darkMode.addListener(e => {
-      if(e.matches) {
+      if (e.matches) {
         setDarkMode()
       } else {
         setLightMode()
@@ -396,7 +399,7 @@ const WaveformProgress = props => {
       show_comments: false,
       show_playcount: false,
       show_user: false,
-      hide_related: false, 
+      hide_related: false,
       visual: true,
       start_track: 0
     };
@@ -414,7 +417,7 @@ const WaveformProgress = props => {
           setState({
             peaks: responseData.samples
           });
-        } catch(error) {
+        } catch (error) {
           console.log('[Soundcloud] -  Error fetching and parsing data', error);
         }
       });
@@ -426,7 +429,7 @@ const WaveformProgress = props => {
   }, [state.peaks]);
 
   const generateWaveForm = () => {
-    if(wavesurfer) {
+    if (wavesurfer) {
       wavesurfer.load(player.currentTrack.enclosure.url, state.peaks);
       setColorScheme();
       setWaveProgressColor();
@@ -443,7 +446,7 @@ const WaveformProgress = props => {
     <div className="player-progress">
       <div
         ref={waveformRef}
-        class={`waveform-wrapper ${ state.isLoaded ? 'loaded' : ''}`}
+        class={`waveform-wrapper ${state.isLoaded ? 'loaded' : ''}`}
       />
       <iframe
         ref={iframe}
@@ -454,9 +457,9 @@ const WaveformProgress = props => {
         scrolling="no"
         allow="autoplay"
       ></iframe>
-      { !state.isLoaded &&
+      {!state.isLoaded &&
         <div class="player-progress-loader">
-          <Loader inline="true"/>
+          <Loader inline="true" />
         </div>
       }
     </div>

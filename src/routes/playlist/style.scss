@@ -66,7 +66,7 @@
 
 .playlist-track-button:hover,
 .active-track {
-  box-shadow: 0 0 2rem rgba(0,0,0,.3);
+  box-shadow: 0 0 2rem rgba(0, 0, 0, .3);
   transform: scale(1.05);
   z-index: 100;
 }
@@ -97,7 +97,7 @@
 
 .playlist-track-title span:before {
   counter-increment: session;
-  content: "#"counter(session);
+  content: "#" counter(session);
   text-indent: 0;
 }
 
@@ -130,25 +130,30 @@
 /* Colours for the tracks */
 
 @mixin colour-scheme($bg-color, $color, $dark-background: false) {
+
   .playlist-track-button,
   .player-artwork {
     background: $bg-color;
     color: $color;
   }
+
   .playlist-track-icon,
   .player-artwork-icon {
     fill: $color;
   }
+
   .player-progress-bar {
     background: #ffffff;
   }
-  .player-button:hover > svg {
+
+  .player-button:hover>svg {
     fill: $bg-color;
 
     @if $dark-background {
       fill: $color;
     }
   }
+
   input[type=range]::-webkit-slider-thumb {
     background: $bg-color;
 
@@ -156,6 +161,7 @@
       background: $color;
     }
   }
+
   input[type=range]::-moz-range-thumb {
     background: $bg-color;
 
@@ -163,6 +169,7 @@
       background: $color;
     }
   }
+
   input[type=range]::-ms-thumb {
     background: $bg-color;
 
@@ -576,6 +583,10 @@
   @include colour-scheme(#17262D, #EF1063, true);
 }
 
+.ok-sessions-101 {
+  @include colour-scheme(#DBC43E, #202526, true);
+}
+
 // Modal window
 
 .modal-body-open {
@@ -612,7 +623,7 @@
 
 .modal {
   background-color: var(--light-color);
-  box-shadow: 0 0 5rem rgba(0,0,0,.4);
+  box-shadow: 0 0 5rem rgba(0, 0, 0, .4);
   margin: auto;
   max-height: 50vh;
   max-width: 62rem;
@@ -702,4 +713,3 @@
   background-color: transparent;
   color: #fff;
 }
-
