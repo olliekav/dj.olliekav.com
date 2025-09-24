@@ -341,8 +341,14 @@ const WaveformProgress = props => {
       case 102:
         color = '#DBC43E';
         break;
+      case 103:
+        color = '#BD3461';
+        break;
+      case 104:
+        color = '#DBC43E';
+        break;
       default:
-        color = '#5d3fa0';
+        color = '#CA46A7';
     }
     wavesurfer.setOptions({
       progressColor: color,
