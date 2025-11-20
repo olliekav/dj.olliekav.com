@@ -1,16 +1,10 @@
-import { h, Component, Fragment } from 'preact';
 import { useContext } from 'preact/hooks';
-import { contextType } from 'preact/compat';
 import ClassNames from 'classnames';
-import processString from 'react-process-string';
-import withPlayer from '../../contexts/withPlayer';
 import { PlayerContext } from '../../contexts/player-context';
-import style from './style';
 import Logo from '../../components/logo';
-import Loader from '../../components/loader';
-import { prettyTime, slugify } from '../../utilities';
+import { slugify } from '../../utilities';
 
-const Playlist = props => {
+const Playlist = () => {
   const { player, playTrackAtIndex } = useContext(PlayerContext);
   const tracks = player.playlist.map((track, i) => {
     const classNames = ClassNames('playlist-track-button', {

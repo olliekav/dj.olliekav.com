@@ -1,6 +1,5 @@
-import { h, Component } from 'preact';
+import { Component } from 'preact';
 import { Router } from 'preact-router';
-import Player from '../components/player';
 import PlayerProvider from '../contexts/player-context';
 import Playlist from '../routes/playlist';
 
