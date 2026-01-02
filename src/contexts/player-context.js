@@ -1,6 +1,5 @@
-import { h, Component, createContext, createRef } from 'preact';
-import { forwardRef } from "preact/compat";
-import { useState, useRef, useEffect, useReducer, useCallback } from 'preact/hooks';
+import { h, createContext } from 'preact';
+import { useState, useEffect, useReducer } from 'preact/hooks';
 import WaveSurfer from 'wavesurfer.js';
 import { isSafari, isMobile } from 'react-device-detect';
 
@@ -14,15 +13,17 @@ const PlayerProvider = props => {
     (state, newState) => ({...state, ...newState}),
     {
       activeIndex: 0,
-      currentTrack: [],
+      currentTrack: {},
       duration: 0,
+      tracks_count: 0,
       hasMounted: false,
       isLoaded: false,
       isPlaying: false,
-      playlist: [],
+      tracks: [],
       wavesurferReady: false,
       volume: 0.5,
-      userInitiated: false
+      userInitiated: false,
+      token: null
     }
   );
   const [wavesurfer, setWavesurfer] = useState(undefined);
@@ -30,22 +31,31 @@ const PlayerProvider = props => {
   const isDesktopSafari = isSafari && !isMobile;
 
   useEffect(() => {
-    getPlaylist();
+    fetchPlaylist();
   }, []);
 
-  const getPlaylist = async () => {
-    const response = await fetch('./.netlify/functions/node-fetch');
-    if(response.ok) {
-      const feed = await response.json();
-      const playlist = feed.feed.reverse();
+  const fetchPlaylist = async () => {
+    try {
+      const response = await fetch('/api/soundcloud');
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
       setPlayer({
         activeIndex: 0,
-        currentTrack: playlist[0],
-        duration: playlist[0].itunes.duration,
+        currentTrack: data.tracks[0],
+        tracks_count: data.playlist.tracks_count,
+        duration: data.tracks[0].duration_ms,
         hasMounted: true,
         isLoaded: true,
-        playlist: playlist
+        tracks: data.tracks,
+        token: data.token
       });
+    } catch (error) {
+      console.error("Error fetching Netlify function:", error);
     }
   };
 
@@ -59,7 +69,14 @@ const PlayerProvider = props => {
       height: 60,
       mediaControls: false,
       normalize: true,
-      progressColor: 'red'
+      progressColor: 'red',
+      // fetchParams: {
+      //   mode: 'no-cors',
+      //   credentials: 'include',
+      //   headers: {
+      //     'Authorization': `OAuth ${player.token}`
+      //   }
+      // }
     });
     setWavesurfer(wavesurfer);
   }
@@ -78,7 +95,7 @@ const PlayerProvider = props => {
     setPlayer({
       activeIndex: index,
       currentTrack: track,
-      duration: track.itunes.duration,
+      duration: track.duration_ms,
       isPlaying: false,
       wavesurferReady: false,
       userInitiated: true
@@ -86,16 +103,16 @@ const PlayerProvider = props => {
   } 
 
   const setTimers = () => {
-    const { userInitiated, isPlaying, currentTrack, playlist, activeIndex } = player;
+    const { userInitiated, isPlaying, tracks, activeIndex } = player;
     
     setPlayer({
       wavesurferReady: true
     });
 
     wavesurfer.on('finish', () => {
-      const nextTrack = playlist[activeIndex+1];
+      const nextTrack = tracks[activeIndex+1];
       const i = activeIndex+1;
-      if (i < playlist.length) {
+      if (i < tracks.length) {
         playTrackAtIndex(i, nextTrack);
       }
     });

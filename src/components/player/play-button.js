@@ -1,11 +1,11 @@
-import { h } from 'preact';
 import { useContext } from "preact/hooks";
 import { PlayerContext } from '../../contexts/player-context';
+import styles from './style.module.scss';
 
 const PlayButton = (props) => {
   const { player } = useContext(PlayerContext);
   return (
-    <button class="player-button play-button" {...props} disabled={!player.wavesurferReady}>
+    <button class={`${styles['player-button']} ${styles['play-button']}`} {...props} disabled={!player.wavesurferReady}>
       { player.isPlaying ?
         <svg aria-hidden="true" viewBox="0 0 31 40" version="1.1" xmlns="http://www.w3.org/2000/svg">
           <path d="M3.47265,39.77051 L9.03905,39.77051 C11.1631,39.77051 12.28615,38.64746 12.28615,36.499025 L12.28615,3.24705 C12.28615,1.0254 11.1631,0 9.03905,0 L3.47265,0 C1.34865,0 0.2256,1.12305 0.2256,3.24705 L0.2256,36.499025 C0.2256,38.64746 1.34865,39.77051 3.47265,39.77051 Z M21.2217,39.77051 L26.76365,39.77051 C28.9121,39.77051 30.01075,38.64746 30.01075,36.499025 L30.01075,3.24705 C30.01075,1.0254 28.9121,0 26.76365,0 L21.2217,0 C19.07325,0 17.9502,1.12305 17.9502,3.24705 L17.9502,36.499025 C17.9502,38.64746 19.07325,39.77051 21.2217,39.77051 Z"></path>

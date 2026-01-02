@@ -1,7 +1,7 @@
-import { h, Fragment } from 'preact';
 import { prettyTime } from '../../utilities';
 import { useContext, useEffect, useState } from "preact/hooks";
 import { PlayerContext } from '../../contexts/player-context';
+import styles from './style.module.scss';
 
 const Timer = (props) => {
   const { player, wavesurfer } = useContext(PlayerContext);
@@ -18,7 +18,7 @@ const Timer = (props) => {
   }), [wavesurfer, setCurrentTime];
 
   return (
-    <span class="player-track-timer">
+    <span class={styles['player-track-timer']}>
       {prettyTime(currentTime)} / {player.duration}
     </span>
   )

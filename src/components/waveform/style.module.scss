@@ -9,6 +9,11 @@
   transition: all .3s ease-in-out;
   visibility: hidden;
 
+  &--loaded {
+    opacity: 1;
+    visibility: visible;
+  }
+
   > wave {
     cursor: pointer !important;
   }
@@ -21,9 +26,4 @@
       background-color: var(--dark-color);
     }
   }
-}
-
-.waveform-wrapper.loaded {
-  opacity: 1;
-  visibility: visible;
 }

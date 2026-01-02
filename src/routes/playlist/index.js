@@ -3,32 +3,33 @@ import ClassNames from 'classnames';
 import { PlayerContext } from '../../contexts/player-context';
 import Logo from '../../components/logo';
 import { slugify } from '../../utilities';
+import styles from './style.module.scss';
 
 const Playlist = () => {
   const { player, playTrackAtIndex } = useContext(PlayerContext);
-  const tracks = player.playlist.map((track, i) => {
-    const classNames = ClassNames('playlist-track-button', {
+  
+  const tracks = player.tracks.map((track, i) => {
+    const buttonClassNames = ClassNames(styles['playlist-track-button'], {
       'active-track': player.activeIndex === i
     });
-    const trackTitle = slugify(track.title);
     return (
       <li 
         key={track.id}
-        class={'playlist-track ' + trackTitle}>
+        class={`${styles['playlist-track']} ${slugify(track.title)}`}>
         <button
-          class={classNames}
+          class={buttonClassNames}
           onClick={() => playTrackAtIndex(i, track)}>
-          <Logo class="playlist-track-icon"/>
-          <h2 class="playlist-track-title">#{i+1}</h2>
-          <span class="playlist-track-time">{track.itunes.duration}</span>
-          <span class="playlist-track-genre">{track.genre}</span>
+          <Logo class={styles['playlist-track-icon']} />
+          <h2 class={styles['playlist-track-title']}>#{i+1}</h2>
+          <span class={styles['playlist-track-time']}>{track.duration_ms}</span>
+          <span class={styles['playlist-track-genre']}>{track.genre}</span>
         </button>
       </li>
     );
   });
 
   return (
-    <ol class="playlist">{tracks}</ol>
+    <ol class={styles['playlist']}>{tracks}</ol>
   );
 }
 

@@ -1,14 +1,10 @@
 import { h, Component, createRef } from 'preact';
 import { useState, useContext, useEffect, useReducer, useRef } from 'preact/hooks';
-import WaveSurfer from 'wavesurfer.js';
 import Loader from '../../components/loader';
-import withPlayer from '../../contexts/withPlayer';
 import { PlayerContext } from '../../contexts/player-context';
-import '../../utilities/soundcloud-api';
-import style from './style';
+import styles from './style.module.scss';
 
 const WaveformProgress = props => {
-  const iframe = createRef();
   const { player, wavesurfer, setTimers, initWavesurfer } = useContext(PlayerContext);
   const [state, setState] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
@@ -403,89 +399,77 @@ const WaveformProgress = props => {
     });
   }
 
-  const getWaveForm = () => {
+  const getWaveForm = async () => {
     setState({
       isLoaded: false
     });
-    const trackId = player.currentTrack.guid.split('/');
-    const url = `https://api.soundcloud.com/tracks/${trackId[1]}`;
-    const widget = SC.Widget('sc-widget');
-    const options = {
-      show_artwork: false,
-      auto_play: false,
-      buying: false,
-      liking: false,
-      download: false,
-      sharing: false,
-      show_comments: false,
-      show_playcount: false,
-      show_user: false,
-      hide_related: false,
-      visual: true,
-      start_track: 0
-    };
-    widget.load(url, options, () => {
-      console.log('[Soundcloud] - Widget loaded');
-    });
-    widget.bind(SC.Widget.Events.READY, () => {
-      widget.getCurrentSound(async info => {
-        try {
-          const response = await fetch(info.waveform_url);
-          if (!response.ok) {
-            throw Error(response.statusText);
-          }
-          const responseData = await response.json();
-          setState({
-            peaks: responseData.samples
-          });
-        } catch (error) {
-          console.log('[Soundcloud] -  Error fetching and parsing data', error);
-        }
+    try {
+      const waveformJSON = player.currentTrack.waveform_url.replace(/\.[^/.]+$/, '.json');
+      const response = await fetch(waveformJSON);
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      const responseData = await response.json();
+      setState({
+        peaks: responseData.samples
       });
-    });
+    } catch (error) {
+      console.log('[Soundcloud] -  Error fetching and parsing waveform data', error);
+    }
   }
 
   useEffect(() => {
     generateWaveForm();
   }, [state.peaks]);
 
-  const generateWaveForm = () => {
-    if (wavesurfer) {
-      wavesurfer.load(player.currentTrack.enclosure.url, state.peaks);
-      setColorScheme();
-      setWaveProgressColor();
-      wavesurfer.on('ready', () => {
-        setTimers();
-        setState({
-          isLoaded: true
-        });
+  const generateWaveForm = async () => {
+    try {
+      const response = await fetch(`https://api.soundcloud.com/tracks/${player.currentTrack.urn}/streams`, {
+        headers: { 
+          Authorization: `Bearer ${player.token}`,
+          'Accept': '*/*'
+        }
       });
+      const responseData = await response.json();
+
+      const res = await fetch(responseData.hls_aac_160_url, {
+        headers: {
+          Authorization: `Bearer ${player.token}`,
+          'Accept': '*/*'
+        }
+      });
+
+      const streamUrl = res.url;
+
+      if (wavesurfer) {
+        wavesurfer.load(streamUrl, state.peaks);
+        setColorScheme();
+        setWaveProgressColor();
+        wavesurfer.on('ready', () => {
+          setTimers();
+          setState({
+            isLoaded: true
+          });
+        });
+      }
+    } catch (error) {
+      console.log('[Soundcloud] -  Error fetching stream url', error);
     }
   }
 
   return (
-    <div className="player-progress">
+    <>
       <div
         ref={waveformRef}
-        class={`waveform-wrapper ${state.isLoaded ? 'loaded' : ''}`}
+        class={`${styles['waveform-wrapper']} ${state.isLoaded ? styles['waveform-wrapper--loaded'] : ''}`}
       />
-      <iframe
-        ref={iframe}
-        id="sc-widget"
-        className="soundcloud-iframe"
-        src="https://w.soundcloud.com/player/?url=https://api.soundcloud.com/tracks/338578337&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=true&start_track=0&callback=true"
-        frameborder="no"
-        scrolling="no"
-        allow="autoplay"
-      ></iframe>
       {!state.isLoaded &&
-        <div class="player-progress-loader">
+        <div class={styles['player-progress-loader']}>
           <Loader inline="true" />
         </div>
       }
-    </div>
+    </>
   );
-
 }
 
 export default WaveformProgress;

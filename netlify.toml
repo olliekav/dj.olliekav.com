@@ -1,10 +1,25 @@
 [build]
-  command = "npm run build && cd functions/node-fetch && npm i"
-  functions = "functions"
+  command = "npm run build"
   publish = "build/"
+  functions = "netlify/functions"
 
 [dev]
   command = "npm run dev"
   publish = "dist"
   targetPort = 8080
-  framework = "#custom"
+  functions = "netlify/functions"
+  [dev.https]
+    keyFile = "./.netlify/certs/localhost-key.pem"
+    certFile = "./.netlify/certs/localhost.pem"
+  https = true
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

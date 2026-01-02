@@ -227,192 +227,6 @@
   height: 3rem;
 }
 
-.player-volume {
-  display: none;
-  flex: 0;
-  flex-flow: row nowrap;
-  justify-content: center;
-  position: relative;
-  width: 5rem;
-
-  @media screen and (min-width: 500px) {
-    display: flex;
-  }
-}
-
-.player-volume > button {
-  background-color: var(--light-color);
-  z-index: 102;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
-  }
-}
-
-.player-volume > div {
-  background-color: var(--light-color);
-  bottom: 100%;
-  border-radius: 1rem 0 0 0;
-  box-shadow: -.2rem -.2rem 2rem rgba(0,0,0,.3);
-  display: flex;
-  max-height: 0;
-  overflow: hidden;
-  justify-content: center;
-  position: absolute;
-  transition: all .2s ease-in-out;
-  width: 100%;
-  z-index: 101;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
-  }
-}
-
-@media screen and (min-width: 800px) {
-  .player-volume:hover > div,
-  .player-volume:active > div,
-  .player-volume:focus > div {
-    max-height: 12rem;
-  }
-}
-
-input[type=range] {
-  background: var(--light-color);
-  height: 17px;
-  appearance: none;
-  margin: 50px 0;
-  width: 100px;
-  transform: rotate(270deg);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--dark-color);
-  }
-}
-
-input[type=range]:focus {
-  outline: none;
-}
-
-input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 5px;
-  cursor: pointer;
-  animate: 0.2s;
-  box-shadow: 0px 0px 0px var(--dark-color);
-  background: var(--dark-color);
-  border-radius: 3rem;
-  border: 0px solid var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--light-color);
-  }
-}
-
-input[type=range]::-webkit-slider-thumb {
-  background: var(--dark-color);
-  box-shadow: 0px 0px 0px var(--dark-color);
-  border: 2px solid var(--light-color);
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  cursor: pointer;
-  appearance: none;
-  margin-top: -5px;
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--light-color);
-    border-color: var(--dark-color);
-  }
-}
-
-input[type=range]:focus::-webkit-slider-runnable-track {
-  background: var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--light-color);
-  }
-}
-
-input[type=range]::-moz-range-track {
-  width: 100%;
-  height: 5px;
-  cursor: pointer;
-  animate: 0.2s;
-  box-shadow: 0px 0px 0px var(--dark-color);
-  background: var(--dark-color);
-  border-radius: 3rem;
-  border: 0px solid var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--light-color);
-    border-color: var(--light-color);
-  }
-}
-
-input[type=range]::-moz-range-thumb {
-  box-shadow: 0px 0px 0px var(--dark-color);
-  border: 1px solid var(--light-color);
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: var(--dark-color);
-  cursor: pointer;
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--light-color);
-    border-color: var(--dark-color);
-  }
-}
-
-input[type=range]::-ms-track {
-  width: 100%;
-  height: 5px;
-  cursor: pointer;
-  animate: 0.2s;
-  background: transparent;
-  border-color: transparent;
-  color: transparent;
-}
-
-input[type=range]::-ms-fill-lower {
-  background: var(--dark-color);
-  border: 0px solid var(--dark-color);
-  border-radius: 2px;
-  box-shadow: 0px 0px 0px var(--dark-color);
-}
-
-input[type=range]::-ms-fill-upper {
-  background: var(--dark-color);
-  border: 0px solid var(--dark-color);
-  border-radius: 2px;
-  box-shadow: 0px 0px 0px var(--dark-color);
-}
-
-input[type=range]::-ms-thumb {
-  margin-top: 1px;
-  box-shadow: 0px 0px 0px var(--dark-color);
-  border: 1px solid #2497E3;
-  height: 10px;
-  width: 18px;
-  border-radius: 25px;
-  background: var(--dark-color);
-  cursor: pointer;
-}
-
-input[type=range]:focus::-ms-fill-lower {
-  background: var(--dark-color);
-}
-
-input[type=range]:focus::-ms-fill-upper {
-  background: var(--dark-color);
-}
-
-.soundcloud-iframe {
-  position:relative;
-  visibility:hidden;
-  z-index:-1;
-}
-
 .loading-text {
   display: flex;
 
@@ -446,4 +260,130 @@ input[type=range]:focus::-ms-fill-upper {
   50%   { opacity: 1; }
   100%  { opacity: 0; }
 }
-  
+
+// Modal window
+
+.modal-body-open {
+  .playlist {
+    overflow: hidden;
+  }
+}
+
+.modal-overlay {
+  align-items: center;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 3rem 6rem;
+  position: fixed;
+  right: 0;
+  opacity: 0;
+  transition: all .2s ease-in-out;
+  transform: translateY(-5rem);
+  top: 0;
+  z-index: 1000;
+}
+
+.ReactModal__Overlay--after-open.modal-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ReactModal__Overlay--before-close.modal-overlay {
+  opacity: 0;
+  transform: translateY(-5rem);
+}
+
+.modal {
+  background-color: var(--light-color);
+  box-shadow: 0 0 5rem rgba(0, 0, 0, .4);
+  margin: auto;
+  max-height: 50vh;
+  max-width: 62rem;
+  padding: 3rem;
+  overflow: auto;
+  outline: none;
+  position: relative;
+  width: 100%;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--dark-color);
+  }
+}
+
+.modal-content {
+  padding-bottom: 3rem;
+}
+
+.modal-content a {
+  color: var(--dark-color);
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--light-color);
+  }
+}
+
+.modal-content a:hover {
+  text-decoration: none;
+}
+
+.modal-title {
+  font-size: 2.6rem;
+  margin-top: 0;
+  padding-right: 4rem;
+}
+
+.modal-description {
+  font-family: var(--body-font);
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  white-space: pre-wrap;
+}
+
+.modal-url {
+  margin-bottom: 0;
+}
+
+.modal-close {
+  align-items: center;
+  background-color: var(--light-color);
+  border: 1px solid var(--dark-color);
+  color: var(--dark-color);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--body-font);
+  font-size: 1.8rem;
+  font-weight: bold;
+  height: 3rem;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 2rem;
+  top: 2rem;
+  width: 3rem;
+
+  svg {
+    fill: var(--dark-color);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--dark-color);
+    border-color: var(--light-color);
+    color: var(--light-color);
+
+    svg {
+      fill: var(--light-color);
+    }
+  }
+}
+
+.modal-close:active,
+.modal-close:focus {
+  background-color: transparent;
+  color: #fff;
+}
