@@ -1,5 +1,4 @@
-import { h, Component, createRef } from 'preact';
-import { useState, useContext, useEffect, useReducer, useRef } from 'preact/hooks';
+import { useContext, useEffect, useReducer, useRef } from 'preact/hooks';
 import Loader from '../../components/loader';
 import { PlayerContext } from '../../contexts/player-context';
 import styles from './style.module.scss';
@@ -361,6 +360,7 @@ const WaveformProgress = props => {
       default:
         color = '#CA46A7';
     }
+
     wavesurfer.setOptions({
       progressColor: color,
       cursorColor: color
