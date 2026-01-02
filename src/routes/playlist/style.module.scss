@@ -60,15 +60,15 @@
   outline: none;
 }
 
-.playlist-track-icon {
-  position: absolute;
-}
-
 .playlist-track-button:hover,
 .active-track {
   box-shadow: 0 0 2rem rgba(0, 0, 0, .3);
   transform: scale(1.05);
   z-index: 100;
+}
+
+.playlist-track-icon {
+  position: absolute;
 }
 
 .playlist-track-title {

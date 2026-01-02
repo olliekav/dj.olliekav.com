@@ -10,6 +10,7 @@ import VolumeControl from './volume-control';
 import WaveformProgress from '../../components/waveform';
 import { slugify } from '../../utilities';
 import styles from './style.module.scss';
+import playlistStyles from '../../routes/playlist/style.module.scss';
 
 String.prototype.parseURL = function() {
   return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function( url ) {
@@ -38,25 +39,25 @@ const Player = props => {
   }
 
   const prevTrackAtIndex = () => {
-    const prevTrack = player.playlist[player.activeIndex-1];
+    const prevTrack = player.tracks[player.activeIndex-1];
     const i = player.activeIndex-1;
     playTrackAtIndex(i, prevTrack);
   }
 
   const nextTrackAtIndex = () => {
-    const nextTrack = player.playlist[player.activeIndex+1];
+    const nextTrack = player.tracks[player.activeIndex+1];
     const i = player.activeIndex+1;
     playTrackAtIndex(i, nextTrack);
   }
 
   const { currentTrack, wavesurferReady } = player;
-  const currentTrackClass = currentTrack ? slugify(currentTrack.title) : '';
+  const currentTrackClass = currentTrack ? playlistStyles[slugify(currentTrack.title)] : '';
 
   return (
     <>
       <div class={`${styles['player']} ${currentTrackClass}`}>
-        <div class={styles['player-artwork']}>
-          <Logo class={styles['player-artwork-icon']} />
+        <div class={`${styles['player-artwork']} ${playlistStyles['player-artwork']}`}>
+          <Logo />
         </div>
         <div class={`${styles['player-track-details']} ${ wavesurferReady ? 'loaded' : ''}`}>
           <h2 class={styles['player-track-title']}>

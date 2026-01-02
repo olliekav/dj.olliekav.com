@@ -16,7 +16,7 @@ const Playlist = () => {
     return (
       <li 
         key={track.id}
-        class={`${styles['playlist-track']} ${slugify(track.title)}`}>
+        class={`${styles['playlist-track']} ${styles[slugify(track.title)]}`}>
         <button
           class={buttonClassNames}
           onClick={() => playTrackAtIndex(i, track)}>

@@ -1,6 +1,7 @@
 import { useContext, useEffect } from 'preact/hooks';
 import { PlayerContext } from '../../contexts/player-context';
 import Modal from 'react-modal';
+import styles from './style.module.scss';
 
 const PlayerModal = ({ isOpen, onClose }) => {
   const { player } = useContext(PlayerContext);
