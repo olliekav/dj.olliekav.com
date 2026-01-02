@@ -595,6 +595,26 @@
   @include colour-scheme(#CA46A7, #BCBDC2);
 }
 
+.ok-sessions-105 {
+  @include colour-scheme(#002D63, #1FC46F, true);
+}
+
+.ok-sessions-106 {
+  @include colour-scheme(#3A485B, #00FFF6, true);
+}
+
+.ok-sessions-107 {
+  @include colour-scheme(#FF7476, #3B4B69);
+}
+
+.ok-sessions-108 {
+  @include colour-scheme(#85F9FF, #405093);
+}
+
+.ok-sessions-109 {
+  @include colour-scheme(#85FFA8, #4F4A93);
+}
+
 // Modal window
 
 .modal-body-open {
