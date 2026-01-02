@@ -17,8 +17,8 @@ const PlayerModal = ({ isOpen, onClose }) => {
       isOpen={isOpen}
       onRequestClose={onClose}
       className={styles['modal']}
-      overlayClassName={styles['modal-overlay']}
-      bodyOpenClassName={styles['modal-body-open']}
+      overlayClassName="modal-overlay"
+      bodyOpenClassName="modal-body-open"
     >
       <div class={styles['modal-content']}>
         <h1 class={styles['modal-title']}>{currentTrack.title}</h1>

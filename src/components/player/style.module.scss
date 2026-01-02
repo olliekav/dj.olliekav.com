@@ -263,36 +263,32 @@
 
 // Modal window
 
-.modal-body-open {
-  .playlist {
-    overflow: hidden;
+:global {
+  .modal-overlay {
+    align-items: center;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    padding: 3rem 3rem 6rem;
+    position: fixed;
+    right: 0;
+    opacity: 0;
+    transition: all .2s ease-in-out;
+    transform: translateY(-5rem);
+    top: 0;
+    z-index: 1000;
   }
-}
 
-.modal-overlay {
-  align-items: center;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  padding: 3rem 3rem 6rem;
-  position: fixed;
-  right: 0;
-  opacity: 0;
-  transition: all .2s ease-in-out;
-  transform: translateY(-5rem);
-  top: 0;
-  z-index: 1000;
-}
+  .ReactModal__Overlay--after-open.modal-overlay {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-.ReactModal__Overlay--after-open.modal-overlay {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.ReactModal__Overlay--before-close.modal-overlay {
-  opacity: 0;
-  transform: translateY(-5rem);
+  .ReactModal__Overlay--before-close.modal-overlay {
+    opacity: 0;
+    transform: translateY(-5rem);
+  }
 }
 
 .modal {

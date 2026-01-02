@@ -159,7 +159,7 @@ function normalizeTrack(t: SoundCloudTrack) {
     id: t.id,
     urn: t.urn,
     title: t.title,
-    description: t.title,
+    description: t.description,
     permalink_url: t.permalink_url,
     duration_ms: t.duration,
     stream_url: t.stream_url,
