@@ -1,0 +1,29 @@
+.waveform-wrapper {
+  bottom: 0;
+  height: 100%;
+  left: .3rem;
+  opacity: 0;
+  position: absolute;
+  right: .3rem;
+  top: 0;
+  transition: all .3s ease-in-out;
+  visibility: hidden;
+
+  &--loaded {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  > wave {
+    cursor: pointer !important;
+  }
+  
+  // Hack to set background color of progress
+  > wave > wave {
+    background-color: var(--light-color);
+
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--dark-color);
+    }
+  }
+}

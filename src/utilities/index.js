@@ -1,4 +1,8 @@
-const prettyTime = (time) => {
+const prettyTime = (time, ms = false) => {
+  if (ms) {
+    time = time / 1000;
+  }
+
   let hours = '0' + Math.floor(time / 3600);
   let mins = '0' + Math.floor((time % 3600) / 60);
   let secs = '0' + Math.floor((time % 60));

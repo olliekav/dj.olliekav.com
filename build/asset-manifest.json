@@ -1,0 +1,20 @@
+{
+  "bundle.css": "bundle.e6f95.css",
+  "bundle.js": "bundle.44a36.esm.js",
+  "bundle.js.map": "bundle.44a36.esm.js.map",
+  "polyfills.js": "polyfills.26e23.esm.js",
+  "polyfills.js.map": "polyfills.26e23.esm.js.map",
+  "route-playlist.js": "route-playlist.chunk.f46fa.esm.js",
+  "route-playlist.js.map": "route-playlist.chunk.f46fa.esm.js.map",
+  "assets/.DS_Store": "assets/.DS_Store",
+  "assets/icons/android-chrome-192x192.png": "assets/icons/android-chrome-192x192.png",
+  "assets/icons/android-chrome-512x512.png": "assets/icons/android-chrome-512x512.png",
+  "assets/icons/apple-touch-icon.png": "assets/icons/apple-touch-icon.png",
+  "assets/icons/favicon-16x16.png": "assets/icons/favicon-16x16.png",
+  "assets/icons/favicon-32x32.png": "assets/icons/favicon-32x32.png",
+  "assets/icons/favicon.svg": "assets/icons/favicon.svg",
+  "assets/icons/mstile-150x150.png": "assets/icons/mstile-150x150.png",
+  "assets/icons/safari-pinned-tab.svg": "assets/icons/safari-pinned-tab.svg",
+  "bundle.e6f95.css.map": "bundle.e6f95.css.map",
+  "manifest.json": "manifest.json"
+}

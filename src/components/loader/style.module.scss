@@ -1,0 +1,99 @@
+.loader {
+  display: flex;
+  font-size: 1rem;
+  height: 80px;
+  left: 50%;
+  margin: -40px 0 0 -28px;
+  position: fixed;
+  text-align: center;
+  top: 50%;
+  width: 56px;
+}
+
+.loader--inline {
+  height: 30px;
+  margin: -15px 0 0 -14px;
+  position: absolute;
+  width: 28px;
+}
+
+.loader > span {
+  display: none;
+}
+
+.loader > div {
+  background-color: var(--dark-color);
+  border-radius: 8px;
+  height: 100%;
+  margin-right: 4px;
+  width: 8px;
+  
+  -webkit-animation: volumeAnimation 1.2s infinite ease-in-out;
+  animation: volumeAnimation 1.2s infinite ease-in-out;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: #fff;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.loader--inline > div {
+  border-radius: 2px;
+  margin-right: 2px;
+  width: 4px;
+}
+
+.loader > div:last-of-type {
+  margin-right: 0;
+}
+
+.loader .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.loader .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+.loader .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+.loader .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@keyframes volumeAnimation {
+
+  0%,
+  40%,
+  100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }
+
+  20% {
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
+
+@-webkit-keyframes volumeAnimation {
+
+  0%,
+  40%,
+  100% {
+    -webkit-transform: scaleY(0.4)
+  }
+
+  20% {
+    -webkit-transform: scaleY(1.0)
+  }
+}
