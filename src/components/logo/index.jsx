@@ -1,4 +1,4 @@
-import playlistStyles from '../../routes/playlist/style.module.scss';
+import playlistStyles from '../../pages/Playlist/style.module.scss';
 
 const Logo = () => (
   <svg class={playlistStyles['playlist-track-icon']} version="1.1" viewBox="0 0 1024 1024" preserveAspectRatio="xMinYMin meet">

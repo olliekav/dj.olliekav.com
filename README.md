@@ -1,11 +1,15 @@
-# Readme
+# `create-preact`
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/221a1872-d36b-48af-9ceb-f4a73d37d3da/deploy-status)](https://app.netlify.com/sites/djolliekav/deploys)
+<h2 align="center">
+  <img height="256" width="256" src="./src/assets/preact.svg">
+</h2>
 
-This is a showcase site for my [OK Sessions DJ mixes](https://soundcloud.com/olliekav/sets/ok-sessions), due to Soundcloud locking down their API it uses their public RSS feeds to drive the content and stream the MP3s.
+<h3 align="center">Get started using Preact and Vite!</h3>
 
-## Tech Stack
-- [Preact](https://preactjs.com/)
-- [Wavesurfer](https://wavesurfer-js.org/) - Audio Player & Waveforms
-- [RSS](https://github.com/rbren/rss-parser/) - Generating JSON from the RSS Feeds
-- [Netlify](https://www.netlify.com/) = Hosting + Netlify Functions
+## Getting Started
+
+-   `npm run dev` - Starts a dev server at http://localhost:5173/
+
+-   `npm run build` - Builds for production, emitting to `dist/`. Prerenders all found routes in app to static HTML
+
+-   `npm run preview` - Starts a server at http://localhost:4173/ to test production build locally

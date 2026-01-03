@@ -1,4 +1,4 @@
-import { h, createContext } from 'preact';
+import { createContext } from 'preact';
 import { useState, useEffect, useReducer } from 'preact/hooks';
 import WaveSurfer from 'wavesurfer.js';
 import { isSafari, isMobile } from 'react-device-detect';
@@ -6,7 +6,7 @@ import { isSafari, isMobile } from 'react-device-detect';
 import Player from '../components/player';
 import Loader from '../components/loader';
 
-export const PlayerContext = createContext();
+export const PlayerContext = createContext(null);
 
 const PlayerProvider = props => {
   const [player, setPlayer] = useReducer(
@@ -28,7 +28,6 @@ const PlayerProvider = props => {
   );
   const [wavesurfer, setWavesurfer] = useState(undefined);
   const isMobileSafari = isSafari && isMobile;
-  const isDesktopSafari = isSafari && !isMobile;
 
   useEffect(() => {
     fetchPlaylist();
@@ -64,7 +63,6 @@ const PlayerProvider = props => {
       barRadius: 3,
       barWidth: 4,
       cursorWidth: 0,
-      closeAudioContext: true,
       container: node,
       height: 60,
       mediaControls: false,
@@ -100,7 +98,7 @@ const PlayerProvider = props => {
       }
     });
     
-    wavesurfer.on('click', (event, progress) => {
+    wavesurfer.on('click', () => {
       if(!isPlaying) {
         play();
       }
@@ -144,9 +142,9 @@ const PlayerProvider = props => {
       initWavesurfer
     }}>
       <div class="wrapper loaded">
-        <main class="main">
+        <div class="content">
           {props.children}
-        </main>
+        </div>
         <Player />
       </div>
     </PlayerContext.Provider>

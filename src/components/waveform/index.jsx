@@ -1,5 +1,5 @@
 import { useContext, useEffect, useReducer, useRef } from 'preact/hooks';
-import Loader from '../../components/loader';
+import Loader from '../loader';
 import { PlayerContext } from '../../contexts/player-context';
 import styles from './style.module.scss';
 

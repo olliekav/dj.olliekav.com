@@ -1,16 +1,16 @@
 import { useContext, useState } from 'preact/hooks';
 import { PlayerContext } from '../../contexts/player-context';
-import Logo from '../../components/logo';
-import Timer from '../../components/player/timer';
-import PlayButton from '../../components/player/play-button';
-import NextButton from '../../components/player/next-button';
-import PrevButton from '../../components/player/prev-button';
+import Logo from '../logo';
+import Timer from './timer';
+import PlayButton from './play-button';
+import NextButton from './next-button';
+import PrevButton from './prev-button';
 import PlayerModal from './player-modal';
 import VolumeControl from './volume-control';
-import WaveformProgress from '../../components/waveform';
+import WaveformProgress from '../waveform';
 import { slugify } from '../../utilities';
 import styles from './style.module.scss';
-import playlistStyles from '../../routes/playlist/style.module.scss';
+import playlistStyles from '../../pages/Playlist/style.module.scss';
 
 String.prototype.parseURL = function() {
   return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&~\?\/.=]+/g, function( url ) {

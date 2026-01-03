@@ -70,7 +70,7 @@
   animation-delay: -0.8s;
 }
 
-@keyframes :global(volumeAnimation) {
+@keyframes volumeAnimation {
 
   0%,
   40%,
@@ -85,7 +85,7 @@
   }
 }
 
-@-webkit-keyframes :global(volumeAnimation) {
+@-webkit-keyframes volumeAnimation {
 
   0%,
   40%,
