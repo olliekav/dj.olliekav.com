@@ -75,8 +75,6 @@ const PlayerProvider = props => {
   }
 
   const playTrackAtIndex = (index, track) => {
-    console.log('track', track);
-    
     setPlayer({
       activeIndex: index,
       currentTrack: track,

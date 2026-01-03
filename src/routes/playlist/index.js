@@ -11,7 +11,7 @@ const Playlist = () => {
   
   const tracks = player.tracks.map((track, i) => {
     const buttonClassNames = ClassNames(styles['playlist-track-button'], {
-      [styles['active-track']]: player.activeIndex === i
+      [styles['active-track']]: player.currentTrack.id === track.id
     });
     return (
       <li 
