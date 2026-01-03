@@ -11,7 +11,7 @@ const Playlist = () => {
   
   const tracks = player.tracks.map((track, i) => {
     const buttonClassNames = ClassNames(styles['playlist-track-button'], {
-      'active-track': player.activeIndex === i
+      [styles['active-track']]: player.activeIndex === i
     });
     return (
       <li 
@@ -19,7 +19,8 @@ const Playlist = () => {
         class={`${styles['playlist-track']} ${styles[slugify(track.title)]}`}>
         <button
           class={buttonClassNames}
-          onClick={() => playTrackAtIndex(i, track)}>
+          onClick={() => playTrackAtIndex(i, track)}
+        >
           <Logo class={styles['playlist-track-icon']} />
           <h2 class={styles['playlist-track-title']}>#{i+1}</h2>
           <span class={styles['playlist-track-time']}>{prettyTime(track.duration_ms, true)}</span>

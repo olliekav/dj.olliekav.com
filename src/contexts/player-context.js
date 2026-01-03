@@ -69,29 +69,14 @@ const PlayerProvider = props => {
       height: 60,
       mediaControls: false,
       normalize: true,
-      progressColor: 'red',
-      // fetchParams: {
-      //   mode: 'no-cors',
-      //   credentials: 'include',
-      //   headers: {
-      //     'Authorization': `OAuth ${player.token}`
-      //   }
-      // }
+      progressColor: 'red'
     });
     setWavesurfer(wavesurfer);
   }
 
   const playTrackAtIndex = (index, track) => {
-    const { isPlaying, activeIndex } = player;
-    const isCurrentTrack = isPlaying && activeIndex === index;
-
-    // Handle user gestures not propagating in Safari
-    if(isDesktopSafari) {
-      wavesurfer.play()
-      .then(data => wavesurfer.pause())
-      .catch(err => reject(err));
-    }
-
+    console.log('track', track);
+    
     setPlayer({
       activeIndex: index,
       currentTrack: track,
