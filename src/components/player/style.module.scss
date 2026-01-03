@@ -232,8 +232,8 @@
 
   span {
     opacity: 0;
-    -webkit-animation: ellipsis-dot 1s infinite;
-    animation: ellipsis-dot 1s infinite;
+    animation: ellipsisDot 1s infinite;
+    -webkit-animation: ellipsisDot 1s infinite;
   }
 
   span:nth-child(1) {
@@ -249,16 +249,32 @@
   }
 }
 
-@-webkit-keyframes ellipsis-dot {
-  0%    { opacity: 0; }
-  50%   { opacity: 1; }
-  100%  { opacity: 0; }
+@keyframes :global(ellipsisDot) {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
-@keyframes ellipsis-dot {
-  0%    { opacity: 0; }
-  50%   { opacity: 1; }
-  100%  { opacity: 0; }
+@-webkit-keyframes :global(ellipsisDot) {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 // Modal window

@@ -37,24 +37,6 @@ body {
   width: 100%;
 }
 
-@keyframes fadein {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@-webkit-keyframes fadein {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
 .wrapper {
   flex: 1;
   display: flex;
@@ -63,7 +45,27 @@ body {
 }
 
 .wrapper.loaded {
-  animation: fadein .3s linear;
+  animation: fadeIn .3s linear;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .main {
