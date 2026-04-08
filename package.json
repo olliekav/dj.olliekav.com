@@ -21,11 +21,11 @@
 	"devDependencies": {
 		"@netlify/vite-plugin": "^2.7.19",
 		"@preact/preset-vite": "^2.10.2",
-		"@vitejs/plugin-react": "^5.1.2",
-		"eslint": "^9.39.2",
+		"@vitejs/plugin-react": "^6.0.1",
+		"eslint": "^10.2.0",
 		"eslint-config-preact": "^2.0.0",
 		"sass-embedded": "^1.97.1",
-		"vite": "^7.0.4",
+		"vite": "^8.0.7",
 		"vite-plugin-mkcert": "^1.17.9"
 	},
 	"eslintConfig": {

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export PATH=\"/opt/homebrew/opt/node@25/bin:$PATH\")",
+      "Bash(npm update:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
