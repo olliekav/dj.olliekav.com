@@ -662,3 +662,7 @@
 .ok-sessions-121 {
   @include colour-scheme(#3B26FF, #2DE7E4);
 }
+
+.ok-sessions-122 {
+  @include colour-scheme(#E15F6C, #DFCFC4, true);
+}
