@@ -7,8 +7,8 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@netlify/cache": "^3.4.10",
-		"@netlify/functions": "^5.3.0",
+		"@netlify/cache": "^4.0.2",
+		"@netlify/functions": "^6.0.2",
 		"classnames": "^2.5.1",
 		"preact": "^10.29.8",
 		"preact-iso": "^2.12.2",
