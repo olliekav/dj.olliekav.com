@@ -10,6 +10,14 @@ import { hasNext, hasPrev, initialState, playerReducer, type PlayerState } from 
 
 const FALLBACK_ACCENT = '#CA46A7';
 
+/** Browsers may refuse to play (e.g. Safari's autoplay rules); say why rather than fail silently. */
+const reportPlayError = (error: unknown) => {
+  const { name, message } = error as Error;
+  if (name !== 'AbortError') {
+    console.warn(`Playback was refused: ${name}: ${message}`);
+  }
+};
+
 /**
  * Safari only lets media start from a user gesture, but the stream URL arrives
  * after an async request. Calling play() on the element during the click (muted,
@@ -100,7 +108,16 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
     applyScheme();
     darkMode.addEventListener('change', applyScheme);
 
+    const media = wavesurfer.getMediaElement();
+    const onMediaError = () => {
+      if (media?.error && media.currentSrc) {
+        console.error(`Couldn't play the stream (media error ${media.error.code}): ${media.error.message}`);
+      }
+    };
+    media?.addEventListener('error', onMediaError);
+
     const unsubscribers = [
+      () => media?.removeEventListener('error', onMediaError),
       wavesurfer.on('ready', () => dispatch({ type: 'ready' })),
       wavesurfer.on('play', () => dispatch({ type: 'playing', isPlaying: true })),
       wavesurfer.on('pause', () => dispatch({ type: 'playing', isPlaying: false })),
@@ -112,7 +129,7 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
       // Clicking the waveform seeks; start playing too if paused
       wavesurfer.on('interaction', () => {
         if (!wavesurfer.isPlaying()) {
-          wavesurfer.play().catch(() => {});
+          wavesurfer.play().catch(reportPlayError);
         }
       })
     ];
@@ -194,7 +211,7 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
   // button still works and play/pause events keep the UI in sync.
   useEffect(() => {
     if (wavesurfer && state.isReady && state.autoplay) {
-      wavesurfer.play().catch(() => {});
+      wavesurfer.play().catch(reportPlayError);
     }
   }, [wavesurfer, state.isReady, state.autoplay]);
 
@@ -207,7 +224,7 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
       playAt: index => {
         const { activeIndex, mixes } = stateRef.current;
         if (index === activeIndex && streamFor.current === mixes[index]?.urn) {
-          wavesurfer?.play().catch(() => {});
+          wavesurfer?.play().catch(reportPlayError);
           return;
         }
         // Keep Safari's permission from this click for when the stream arrives
@@ -234,7 +251,7 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
           dispatch({ type: 'select', index: activeIndex });
           return;
         }
-        wavesurfer?.playPause().catch(() => {});
+        wavesurfer?.playPause().catch(reportPlayError);
       },
       setVolume: volume => {
         dispatch({ type: 'volume', volume });
