@@ -7,26 +7,25 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@netlify/cache": "^3.3.4",
-		"@netlify/functions": "^5.1.2",
+		"@netlify/cache": "^3.4.10",
+		"@netlify/functions": "^5.3.0",
 		"classnames": "^2.5.1",
-		"preact": "^10.26.9",
-		"preact-iso": "^2.11.1",
-		"preact-render-to-string": "^6.6.5",
+		"preact": "^10.29.8",
+		"preact-iso": "^2.12.2",
+		"preact-render-to-string": "^6.8.0",
 		"react-device-detect": "^2.2.3",
 		"react-modal": "^3.16.3",
 		"react-process-string": "^1.2.0",
-		"wavesurfer.js": "^7.12.1"
+		"wavesurfer.js": "^7.12.12"
 	},
 	"devDependencies": {
-		"@netlify/vite-plugin": "^2.7.19",
-		"@preact/preset-vite": "^2.10.2",
-		"@vitejs/plugin-react": "^6.0.1",
-		"eslint": "^9.39.4",
+		"@netlify/vite-plugin": "^2.12.9",
+		"@preact/preset-vite": "^2.10.6",
+		"eslint": "^9.39.5",
 		"eslint-config-preact": "^2.0.0",
-		"sass-embedded": "^1.97.1",
-		"vite": "^8.0.7",
-		"vite-plugin-mkcert": "^1.17.9"
+		"sass-embedded": "^1.105.1",
+		"vite": "^8.3.4",
+		"vite-plugin-mkcert": "^1.17.12"
 	},
 	"eslintConfig": {
 		"extends": "preact"
