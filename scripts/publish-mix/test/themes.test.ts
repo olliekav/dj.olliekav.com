@@ -1,8 +1,20 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import type { Theme } from '../../../shared/api-types.ts';
 import originals from '../../../shared/mix-themes.json' with { type: 'json' };
 import { contrast } from '../colour.ts';
-import { findClashes, generateTheme, isAcceptable, pairDistance, random, regenerate, RULES, toTheme } from '../themes.ts';
+import {
+  distinctness,
+  findClashes,
+  generateTheme,
+  isAcceptable,
+  isDistinctPair,
+  pairDistance,
+  random,
+  regenerate,
+  RULES,
+  toTheme
+} from '../themes.ts';
+import { distance, hexToOklch } from '../colour.ts';
 
 const themes: Record<string, Theme> = originals;
 const t = (background: string, foreground: string) => toTheme(background, foreground);
@@ -38,15 +50,43 @@ describe('isAcceptable', () => {
   it.each([
     ['too little contrast', '#777777', '#7A7A80'],
     ['too much contrast', '#FFFF00', '#000044'],
+    ['two shades of one colour', '#1E5E12', '#5FD34A'],
     ['a plain white logo', '#1F4FCC', '#FFFFFF'],
     ['a plain black logo', '#FFD84D', '#000000']
   ])('rejects %s', (_label, background, foreground) => {
     expect(isAcceptable({ background, foreground }, [])).toBe(false);
   });
 
-  it('rejects pairs too close to another mix', () => {
-    expect(isAcceptable({ background: '#2B11A7', foreground: '#EB01A4' }, [t('#2A10A6', '#EC00A5')])).toBe(false);
-    expect(isAcceptable({ background: '#2B11A7', foreground: '#EB01A4' }, [])).toBe(true);
+  it('rejects pairs too close to another mix, or to the rest of the batch', () => {
+    const pair = { background: '#3F2D8F', foreground: '#E8B040' };
+    expect(isAcceptable(pair, [t('#3E2C8E', '#E9B141')])).toBe(false);
+    expect(isAcceptable(pair, [])).toBe(true);
+    // Shares a background with another mix
+    expect(isAcceptable(pair, [t('#402E90', '#FF6A00')])).toBe(false);
+    // Fine against the originals, too close within a batch
+    const nearby = t('#013B92', '#B88D3A');
+    expect(isAcceptable(pair, [nearby])).toBe(true);
+    expect(isAcceptable(pair, [], [nearby])).toBe(false);
+  });
+});
+
+describe('isDistinctPair', () => {
+  it.each([
+    ['two shades of green', '#1E5E12', '#5FD34A', false],
+    ['similar lightness', '#B05C2A', '#4F9AA0', false],
+    ['different hue and lightness', '#3F2D8F', '#E8B040', true],
+    ['a neutral background', '#EDEBE8', '#A445A1', true],
+    ['a large lightness gap in one hue', '#0B3D0B', '#C8FAC0', true]
+  ])('%s → %s', (_label, background, foreground, expected) => {
+    expect(isDistinctPair({ background, foreground })).toBe(expected);
+  });
+});
+
+describe('distinctness', () => {
+  it('is relative to the thresholds and Infinity with nothing to compare', () => {
+    const pair = t('#2A10A6', '#EC00A5');
+    expect(distinctness(pair, [])).toBe(Infinity);
+    expect(distinctness(pair, [pair])).toBe(0);
   });
 });
 
@@ -57,19 +97,22 @@ describe('generateTheme', () => {
   });
 
   it('gives up when no unique theme is possible', () => {
-    const minContrast = RULES.minContrast;
-    RULES.minContrast = 22; // above the maximum possible ratio
+    const minBackgroundDistance = RULES.minBackgroundDistance;
+    RULES.minBackgroundDistance = 10; // further than any two colours can be
     try {
-      expect(() => generateTheme(1, [])).toThrow("Couldn't find a unique theme for mix #1");
+      expect(() => generateTheme(1, [t('#3F2D8F', '#E8B040')])).toThrow("Couldn't find a unique theme for mix #1");
     } finally {
-      RULES.minContrast = minContrast;
+      RULES.minBackgroundDistance = minBackgroundDistance;
     }
-  });
+  }, 30_000);
 });
 
 describe('regenerate', () => {
   const numbers = Array.from({ length: 30 }, (_, i) => 21 + i);
-  const result = regenerate(themes, numbers);
+  let result: Record<string, Theme>;
+  beforeAll(() => {
+    result = regenerate(themes, numbers);
+  }, 120_000);
 
   it('replaces only the requested mixes', () => {
     for (const [n, theme] of Object.entries(themes)) {
@@ -77,20 +120,30 @@ describe('regenerate', () => {
     }
   });
 
-  it('keeps every new pair unique, readable and coloured', () => {
+  it('keeps every new pair readable, distinct and unlike every other mix', () => {
     const clashes = findClashes(result).filter(([a, b]) => numbers.includes(+a) || numbers.includes(+b));
     expect(clashes).toEqual([]);
-    for (const n of numbers) {
-      const theme = result[n]!;
+    const batch = numbers.map(n => result[n]!);
+    for (const [i, theme] of batch.entries()) {
       expect(theme.gradient).toBeUndefined();
+      expect(isDistinctPair(theme)).toBe(true);
       const ratio = contrast(theme.background, theme.foreground);
       expect(ratio).toBeGreaterThanOrEqual(RULES.minContrast);
       expect(ratio).toBeLessThanOrEqual(RULES.maxContrast);
+      for (const other of batch.slice(i + 1)) {
+        expect(pairDistance(theme, other)).toBeGreaterThanOrEqual(RULES.minBatchPairDistance);
+        expect(distance(theme.background, other.background)).toBeGreaterThanOrEqual(RULES.minBatchBackgroundDistance);
+      }
     }
   });
 
-  it('is stable for the same input, and honours variants', () => {
-    expect(regenerate(themes, numbers)).toEqual(result);
+  it('covers the colour wheel', () => {
+    const hues = numbers.map(n => hexToOklch(result[n]!.background)).filter(c => c.c > 0.04).map(c => Math.floor(c.h / 60));
+    expect(new Set(hues).size).toBe(6);
+  });
+
+  it('is deterministic, and re-rolls only the requested mix', () => {
+    expect(regenerate(themes, [21, 22])).toEqual(regenerate(themes, [21, 22]));
     const rerolled = regenerate(result, [27], { 27: 5 });
     expect(rerolled[27]).not.toEqual(result[27]);
     expect(rerolled[28]).toEqual(result[28]);

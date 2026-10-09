@@ -1,5 +1,5 @@
 import type { Theme } from '../../shared/api-types.ts';
-import { contrast, distance, hexToOklch, oklchToHex } from './colour.ts';
+import { contrast, distance, hexToOklch, maxChroma, oklchToHex } from './colour.ts';
 
 // Generates two-colour mix themes in the style of the hand-picked ones: a
 // background and a contrasting coloured logo, never repeating another mix's pair.
@@ -13,6 +13,17 @@ export const RULES = {
   // Pairs closer than this (summed OKLab distance of both colours) count as the same combination.
   // Originals sit a median 0.13 from their nearest neighbour; new pairs must beat 75% of them.
   minPairDistance: 0.16,
+  // Mixes generated together are held further apart so a new batch looks varied
+  minBatchPairDistance: 0.22,
+  // Backgrounds must differ from other mixes' backgrounds, and more so within a batch
+  minBackgroundDistance: 0.05,
+  minBatchBackgroundDistance: 0.09,
+  // Logo and background must differ in lightness...
+  minLightnessDifference: 0.25,
+  // ...and in hue, unless the lightness gap is large or one colour is neutral
+  minHueDifference: 70,
+  hueExemptLightnessDifference: 0.45,
+  neutralChroma: 0.04,
   // A logo this close to white or black reads as the plain black/white style
   plainLogoChroma: 0.04,
   plainLogoLightness: [0.25, 0.95] as const,
@@ -64,36 +75,112 @@ export const toTheme = (background: string, foreground: string): Theme => {
 // new themes covers every hue instead of clustering where sRGB has the most room
 const GOLDEN_ANGLE = 137.508;
 
+const MIN_CHROMA = 0.09;
+
 const sampleColour = (next: () => number, { neutral = false, hue }: { neutral?: boolean; hue?: number } = {}) => {
-  // Neutrals are creams/off-whites or charcoals like the originals, never mid-grey
-  const l = neutral ? (next() < 0.5 ? 0.9 + next() * 0.08 : 0.22 + next() * 0.12) : 0.3 + next() * 0.65;
-  const c = neutral ? next() * 0.03 : 0.09 + next() * 0.17;
   const h = hue === undefined ? next() * 360 : (hue + (next() - 0.5) * 50 + 360) % 360;
-  return oklchToHex({ l, c, h });
+  if (neutral) {
+    // Creams/off-whites or charcoals like the originals, never mid-grey
+    const l = next() < 0.5 ? 0.9 + next() * 0.08 : 0.22 + next() * 0.12;
+    return oklchToHex({ l, c: Math.min(next() * 0.03, maxChroma(l, h)), h });
+  }
+  // Sample chroma within what sRGB can show, so no candidates are wasted out of gamut
+  const l = 0.3 + next() * 0.65;
+  const ceiling = Math.min(0.26, maxChroma(l, h));
+  if (ceiling < MIN_CHROMA) {
+    return null;
+  }
+  return oklchToHex({ l, c: MIN_CHROMA + next() * (ceiling - MIN_CHROMA), h });
 };
 
-export const isAcceptable = (theme: Pick<Theme, 'background' | 'foreground'>, others: Theme[]) => {
-  const ratio = contrast(theme.background, theme.foreground);
-  if (ratio < RULES.minContrast || ratio > RULES.maxContrast || isPlainLogo(theme.foreground)) {
+const hueDifference = (a: number, b: number) => {
+  const d = Math.abs(a - b) % 360;
+  return d > 180 ? 360 - d : d;
+};
+
+/** Background and logo read as clearly different colours, not two shades of one. */
+export const isDistinctPair = ({ background, foreground }: Pick<Theme, 'background' | 'foreground'>) => {
+  const bg = hexToOklch(background);
+  const fg = hexToOklch(foreground);
+  const lightness = Math.abs(bg.l - fg.l);
+  if (lightness < RULES.minLightnessDifference) {
     return false;
   }
-  return others.every(other => pairDistance(theme, other) >= RULES.minPairDistance);
+  const neutral = bg.c < RULES.neutralChroma || fg.c < RULES.neutralChroma;
+  return neutral || lightness >= RULES.hueExemptLightnessDifference || hueDifference(bg.h, fg.h) >= RULES.minHueDifference;
 };
 
-/** Generates a theme unlike all `others`. Same number and variant always give the same result. */
-export const generateTheme = (number: number, others: Theme[], variant = 0): Theme => {
+/** Whether a pair works on its own: readable, coloured and two distinct colours. */
+export const isValidPair = (theme: Pick<Theme, 'background' | 'foreground'>) => {
+  const ratio = contrast(theme.background, theme.foreground);
+  return ratio >= RULES.minContrast && ratio <= RULES.maxContrast && !isPlainLogo(theme.foreground) && isDistinctPair(theme);
+};
+
+/**
+ * How well a pair stands apart from other mixes, relative to the thresholds:
+ * 1 or more means every rule is met; higher is more distinct.
+ */
+export const distinctness = (theme: Pick<Theme, 'background' | 'foreground'>, others: Theme[], batch: Theme[] = []) => {
+  let score = Infinity;
+  for (const other of others) {
+    score = Math.min(
+      score,
+      pairDistance(theme, other) / RULES.minPairDistance,
+      distance(theme.background, other.background) / RULES.minBackgroundDistance
+    );
+  }
+  for (const other of batch) {
+    score = Math.min(
+      score,
+      pairDistance(theme, other) / RULES.minBatchPairDistance,
+      distance(theme.background, other.background) / RULES.minBatchBackgroundDistance
+    );
+  }
+  return score;
+};
+
+export const isAcceptable = (theme: Pick<Theme, 'background' | 'foreground'>, others: Theme[], batch: Theme[] = []) =>
+  isValidPair(theme) && distinctness(theme, others, batch) >= 1;
+
+const CANDIDATES = 6000;
+// A candidate clearing every rule by this margin is taken straight away; pushing for
+// maximum distinctness drifts into garish extremes, so that's only the fallback
+const COMFORTABLE = 1.1;
+
+/**
+ * Generates a theme unlike `others` (and the rest of its `batch`): the first valid
+ * candidate with some margin, else the most distinct of a few thousand.
+ * Same number and variant always give the same result.
+ */
+export const generateTheme = (number: number, others: Theme[], variant = 0, batch: Theme[] = []): Theme => {
   const next = random(`ok-sessions:${number}:${variant}`);
   const hue = (number * GOLDEN_ANGLE + variant * 61) % 360;
-  for (let attempt = 0; attempt < 20_000; attempt++) {
+  let best: { theme: Theme; score: number } | null = null;
+  let found = 0;
+  for (let attempt = 0; attempt < CANDIDATES * 50 && found < CANDIDATES; attempt++) {
+    // Mostly stay in the mix's hue slot, so a batch covers the whole wheel
+    const slot = next() < 0.5 ? hue : undefined;
     const neutral = next() < RULES.neutralBackground;
-    // A neutral background takes its logo from the mix's hue slot instead
-    const background = sampleColour(next, neutral ? { neutral } : { hue });
-    const foreground = sampleColour(next, neutral ? { hue } : {});
-    if (background && foreground && isAcceptable({ background, foreground }, others)) {
-      return toTheme(background, foreground);
+    // A neutral background takes its logo from the hue slot instead
+    const background = sampleColour(next, neutral ? { neutral } : { hue: slot });
+    const foreground = sampleColour(next, neutral ? { hue: slot } : {});
+    if (!background || !foreground || !isValidPair({ background, foreground })) {
+      continue;
+    }
+    found++;
+    const theme = toTheme(background, foreground);
+    const score = distinctness(theme, others, batch);
+    if (score >= COMFORTABLE) {
+      return theme;
+    }
+    if (!best || score > best.score) {
+      best = { theme, score };
     }
   }
-  throw new Error(`Couldn't find a unique theme for mix #${number}`);
+  if (!best || best.score < 1) {
+    throw new Error(`Couldn't find a unique theme for mix #${number}`);
+  }
+  return best.theme;
 };
 
 /** Regenerates the given mixes in order, each unlike every other mix. */
@@ -102,8 +189,11 @@ export const regenerate = (themes: Themes, numbers: number[], variants: Record<n
   for (const number of numbers) {
     delete result[number];
   }
+  const batch: Theme[] = [];
   for (const number of numbers) {
-    result[number] = generateTheme(number, Object.values(result), variants[number] ?? 0);
+    const theme = generateTheme(number, Object.values(result), variants[number] ?? 0, batch);
+    result[number] = theme;
+    batch.push(theme);
   }
   return result;
 };

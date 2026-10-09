@@ -72,3 +72,15 @@ export const contrast = (x: string, y: string) => {
   const [hi, lo] = [luminance(x), luminance(y)].sort((p, q) => q - p) as [number, number];
   return (hi + 0.05) / (lo + 0.05);
 };
+
+/** The most chroma sRGB can show at this lightness and hue. */
+export const maxChroma = (l: number, h: number) => {
+  let lo = 0;
+  let hi = 0.4;
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2;
+    if (oklchToHex({ l, c: mid, h })) lo = mid;
+    else hi = mid;
+  }
+  return lo;
+};
