@@ -15,7 +15,7 @@ const WaveformProgress = props => {
     }
   );
 
-  const waveformRef = useRef();
+  const waveformRef = useRef(null);
   useEffect(() => {
     if (waveformRef.current) {
       initWavesurfer(waveformRef.current);

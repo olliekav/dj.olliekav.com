@@ -10,7 +10,7 @@
 		"@netlify/cache": "^4.0.2",
 		"@netlify/functions": "^6.0.2",
 		"classnames": "^2.5.1",
-		"preact": "^10.29.8",
+		"preact": "^11.0.1",
 		"preact-iso": "^2.12.2",
 		"preact-render-to-string": "^6.8.0",
 		"react-device-detect": "^2.2.3",
