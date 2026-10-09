@@ -7,7 +7,8 @@ import mkcert from 'vite-plugin-mkcert';
 export default defineConfig({
 	plugins: [
 		mkcert(),
-		netlify(),
+		// No edge functions in this project, so skip starting Deno to emulate them
+		netlify({ edgeFunctions: { enabled: false } }),
 		preact({
 			prerender: {
 				enabled: true,
