@@ -20,12 +20,16 @@ export const unlockMedia = (media: HTMLMediaElement | null | undefined) => {
     return;
   }
   const muted = media.muted;
+  const src = media.currentSrc;
   media.muted = true;
   media
     .play()
     .catch(() => {})
     .finally(() => {
-      media.pause();
+      // Safari can take a while to settle this; by then the next mix may be playing
+      if (media.currentSrc === src) {
+        media.pause();
+      }
       media.muted = muted;
     });
 };
@@ -145,11 +149,13 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
       }
       const media = wavesurfer.getMediaElement();
       // Safari and Chrome play HLS natively; Firefox needs hls.js (loaded only then)
+      // Without peaks wavesurfer would fetch and decode the URL itself, which fails for HLS
+      const channels = peaks ?? [[0]];
       if (!media || media.canPlayType('application/vnd.apple.mpegurl')) {
-        await wavesurfer.load(stream.url, peaks, duration);
+        await wavesurfer.load(stream.url, channels, duration);
         return;
       }
-      await wavesurfer.load('', peaks ?? [[0]], duration);
+      await wavesurfer.load('', channels, duration);
       const { default: HlsJs } = await import('hls.js');
       if (cancelled) {
         return;

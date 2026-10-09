@@ -55,6 +55,7 @@ describe('unlockMedia', () => {
     const media = {
       paused: true,
       muted: false,
+      currentSrc: 'a.m3u8',
       play: () => {
         calls.push(`play muted=${media.muted}`);
         return Promise.reject(new Error('no source'));
@@ -64,6 +65,25 @@ describe('unlockMedia', () => {
     unlockMedia(media as unknown as HTMLMediaElement);
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(calls).toEqual(['play muted=true', 'pause']);
+    expect(media.muted).toBe(false);
+  });
+
+  it("doesn't pause a mix that started while it was settling", async () => {
+    const { unlockMedia } = await import('../player-context');
+    const calls: string[] = [];
+    const media = {
+      paused: true,
+      muted: false,
+      currentSrc: 'a.m3u8',
+      play: () => {
+        media.currentSrc = 'b.m3u8';
+        return Promise.resolve();
+      },
+      pause: () => calls.push('pause')
+    };
+    unlockMedia(media as unknown as HTMLMediaElement);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(calls).toEqual([]);
     expect(media.muted).toBe(false);
   });
 
