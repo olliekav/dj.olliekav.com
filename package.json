@@ -6,7 +6,6 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"publish-mix": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/cli.ts",
-		"export-soundcloud-manifest": "node scripts/publish-mix/export-soundcloud.ts",
 		"test": "vitest run",
 		"lint": "eslint .",
 		"typecheck": "tsc --noEmit"

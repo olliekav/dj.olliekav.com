@@ -22,6 +22,7 @@ export type AdminMix = Mix & { status: MixInput['status'] };
 
 export interface Api {
   putMix(slug: string, input: MixInput): Promise<AdminMix>;
+  listMixes(): Promise<AdminMix[]>;
 }
 
 export const createApi = ({
@@ -46,19 +47,30 @@ export const createApi = ({
       : {})
   };
 
+  const url = (path: string) => `${baseUrl.replace(/\/$/, '')}${path}`;
+
+  const parse = async <T>(res: Response): Promise<T> => {
+    const body = (await res.json().catch(() => ({}))) as T & { error?: string; issues?: unknown };
+    if (!res.ok) {
+      const issues = body.issues ? `\n${JSON.stringify(body.issues, null, 2)}` : '';
+      throw new Error(`API ${res.status}: ${body.error ?? res.statusText}${issues}`);
+    }
+    return body;
+  };
+
   return {
+    async listMixes() {
+      const { mixes } = await parse<{ mixes: AdminMix[] }>(await fetchFn(url('/v1/admin/mixes'), { headers }));
+      return mixes;
+    },
+
     async putMix(slug, input) {
-      const res = await fetchFn(`${baseUrl.replace(/\/$/, '')}/v1/admin/mixes/${slug}`, {
+      const res = await fetchFn(url(`/v1/admin/mixes/${slug}`), {
         method: 'PUT',
         headers,
         body: JSON.stringify(input)
       });
-      const body = (await res.json().catch(() => ({}))) as { mix?: AdminMix; error?: string; issues?: unknown };
-      if (!res.ok || !body.mix) {
-        const issues = body.issues ? `\n${JSON.stringify(body.issues, null, 2)}` : '';
-        throw new Error(`API ${res.status}: ${body.error ?? res.statusText}${issues}`);
-      }
-      return body.mix;
+      return (await parse<{ mix: AdminMix }>(res)).mix;
     }
   };
 };

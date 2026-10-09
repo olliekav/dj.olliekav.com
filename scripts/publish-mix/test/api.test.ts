@@ -39,6 +39,14 @@ describe('createApi', () => {
     );
   });
 
+  it('lists mixes including drafts', async () => {
+    const fetchFn = mockFetch(() => jsonResponse(200, { mixes: [{ slug: 'x', status: 'draft' }] }));
+    expect(await createApi({ baseUrl: 'https://a/', adminToken: 't', fetchFn }).listMixes()).toEqual([
+      { slug: 'x', status: 'draft' }
+    ]);
+    expect(fetchFn.mock.calls[0]![0]).toBe('https://a/v1/admin/mixes');
+  });
+
   it('handles non-JSON errors', async () => {
     const fetchFn = mockFetch(() => jsonResponse(502));
     await expect(createApi({ baseUrl: 'https://a', adminToken: 't', fetchFn }).putMix('x', input)).rejects.toThrow(

@@ -6,11 +6,14 @@ import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createApi } from './api.ts';
 import { publishMix, type MixMeta, type PublishDeps, type PublishJob, type Themes } from './publish.ts';
+import { importFromSoundCloud, parseNumbers } from './import-soundcloud.ts';
+import { createSoundCloud, PLAYLIST_URL } from './soundcloud.ts';
 import { createR2Client } from './storage.ts';
 
 const usage = `Usage:
   npm run publish-mix -- <file.wav> --number <n> [options]
   npm run publish-mix -- --batch <manifest.json> [--draft] [--dry-run]
+  npm run publish-mix -- --from-soundcloud [--only 1,5-10] [--force] [--draft] [--dry-run]
 
 Options:
   --number <n>            Mix number (required for single files)
@@ -25,9 +28,16 @@ Options:
   --draft                 Save without publishing
   --dry-run               Print what would happen without uploading
 
+SoundCloud import:
+  --from-soundcloud [url] Import original uploads from the playlist (default: OK Sessions).
+                          Mix numbers follow playlist order. Tracks need downloads enabled.
+  --only <numbers>        Only these mixes, e.g. 1,4,10-20
+  --force                 Re-import mixes already imported from the same track
+
 Environment (.env next to this script):
   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET,
-  API_URL, ADMIN_TOKEN, [CF_ACCESS_CLIENT_ID, CF_ACCESS_CLIENT_SECRET]`;
+  API_URL, ADMIN_TOKEN, [CF_ACCESS_CLIENT_ID, CF_ACCESS_CLIENT_SECRET],
+  SOUNDCLOUD_CLIENT_ID, SOUNDCLOUD_CLIENT_SECRET (for --from-soundcloud)`;
 
 export const parseCli = (argv: string[]) => {
   const { values, positionals } = parseArgs({
@@ -47,6 +57,9 @@ export const parseCli = (argv: string[]) => {
       fg: { type: 'string' },
       dark: { type: 'boolean', default: false },
       batch: { type: 'string' },
+      'from-soundcloud': { type: 'boolean', default: false },
+      only: { type: 'string' },
+      force: { type: 'boolean', default: false },
       draft: { type: 'boolean', default: false },
       'dry-run': { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false }
@@ -138,10 +151,21 @@ export const readManifest = async (manifestPath: string): Promise<PublishJob[]> 
 
 export const main = async (
   argv: string[],
-  { env = process.env, log = console.log, publish = publishMix }: { env?: Env; log?: (message: string) => void; publish?: typeof publishMix } = {}
+  {
+    env = process.env,
+    log = console.log,
+    publish = publishMix,
+    importer = importFromSoundCloud
+  }: {
+    env?: Env;
+    log?: (message: string) => void;
+    publish?: typeof publishMix;
+    importer?: typeof importFromSoundCloud;
+  } = {}
 ): Promise<number> => {
   const { values, positionals } = parseCli(argv);
-  if (values.help || (!values.batch && positionals.length === 0)) {
+  const fromSoundCloud = values['from-soundcloud'];
+  if (values.help || (!values.batch && !fromSoundCloud && positionals.length === 0)) {
     log(usage);
     return 0;
   }
@@ -151,6 +175,23 @@ export const main = async (
   );
   const options = { draft: values.draft, dryRun: values['dry-run'] };
   const deps = { ...createDeps(env, options), themes, log };
+
+  if (fromSoundCloud) {
+    const soundcloud = createSoundCloud({
+      clientId: requireEnv(env, 'SOUNDCLOUD_CLIENT_ID'),
+      clientSecret: requireEnv(env, 'SOUNDCLOUD_CLIENT_SECRET')
+    });
+    const summary = await importer(
+      {
+        playlistUrl: positionals[0] ?? PLAYLIST_URL,
+        only: values.only ? parseNumbers(values.only) : undefined,
+        force: values.force,
+        ...options
+      },
+      { ...deps, soundcloud, publish }
+    );
+    return summary.failed.length ? 1 : 0;
+  }
 
   const jobs = values.batch
     ? await readManifest(values.batch)

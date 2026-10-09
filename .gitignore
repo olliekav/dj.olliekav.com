@@ -33,5 +33,5 @@ dist-ssr
 .wrangler
 coverage
 .env
-scripts/publish-mix/manifest.json
 .dev.vars
+scripts/publish-mix/manifest.json

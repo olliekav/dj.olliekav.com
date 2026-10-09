@@ -16,12 +16,13 @@ const version = 'hash-of-sour';
 const fakeMedia = () => ({
   sha256File: vi.fn(async (_file: string) => 'source-hash'),
   sha256: vi.fn((value: string | Buffer) => (typeof value === 'string' ? `hash-of-${value}` : 'artworkhash-0123456789')),
-  probeDurationMs: vi.fn(async (_file: string) => 3_600_000),
-  transcode: vi.fn(async (_file: string, dir: string) => ({ m4a: `${dir}/audio.m4a`, mp3: `${dir}/audio.mp3` })),
+  probeAudio: vi.fn(async (_file: string) => ({ durationMs: 3_600_000, codec: 'pcm_s24le' })),
+  transcode: vi.fn(async (_file: string, dir: string, _options?: { sourceCodec?: string }) => ({ m4a: `${dir}/audio.m4a`, mp3: `${dir}/audio.mp3` })),
   generatePeaks: vi.fn(async (_file: string, _duration: number) => ({ version: 1 as const, peaks: [0.5, 1] }))
 });
 
 const fakeApi = () => ({
+  listMixes: vi.fn(async () => [] as AdminMix[]),
   putMix: vi.fn(async (slug: string, _input: MixInput) => ({ share_url: `https://dj.olliekav.com/mixes/${slug}` }) as AdminMix)
 });
 
@@ -102,6 +103,14 @@ describe('publishMix', () => {
       status: 'published',
       access: 'free'
     });
+  });
+
+  it('keeps an MP3 source as the download rendition', async () => {
+    const { deps, media } = setup();
+    media.probeAudio.mockResolvedValue({ durationMs: 1000, codec: 'mp3' });
+    await publishMix({ file: 'mix.mp3', meta: { number: 1 } }, deps);
+    expect(media.transcode.mock.calls[0]![2]).toEqual({ sourceCodec: 'mp3' });
+    expect(deps.log).toHaveBeenCalledWith('  encoding AAC (keeping the source MP3)…');
   });
 
   it('skips encoding when the renditions already exist', async () => {

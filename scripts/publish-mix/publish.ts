@@ -38,7 +38,7 @@ export interface PublishDeps {
   api: Api | null;
   themes: Themes;
   log?: (message: string) => void;
-  media?: Pick<typeof media, 'sha256File' | 'sha256' | 'probeDurationMs' | 'transcode' | 'generatePeaks'>;
+  media?: Pick<typeof media, 'sha256File' | 'sha256' | 'probeAudio' | 'transcode' | 'generatePeaks'>;
   uploadOnce?: typeof uploadOnce;
   exists?: typeof exists;
 }
@@ -103,7 +103,7 @@ export const publishMix = async (
     mp3: `mixes/${slug}/audio-${version}.mp3`,
     peaks: `mixes/${slug}/peaks-${version}.json`
   };
-  const durationMs = await m.probeDurationMs(file);
+  const { durationMs, codec } = await m.probeAudio(file);
 
   let artwork: UploadItem | null = null;
   if (meta.artwork) {
@@ -156,8 +156,8 @@ export const publishMix = async (
   } else {
     const workDir = await mkdtemp(path.join(tmpdir(), `publish-${slug}-`));
     try {
-      log('  encoding AAC + MP3…');
-      const { m4a, mp3 } = await m.transcode(file, workDir);
+      log(codec === 'mp3' ? '  encoding AAC (keeping the source MP3)…' : '  encoding AAC + MP3…');
+      const { m4a, mp3 } = await m.transcode(file, workDir, { sourceCodec: codec });
       log('  generating waveform peaks…');
       const peaks = await m.generatePeaks(file, durationMs);
 

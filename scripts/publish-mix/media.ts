@@ -34,17 +34,30 @@ export const run = (command: string, args: string[], { spawnFn = defaultSpawn }:
     });
   });
 
-export const probeDurationMs = async (file: string, deps?: ProcessDeps): Promise<number> => {
+export interface AudioInfo {
+  durationMs: number;
+  /** ffprobe codec name of the first audio stream, e.g. "mp3" or "pcm_s24le" */
+  codec: string;
+}
+
+export const probeAudio = async (file: string, deps?: ProcessDeps): Promise<AudioInfo> => {
   const out = await run(
     'ffprobe',
-    ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file],
+    ['-v', 'error', '-select_streams', 'a:0', '-show_entries', 'stream=codec_name:format=duration', '-of', 'json', file],
     deps
   );
-  const seconds = Number.parseFloat(out.trim());
-  if (!Number.isFinite(seconds) || seconds <= 0) {
+  let parsed: { streams?: { codec_name?: string }[]; format?: { duration?: string } };
+  try {
+    parsed = JSON.parse(out);
+  } catch {
+    throw new Error(`Could not read ${file}`);
+  }
+  const seconds = Number.parseFloat(parsed.format?.duration ?? '');
+  const codec = parsed.streams?.[0]?.codec_name;
+  if (!Number.isFinite(seconds) || seconds <= 0 || !codec) {
     throw new Error(`Could not read duration of ${file}`);
   }
-  return Math.round(seconds * 1000);
+  return { durationMs: Math.round(seconds * 1000), codec };
 };
 
 export interface Renditions {
@@ -52,8 +65,15 @@ export interface Renditions {
   mp3: string;
 }
 
-/** Encodes the streaming (AAC in MP4, faststart for range-request seeking) and download (MP3) renditions. */
-export const transcode = async (input: string, outDir: string, deps?: ProcessDeps): Promise<Renditions> => {
+/**
+ * Encodes the streaming (AAC in MP4, faststart for range-request seeking) and download (MP3) renditions.
+ * An MP3 source is copied rather than re-encoded, which would only lose quality.
+ */
+export const transcode = async (
+  input: string,
+  outDir: string,
+  { sourceCodec, ...deps }: ProcessDeps & { sourceCodec?: string } = {}
+): Promise<Renditions> => {
   const m4a = path.join(outDir, 'audio.m4a');
   const mp3 = path.join(outDir, 'audio.mp3');
   await run(
@@ -61,7 +81,8 @@ export const transcode = async (input: string, outDir: string, deps?: ProcessDep
     ['-y', '-v', 'error', '-i', input, '-vn', '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', m4a],
     deps
   );
-  await run('ffmpeg', ['-y', '-v', 'error', '-i', input, '-vn', '-c:a', 'libmp3lame', '-b:a', '320k', mp3], deps);
+  const mp3Codec = sourceCodec === 'mp3' ? ['-c:a', 'copy'] : ['-c:a', 'libmp3lame', '-b:a', '320k'];
+  await run('ffmpeg', ['-y', '-v', 'error', '-i', input, '-map', '0:a:0', ...mp3Codec, mp3], deps);
   return { m4a, mp3 };
 };
 

@@ -3,7 +3,6 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createDeps, main, metaFromArgs, readManifest } from '../cli.ts';
-import { exportManifest, toManifest } from '../export-soundcloud.ts';
 import type { publishMix } from '../publish.ts';
 import { jsonResponse, mockFetch } from './helpers.ts';
 
@@ -123,29 +122,33 @@ describe('main', () => {
   });
 });
 
-describe('export-soundcloud', () => {
-  const data = {
-    tracks: [
-      { title: 'OK Sessions #1', description: 'd', genre: '', permalink_url: 'https://soundcloud.com/1', created_at: '2019-01-01' },
-      { title: 'OK Sessions #2', permalink_url: 'https://soundcloud.com/2' }
-    ]
-  };
+describe('main --from-soundcloud', () => {
+  const importer = () =>
+    vi.fn<typeof import('../import-soundcloud.ts').importFromSoundCloud>(async () => ({ published: [1], skipped: [], failed: [] }));
+  const scEnv = { ...env, SOUNDCLOUD_CLIENT_ID: 'id', SOUNDCLOUD_CLIENT_SECRET: 'secret' };
 
-  it('numbers tracks in playlist order', () => {
-    expect(toManifest(data)).toEqual([
-      { file: null, number: 1, title: 'OK Sessions #1', description: 'd', genre: null, recorded_at: null, published_at: '2019-01-01', soundcloud_url: 'https://soundcloud.com/1' },
-      { file: null, number: 2, title: 'OK Sessions #2', description: '', genre: null, recorded_at: null, published_at: null, soundcloud_url: 'https://soundcloud.com/2' }
-    ]);
+  it('imports the default playlist with options', async () => {
+    const run = importer();
+    const code = await main(['--from-soundcloud', '--only', '1,3-4', '--force', '--draft'], { env: scEnv, log: vi.fn(), importer: run });
+    expect(code).toBe(0);
+    const [options, deps] = run.mock.calls[0]!;
+    expect(options).toMatchObject({ playlistUrl: 'https://soundcloud.com/olliekav/sets/ok-sessions', force: true, draft: true });
+    expect([...options.only!]).toEqual([1, 3, 4]);
+    expect(typeof deps.soundcloud.downloadOriginal).toBe('function');
   });
 
-  it('writes the manifest', async () => {
-    const out = path.join(dir, 'm.json');
-    const fetchFn = mockFetch(() => jsonResponse(200, data));
-    expect(await exportManifest({ url: 'https://x', out, fetchFn })).toBe(2);
+  it('accepts another playlist and fails when any mix fails', async () => {
+    const run = vi.fn<typeof import('../import-soundcloud.ts').importFromSoundCloud>(async () => ({
+      published: [],
+      skipped: [],
+      failed: [{ number: 1, title: 'x', reason: 'y' }]
+    }));
+    const code = await main(['--from-soundcloud', 'https://soundcloud.com/a/sets/b', '--dry-run'], { env: scEnv, log: vi.fn(), importer: run });
+    expect(code).toBe(1);
+    expect(run.mock.calls[0]![0]).toMatchObject({ playlistUrl: 'https://soundcloud.com/a/sets/b', dryRun: true });
   });
 
-  it('fails on HTTP errors', async () => {
-    const fetchFn = mockFetch(() => jsonResponse(500, {}));
-    await expect(exportManifest({ url: 'https://x', out: path.join(dir, 'm.json'), fetchFn })).rejects.toThrow('500');
+  it('needs SoundCloud credentials', async () => {
+    await expect(main(['--from-soundcloud'], { env, log: vi.fn(), importer: importer() })).rejects.toThrow('Missing SOUNDCLOUD_CLIENT_ID');
   });
 });

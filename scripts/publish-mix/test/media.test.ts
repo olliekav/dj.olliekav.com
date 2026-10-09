@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -7,7 +7,7 @@ import {
   createPeakReducer,
   generatePeaks,
   PEAK_COUNT,
-  probeDurationMs,
+  probeAudio,
   run,
   sha256,
   sha256File,
@@ -61,15 +61,20 @@ describe('run', () => {
   });
 });
 
-describe('probeDurationMs', () => {
-  it('parses ffprobe seconds', async () => {
-    const { spawnFn } = fakeSpawn({ ffprobe: { stdout: '3725.5\n' } });
-    expect(await probeDurationMs('mix.wav', { spawnFn })).toBe(3_725_500);
+describe('probeAudio', () => {
+  const probe = (stdout: string) => fakeSpawn({ ffprobe: { stdout } });
+
+  it('reads duration and codec', async () => {
+    const { spawnFn } = probe(JSON.stringify({ streams: [{ codec_name: 'mp3' }], format: { duration: '3725.5' } }));
+    expect(await probeAudio('mix.mp3', { spawnFn })).toEqual({ durationMs: 3_725_500, codec: 'mp3' });
   });
 
-  it('rejects unreadable durations', async () => {
-    const { spawnFn } = fakeSpawn({ ffprobe: { stdout: 'N/A' } });
-    await expect(probeDurationMs('mix.wav', { spawnFn })).rejects.toThrow('Could not read duration');
+  it.each([
+    ['unreadable durations', JSON.stringify({ streams: [{ codec_name: 'mp3' }], format: { duration: 'N/A' } })],
+    ['files without audio', JSON.stringify({ streams: [], format: { duration: '10' } })],
+    ['invalid output', 'nope']
+  ])('rejects %s', async (_label, stdout) => {
+    await expect(probeAudio('mix.wav', { spawnFn: probe(stdout).spawnFn })).rejects.toThrow('Could not read');
   });
 });
 
@@ -80,6 +85,13 @@ describe('transcode', () => {
     expect(out).toEqual({ m4a: '/tmp/x/audio.m4a', mp3: '/tmp/x/audio.mp3' });
     expect(calls[0]).toEqual(expect.arrayContaining(['aac', '256k', '+faststart', '/tmp/x/audio.m4a']));
     expect(calls[1]).toEqual(expect.arrayContaining(['libmp3lame', '320k', '/tmp/x/audio.mp3']));
+  });
+
+  it('copies MP3 sources instead of re-encoding', async () => {
+    const { spawnFn, calls } = fakeSpawn();
+    await transcode('in.mp3', '/tmp/x', { spawnFn, sourceCodec: 'mp3' });
+    expect(calls[1]).toEqual(expect.arrayContaining(['-map', '0:a:0', '-c:a', 'copy', '/tmp/x/audio.mp3']));
+    expect(calls[1]).not.toContain('libmp3lame');
   });
 });
 
@@ -140,12 +152,24 @@ describe.runIf(hasFfmpeg)('with real ffmpeg', () => {
   afterAll(() => rm(dir, { recursive: true, force: true }));
 
   it('probes, transcodes and generates peaks', async () => {
-    const duration = await probeDurationMs(wav);
+    const { durationMs: duration, codec } = await probeAudio(wav);
     expect(duration).toBe(3000);
+    expect(codec).toMatch(/^pcm_/);
 
-    const { m4a, mp3 } = await transcode(wav, dir);
-    expect(await probeDurationMs(m4a)).toBeGreaterThan(2900);
-    expect(await probeDurationMs(mp3)).toBeGreaterThan(2900);
+    const { m4a, mp3 } = await transcode(wav, dir, { sourceCodec: codec });
+    expect(await probeAudio(m4a)).toMatchObject({ codec: 'aac' });
+    expect(await probeAudio(mp3)).toMatchObject({ codec: 'mp3' });
+
+    // An MP3 source with cover art is copied: same audio, no image stream
+    const sourceMp3 = path.join(dir, 'source.mp3');
+    const cover = path.join(dir, 'cover.png');
+    execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'lavfi', '-i', 'color=c=red:s=16x16', '-frames:v', '1', cover]);
+    execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', mp3, '-i', cover, '-map', '0:a', '-map', '1:v', '-c:a', 'copy', '-c:v', 'png', '-disposition:v', 'attached_pic', sourceMp3]);
+    const copyDir = path.join(dir, 'copy');
+    await mkdir(copyDir);
+    const copied = await transcode(sourceMp3, copyDir, { sourceCodec: 'mp3' });
+    expect((await probeAudio(copied.mp3)).durationMs).toBe((await probeAudio(sourceMp3)).durationMs);
+    expect(await run('ffprobe', ['-v', 'error', '-show_entries', 'stream=codec_name', '-of', 'csv=p=0', copied.mp3])).toBe('mp3\n');
 
     const { peaks } = await generatePeaks(wav, duration);
     expect(peaks).toHaveLength(PEAK_COUNT);

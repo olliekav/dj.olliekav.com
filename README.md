@@ -82,17 +82,14 @@ npm run publish-mix -- ~/Music/ok-sessions-132.wav --number 132 --genre House
 
 This encodes an AAC (256k, faststart) stream and a 320k MP3 download, generates waveform peaks, uploads them to R2 under content-hashed keys, and registers the mix. Re-running with the same master skips the encode. Themes come from `shared/mix-themes.json`; for a new session add an entry there or pass `--bg`/`--fg`/`--dark`. Use `--draft` to upload without publishing.
 
-### Backfilling from SoundCloud
+### Importing from SoundCloud
+
+The original uploads in the OK Sessions playlist can be imported directly, numbered by their playlist position as on the old site. This uses SoundCloud's official download endpoint, so **downloads must be enabled** on each track (you can turn them off again afterwards). Add `SOUNDCLOUD_CLIENT_ID` and `SOUNDCLOUD_CLIENT_SECRET` to `scripts/publish-mix/.env`, then:
 
 ```bash
-npm run export-soundcloud-manifest -- scripts/publish-mix/manifest.json
+npm run publish-mix -- --from-soundcloud --dry-run          # list what would be imported
+npm run publish-mix -- --from-soundcloud --only 1 --draft   # try one
+npm run publish-mix -- --from-soundcloud                    # everything
 ```
 
-This writes a manifest with each mix's title, description and SoundCloud link. Fill in each `file` with the path to its master (relative to the manifest), then:
-
-```bash
-npm run publish-mix -- --batch scripts/publish-mix/manifest.json --dry-run
-npm run publish-mix -- --batch scripts/publish-mix/manifest.json
-```
-
-The SoundCloud export only works while the old `/api/soundcloud` function is still deployed, so run it before deploying this version of the site.
+Titles, descriptions, genres, upload dates and SoundCloud links come from SoundCloud. MP3 originals are kept as the download file rather than re-encoded. Re-running skips mixes already imported from the same track, so an interrupted import can simply be restarted; `--force` re-imports, and `--only 3,10-12` limits it to specific mixes. Failures are listed at the end and don't stop the run.
