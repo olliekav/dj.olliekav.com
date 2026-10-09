@@ -1,0 +1,89 @@
+name: OKSessions
+options:
+  bundleIdPrefix: com.olliekav
+  deploymentTarget:
+    iOS: "26.1"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # Set your team in Xcode (Signing & Capabilities) to run on a device
+    DEVELOPMENT_TEAM: ""
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+packages:
+  OKSessionsKit:
+    path: Packages/OKSessionsKit
+targets:
+  OKSessions:
+    type: application
+    platform: iOS
+    sources:
+      - path: OKSessions
+      # The API fixture doubles as the stub data for UI tests
+      - path: ../../shared/fixtures/mixes.json
+        group: OKSessions/Support
+        buildPhase: resources
+    dependencies:
+      - package: OKSessionsKit
+        product: MixKit
+      - package: OKSessionsKit
+        product: PlayerKit
+    entitlements:
+      path: OKSessions/OKSessions.entitlements
+      properties:
+        # Requested from Apple; needed to run CarPlay on a device
+        com.apple.developer.carplay-audio: true
+    info:
+      path: OKSessions/Info.plist
+      properties:
+        CFBundleDisplayName: OK Sessions
+        LSApplicationCategoryType: public.app-category.music
+        ITSAppUsesNonExemptEncryption: false
+        UILaunchScreen:
+          UIColorName: ""
+        UIBackgroundModes: [audio]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            CPTemplateApplicationSceneSessionRoleApplication:
+              - UISceneConfigurationName: CarPlay
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
+        OKAPIBaseURL: $(OK_API_BASE_URL)
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.olliekav.oksessions
+        OK_API_BASE_URL: https://dj.olliekav.com
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_STRICT_CONCURRENCY: complete
+  OKSessionsUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [OKSessionsUITests]
+    dependencies:
+      - target: OKSessions
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.olliekav.oksessions.uitests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  OKSessions:
+    build:
+      targets:
+        OKSessions: all
+        OKSessionsUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      coverageTargets: [OKSessions]
+      targets:
+        - OKSessionsUITests
+        - package: OKSessionsKit/MixKitTests
+        - package: OKSessionsKit/PlayerKitTests

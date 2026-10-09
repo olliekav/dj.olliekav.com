@@ -33,3 +33,10 @@ dist-ssr
 coverage
 .env
 scripts/mix-tools/manifest.json
+
+# iOS
+apps/ios/build
+apps/ios/Packages/*/.build
+apps/ios/Packages/*/.swiftpm
+xcuserdata/
+*.xcresult
