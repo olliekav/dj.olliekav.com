@@ -47,3 +47,30 @@ describe('navigation', () => {
     expect([hasPrev(last), hasNext(last)]).toEqual([true, false]);
   });
 });
+
+describe('unlockMedia', () => {
+  it('plays muted and pauses straight away, restoring the mute state', async () => {
+    const { unlockMedia } = await import('../player-context');
+    const calls: string[] = [];
+    const media = {
+      paused: true,
+      muted: false,
+      play: () => {
+        calls.push(`play muted=${media.muted}`);
+        return Promise.reject(new Error('no source'));
+      },
+      pause: () => calls.push('pause')
+    };
+    unlockMedia(media as unknown as HTMLMediaElement);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(calls).toEqual(['play muted=true', 'pause']);
+    expect(media.muted).toBe(false);
+  });
+
+  it('leaves playing or missing elements alone', async () => {
+    const { unlockMedia } = await import('../player-context');
+    const media = { paused: false, play: () => { throw new Error('should not play'); } };
+    expect(() => unlockMedia(media as unknown as HTMLMediaElement)).not.toThrow();
+    expect(() => unlockMedia(null)).not.toThrow();
+  });
+});

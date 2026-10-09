@@ -10,6 +10,26 @@ import { hasNext, hasPrev, initialState, playerReducer, type PlayerState } from 
 
 const FALLBACK_ACCENT = '#CA46A7';
 
+/**
+ * Safari only lets media start from a user gesture, but the stream URL arrives
+ * after an async request. Calling play() on the element during the click (muted,
+ * then paused straight away) marks it as user-started, so the later play() works.
+ */
+export const unlockMedia = (media: HTMLMediaElement | null | undefined) => {
+  if (!media || !media.paused) {
+    return;
+  }
+  const muted = media.muted;
+  media.muted = true;
+  media
+    .play()
+    .catch(() => {})
+    .finally(() => {
+      media.pause();
+      media.muted = muted;
+    });
+};
+
 export interface PlayerContextValue {
   state: PlayerState;
   currentMix: Mix | undefined;
@@ -168,11 +188,23 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
       playAt: index => {
         if (index === stateRef.current.activeIndex) {
           wavesurfer?.play().catch(() => {});
+        } else {
+          unlockMedia(wavesurfer?.getMediaElement());
         }
         dispatch({ type: 'select', index });
       },
-      next: () => hasNext(stateRef.current) && dispatch({ type: 'select', index: stateRef.current.activeIndex + 1 }),
-      prev: () => hasPrev(stateRef.current) && dispatch({ type: 'select', index: stateRef.current.activeIndex - 1 }),
+      next: () => {
+        if (hasNext(stateRef.current)) {
+          unlockMedia(wavesurfer?.getMediaElement());
+          dispatch({ type: 'select', index: stateRef.current.activeIndex + 1 });
+        }
+      },
+      prev: () => {
+        if (hasPrev(stateRef.current)) {
+          unlockMedia(wavesurfer?.getMediaElement());
+          dispatch({ type: 'select', index: stateRef.current.activeIndex - 1 });
+        }
+      },
       togglePlay: () => {
         wavesurfer?.playPause().catch(() => {});
       },
