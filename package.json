@@ -16,7 +16,7 @@
 		"react-device-detect": "^2.2.3",
 		"react-modal": "^3.16.3",
 		"react-process-string": "^1.2.0",
-		"wavesurfer.js": "^7.12.12"
+		"wavesurfer.js": "^8.0.2"
 	},
 	"devDependencies": {
 		"@netlify/vite-plugin": "^3.0.1",

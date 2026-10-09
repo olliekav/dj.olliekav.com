@@ -506,7 +506,12 @@ const WaveformProgress = props => {
       const streamUrl = res.url;
 
       if (wavesurfer) {
-        wavesurfer.load(streamUrl, state.peaks);
+        wavesurfer.load(streamUrl, state.peaks).catch((error) => {
+          // A newer load superseded this one
+          if (error.name !== 'AbortError') {
+            console.log('[Soundcloud] -  Error loading stream', error);
+          }
+        });
         setColorScheme();
         setWaveProgressColor();
         wavesurfer.on('ready', () => {
