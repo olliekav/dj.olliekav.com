@@ -11,7 +11,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net; font-src https://use.typekit.net; img-src 'self' data: https://p.typekit.net https://*.sndcdn.com; connect-src 'self' https://*.sndcdn.com https://*.soundcloud.cloud https://p.typekit.net; media-src 'self' https://*.sndcdn.com https://*.soundcloud.cloud blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net; font-src https://use.typekit.net; img-src 'self' data: https://p.typekit.net https://*.sndcdn.com; connect-src 'self' https://*.sndcdn.com https://*.soundcloud.cloud https://p.typekit.net; media-src 'self' https://*.sndcdn.com https://*.soundcloud.cloud blob:; frame-src https://app.netlify.com; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Content-Type-Options = "nosniff"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
