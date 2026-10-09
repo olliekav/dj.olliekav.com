@@ -8,14 +8,20 @@ export interface PlayerState {
   isReady: boolean;
   isPlaying: boolean;
   volume: number;
-  /** Start playback once ready (set when the listener picks a mix) */
+  /**
+   * The listener has asked to play (picked a mix or pressed play). Until then only the
+   * waveform loads: each stream URL counts towards SoundCloud's daily limit.
+   */
   autoplay: boolean;
+  /** Bumped on every request to play, so a failed stream can be retried */
+  playRequest: number;
 }
 
 export type PlayerAction =
   | { type: 'loaded'; mixes: Mix[] }
   | { type: 'failed' }
   | { type: 'select'; index: number }
+  | { type: 'loading' }
   | { type: 'ready' }
   | { type: 'playing'; isPlaying: boolean }
   | { type: 'volume'; volume: number };
@@ -27,7 +33,8 @@ export const initialState: PlayerState = {
   isReady: false,
   isPlaying: false,
   volume: 0.5,
-  autoplay: false
+  autoplay: false,
+  playRequest: 0
 };
 
 export const playerReducer = (state: PlayerState, action: PlayerAction): PlayerState => {
@@ -41,10 +48,18 @@ export const playerReducer = (state: PlayerState, action: PlayerAction): PlayerS
         return state;
       }
       if (action.index === state.activeIndex) {
-        // Already loaded; just play it
-        return { ...state, autoplay: true };
+        return { ...state, autoplay: true, playRequest: state.playRequest + 1 };
       }
-      return { ...state, activeIndex: action.index, isReady: false, isPlaying: false, autoplay: true };
+      return {
+        ...state,
+        activeIndex: action.index,
+        isReady: false,
+        isPlaying: false,
+        autoplay: true,
+        playRequest: state.playRequest + 1
+      };
+    case 'loading':
+      return { ...state, isReady: false };
     case 'ready':
       return { ...state, isReady: true };
     case 'playing':

@@ -22,9 +22,11 @@ describe('playerReducer', () => {
     });
   });
 
-  it('keeps the loaded audio when the current mix is selected again', () => {
+  it('keeps the loaded audio when the current mix is selected again, counting the request', () => {
     const ready: PlayerState = { ...loaded, isReady: true };
-    expect(playerReducer(ready, { type: 'select', index: 0 })).toMatchObject({ isReady: true, autoplay: true });
+    const again = playerReducer(ready, { type: 'select', index: 0 });
+    expect(again).toMatchObject({ isReady: true, autoplay: true, playRequest: 1 });
+    expect(playerReducer(again, { type: 'select', index: 0 }).playRequest).toBe(2);
   });
 
   it('ignores out of range selections', () => {
@@ -34,6 +36,7 @@ describe('playerReducer', () => {
 
   it('tracks readiness, playback and clamped volume', () => {
     expect(playerReducer(loaded, { type: 'ready' }).isReady).toBe(true);
+    expect(playerReducer({ ...loaded, isReady: true }, { type: 'loading' }).isReady).toBe(false);
     expect(playerReducer(loaded, { type: 'playing', isPlaying: true }).isPlaying).toBe(true);
     expect(playerReducer(loaded, { type: 'volume', volume: 2 }).volume).toBe(1);
     expect(playerReducer(loaded, { type: 'volume', volume: -1 }).volume).toBe(0);

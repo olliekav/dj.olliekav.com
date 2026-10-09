@@ -124,7 +124,11 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
     };
   }, [wavesurfer]);
 
-  // Load the current mix: SoundCloud's waveform, and a fresh stream URL from /api/stream.
+  // The stream currently loaded into the media element, if any
+  const streamFor = useRef<string | null>(null);
+
+  // Load the current mix's waveform, and once the listener asks to play, a fresh
+  // stream URL from /api/stream (each counts towards SoundCloud's daily limit).
   // SoundCloud streams are HLS: played natively where supported, otherwise via hls.js.
   useEffect(() => {
     if (!wavesurfer || !currentMix) {
@@ -132,25 +136,34 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
     }
     let cancelled = false;
     let hls: Hls | undefined;
+    const wantsStream = state.autoplay;
     wavesurfer.setOptions({ progressColor: currentMix.theme.accent });
+    dispatch({ type: 'loading' });
 
     (async () => {
       const duration = currentMix.duration_ms / 1000;
       const [peaks, stream] = await Promise.all([
         fetchPeaks(currentMix.waveform_url).catch(error => {
-          // Without peaks wavesurfer shows a flat line until playback
+          // Without peaks wavesurfer shows a flat line
           console.warn('Error fetching waveform', error);
           return undefined;
         }),
-        fetchStream(currentMix)
+        wantsStream ? fetchStream(currentMix) : undefined
       ]);
       if (cancelled) {
         return;
       }
-      const media = wavesurfer.getMediaElement();
-      // Safari and Chrome play HLS natively; Firefox needs hls.js (loaded only then)
       // Without peaks wavesurfer would fetch and decode the URL itself, which fails for HLS
       const channels = peaks ?? [[0]];
+      const media = wavesurfer.getMediaElement();
+      if (!stream) {
+        // Just the waveform, ready for the listener to press play
+        streamFor.current = null;
+        await wavesurfer.load('', channels, duration);
+        return;
+      }
+      streamFor.current = currentMix.urn;
+      // Safari and Chrome play HLS natively; Firefox needs hls.js (loaded only then)
       if (!media || media.canPlayType('application/vnd.apple.mpegurl')) {
         await wavesurfer.load(stream.url, channels, duration);
         return;
@@ -174,7 +187,7 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
       cancelled = true;
       hls?.destroy();
     };
-  }, [wavesurfer, currentMix]);
+  }, [wavesurfer, currentMix, state.autoplay, state.playRequest]);
 
   // Start playback when the listener chose this mix. Browsers may block this
   // outside a user gesture (e.g. iOS Safari after an async load); the play
@@ -192,11 +205,13 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
       wavesurfer,
       attachWaveform,
       playAt: index => {
-        if (index === stateRef.current.activeIndex) {
+        const { activeIndex, mixes } = stateRef.current;
+        if (index === activeIndex && streamFor.current === mixes[index]?.urn) {
           wavesurfer?.play().catch(() => {});
-        } else {
-          unlockMedia(wavesurfer?.getMediaElement());
+          return;
         }
+        // Keep Safari's permission from this click for when the stream arrives
+        unlockMedia(wavesurfer?.getMediaElement());
         dispatch({ type: 'select', index });
       },
       next: () => {
@@ -212,6 +227,13 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
         }
       },
       togglePlay: () => {
+        const { activeIndex, mixes } = stateRef.current;
+        if (streamFor.current !== mixes[activeIndex]?.urn) {
+          // No stream yet: fetch one, keeping Safari's permission from this click
+          unlockMedia(wavesurfer?.getMediaElement());
+          dispatch({ type: 'select', index: activeIndex });
+          return;
+        }
         wavesurfer?.playPause().catch(() => {});
       },
       setVolume: volume => {
