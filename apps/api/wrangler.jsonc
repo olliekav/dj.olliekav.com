@@ -15,8 +15,7 @@
     {
       "binding": "DB",
       "database_name": "ok-sessions",
-      // Replace with the id printed by `wrangler d1 create ok-sessions`
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "bac23b74-9fa3-4900-90c2-a7f6ad659f82",
       "migrations_dir": "migrations"
     }
   ],
