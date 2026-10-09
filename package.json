@@ -5,21 +5,24 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"publish-mix": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/cli.ts",
 		"test": "vitest run",
 		"lint": "eslint .",
 		"typecheck": "tsc --noEmit",
-		"themes": "node scripts/publish-mix/themes-cli.ts",
-		"artwork": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/artwork-cli.ts",
-		"soundcloud-artwork": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/soundcloud-artwork-cli.ts"
+		"themes": "node scripts/mix-tools/themes-cli.ts",
+		"artwork": "node --env-file-if-exists=scripts/mix-tools/.env scripts/mix-tools/artwork-cli.ts",
+		"soundcloud-artwork": "node --env-file-if-exists=scripts/mix-tools/.env scripts/mix-tools/soundcloud-artwork-cli.ts"
 	},
 	"dependencies": {
+		"@netlify/blobs": "^11.1.4",
+		"hls.js": "^1.7.3",
 		"preact": "^11.0.1",
 		"preact-iso": "^2.12.2",
 		"preact-render-to-string": "^6.8.0",
 		"wavesurfer.js": "^8.0.2"
 	},
 	"devDependencies": {
+		"@netlify/functions": "^6.0.2",
+		"@netlify/vite-plugin": "^3.0.1",
 		"@preact/preset-vite": "^2.10.6",
 		"eslint": "^9.39.5",
 		"eslint-config-preact": "^2.0.0",

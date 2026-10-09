@@ -1,44 +1,53 @@
-// Response types for the OK Sessions API, shared by the Worker and the website.
+// Response types for dj.olliekav.com/api, used by the website, functions and native apps.
 // shared/fixtures/mixes.json is a sample of MixList.
 
 export interface Theme {
   background: string;
   foreground: string;
   accent: string;
-  /** The background is dark, so the foreground is used for accents */
+  /** The accent is the foreground (the background is the darker, plainer colour) */
   dark: boolean;
   gradient?: { angle: number; stops: string[] };
 }
 
+/** An OK Sessions mix, from the SoundCloud playlist plus its colour theme. */
 export interface Mix {
   id: number;
-  slug: string;
+  /** SoundCloud track URN, used to request a stream */
+  urn: string;
+  /** Position in the playlist, which is the session number */
   number: number;
+  slug: string;
   title: string;
   description: string;
   genre: string | null;
-  recorded_at: string | null;
-  published_at: string | null;
   duration_ms: number;
-  audio: { m4a: string; mp3: string | null };
-  peaks_url: string | null;
+  published_at: string | null;
+  /** 500×500 artwork */
   artwork_url: string | null;
+  /** Full-size artwork as uploaded */
+  artwork_original_url: string | null;
+  /** SoundCloud waveform JSON ({ width, height, samples }) */
+  waveform_url: string | null;
+  /** The track on SoundCloud (attribution link) */
+  permalink_url: string;
+  playback_count: number | null;
   theme: Theme;
-  soundcloud_url: string | null;
-  share_url: string;
-  access: 'free' | 'paid';
-  updated_at: string;
 }
 
 export interface MixList {
   mixes: Mix[];
 }
 
-/** Body of shared/peaks: normalised 0–1 amplitudes */
-export interface Peaks {
-  version: 1;
-  peaks: number[];
+/** Response of /api/stream: a short-lived HLS URL (AAC 160k where available) */
+export interface Stream {
+  url: string;
+  format: 'hls_aac_160' | 'hls_mp3_128';
 }
 
-export const platforms = ['web', 'ios', 'android', 'carplay', 'android-auto'] as const;
-export type Platform = (typeof platforms)[number];
+/** SoundCloud's waveform JSON */
+export interface Waveform {
+  width: number;
+  height: number;
+  samples: number[];
+}

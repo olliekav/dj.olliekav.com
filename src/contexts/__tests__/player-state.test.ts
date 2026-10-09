@@ -3,7 +3,7 @@ import type { Mix } from '../../../shared/api-types';
 import fixture from '../../../shared/fixtures/mixes.json';
 import { hasNext, hasPrev, initialState, playerReducer, type PlayerState } from '../player-state';
 
-const mixes = fixture.mixes as Mix[];
+const mixes: Mix[] = [...fixture.mixes, { ...fixture.mixes[0]!, id: 103, number: 3 }];
 const loaded = playerReducer(initialState, { type: 'loaded', mixes });
 
 describe('playerReducer', () => {

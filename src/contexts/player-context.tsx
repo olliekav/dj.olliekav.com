@@ -1,15 +1,13 @@
 import { createContext, type ComponentChildren } from 'preact';
 import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'preact/hooks';
+import type Hls from 'hls.js';
 import WaveSurfer from 'wavesurfer.js';
 import type { Mix } from '../../shared/api-types';
 import Loader from '../components/loader';
 import Player from '../components/player';
-import { fetchMixes, fetchPeaks, reportPlay } from '../utilities/api';
-import { createPlayTracker } from '../utilities/play-tracker';
+import { fetchMixes, fetchPeaks, fetchStream } from '../utilities/api';
 import { hasNext, hasPrev, initialState, playerReducer, type PlayerState } from './player-state';
 
-// Seconds of listening before a play is counted
-const PLAY_THRESHOLD = 30;
 const FALLBACK_ACCENT = '#CA46A7';
 
 export interface PlayerContextValue {
@@ -102,37 +100,53 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
     };
   }, [wavesurfer]);
 
-  // Load the current mix's audio and peaks
+  // Load the current mix: SoundCloud's waveform, and a fresh stream URL from /api/stream.
+  // SoundCloud streams are HLS: played natively where supported, otherwise via hls.js.
   useEffect(() => {
     if (!wavesurfer || !currentMix) {
       return;
     }
     let cancelled = false;
+    let hls: Hls | undefined;
     wavesurfer.setOptions({ progressColor: currentMix.theme.accent });
 
     (async () => {
-      let peaks: number[][] | undefined;
-      try {
-        peaks = await fetchPeaks(currentMix.peaks_url);
-      } catch (error) {
-        // Without peaks wavesurfer decodes the waveform from the audio itself
-        console.warn('Error fetching peaks', error);
-      }
+      const duration = currentMix.duration_ms / 1000;
+      const [peaks, stream] = await Promise.all([
+        fetchPeaks(currentMix.waveform_url).catch(error => {
+          // Without peaks wavesurfer shows a flat line until playback
+          console.warn('Error fetching waveform', error);
+          return undefined;
+        }),
+        fetchStream(currentMix)
+      ]);
       if (cancelled) {
         return;
       }
-      try {
-        await wavesurfer.load(currentMix.audio.m4a, peaks, currentMix.duration_ms / 1000);
-      } catch (error) {
-        // A newer load (or teardown) superseded this one
-        if (!cancelled && (error as Error).name !== 'AbortError') {
-          console.error('Error loading audio', error);
-        }
+      const media = wavesurfer.getMediaElement();
+      // Safari and Chrome play HLS natively; Firefox needs hls.js (loaded only then)
+      if (!media || media.canPlayType('application/vnd.apple.mpegurl')) {
+        await wavesurfer.load(stream.url, peaks, duration);
+        return;
       }
-    })();
+      await wavesurfer.load('', peaks ?? [[0]], duration);
+      const { default: HlsJs } = await import('hls.js');
+      if (cancelled) {
+        return;
+      }
+      hls = new HlsJs();
+      hls.loadSource(stream.url);
+      hls.attachMedia(media);
+    })().catch(error => {
+      // A newer load (or teardown) superseded this one
+      if (!cancelled && (error as Error).name !== 'AbortError') {
+        console.error('Error loading audio', error);
+      }
+    });
 
     return () => {
       cancelled = true;
+      hls?.destroy();
     };
   }, [wavesurfer, currentMix]);
 
@@ -144,21 +158,6 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
       wavesurfer.play().catch(() => {});
     }
   }, [wavesurfer, state.isReady, state.autoplay]);
-
-  // Count a play once per mix after PLAY_THRESHOLD seconds of listening, and completions
-  useEffect(() => {
-    if (!wavesurfer || !currentMix) {
-      return;
-    }
-    const { slug } = currentMix;
-    const tracker = createPlayTracker(PLAY_THRESHOLD, () => reportPlay(slug));
-    const unsubscribers = [
-      wavesurfer.on('timeupdate', time => tracker.time(time)),
-      wavesurfer.on('seeking', () => tracker.seek()),
-      wavesurfer.on('finish', () => reportPlay(slug, { completed: true }))
-    ];
-    return () => unsubscribers.forEach(unsubscribe => unsubscribe());
-  }, [wavesurfer, currentMix]);
 
   const value = useMemo<PlayerContextValue>(
     () => ({

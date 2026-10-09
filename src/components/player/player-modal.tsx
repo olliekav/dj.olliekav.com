@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
-import { reportDownload } from '../../utilities/api';
 import { linkify } from '../../utilities/format';
 import styles from './style.module.scss';
 
@@ -44,20 +43,11 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
             )
           )}
         </div>
-        {currentMix.audio.mp3 &&
-          <p class={styles['modal-url']}>
-            <a href={currentMix.audio.mp3} download onClick={() => reportDownload(currentMix.slug)}>
-              Download MP3
-            </a>
-          </p>
-        }
-        {currentMix.soundcloud_url &&
-          <p class={styles['modal-url']}>
-            <a href={currentMix.soundcloud_url} target="_blank" rel="noopener noreferrer">
-              Also on SoundCloud
-            </a>
-          </p>
-        }
+        <p class={styles['modal-url']}>
+          <a href={currentMix.permalink_url} target="_blank" rel="noopener noreferrer">
+            Listen on SoundCloud
+          </a>
+        </p>
         <button
           onClick={onClose}
           class={styles['modal-close']}

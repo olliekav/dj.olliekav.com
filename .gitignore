@@ -30,8 +30,6 @@ dist-ssr
 .claude/
 
 # Platform
-.wrangler
 coverage
 .env
-.dev.vars
-scripts/publish-mix/manifest.json
+scripts/mix-tools/manifest.json

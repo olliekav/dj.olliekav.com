@@ -1,3 +1,0 @@
-# Copy to .dev.vars for `npm run dev`
-ADMIN_TOKEN=local-dev-token
-ALLOWED_ORIGINS=https://dj.olliekav.com,https://localhost:5173

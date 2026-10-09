@@ -22,5 +22,5 @@
 			"react-dom": ["./node_modules/preact/compat/"]
 		}
 	},
-	"include": ["src", "shared", "vite.config.ts", "vitest.config.ts"]
+	"include": ["src", "shared", "netlify", "vite.config.ts", "vitest.config.ts"]
 }

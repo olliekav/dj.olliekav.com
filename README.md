@@ -2,119 +2,59 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/221a1872-d36b-48af-9ceb-f4a73d37d3da/deploy-status)](https://app.netlify.com/sites/djolliekav/deploys)
 
-This is a showcase site for my OK Sessions DJ mixes. Mixes are self-hosted: audio lives in Cloudflare R2 and the catalogue and play stats are served by a Cloudflare Worker. The website and the native apps all read from that API. Mixes can still be published to [SoundCloud](https://soundcloud.com/olliekav/sets/ok-sessions) separately; each mix links there.
+This is a showcase site for my [OK Sessions DJ mixes](https://soundcloud.com/olliekav/sets/ok-sessions). SoundCloud is the source of truth: the mixes, their order, waveforms and audio all come from the OK Sessions playlist. This repo adds each mix's colour theme and a small API that the website and native apps share.
 
 ## Repo layout
 
 | Path | What |
 |---|---|
-| `src/` | Website (Preact + Vite, hosted on Netlify) |
-| `apps/api/` | API Worker (Hono + D1) at `api.olliekav.com` |
-| `scripts/publish-mix/` | CLI that encodes a master, uploads to R2 and registers the mix |
-| `shared/mix-themes.json` | Colour theme per session, used when publishing |
-| `shared/fixtures/` | API response fixtures shared by every test suite |
-
-## Tech stack
-- [Preact](https://preactjs.com/) + [Wavesurfer](https://wavesurfer-js.org/) for the site
-- [Cloudflare Workers](https://developers.cloudflare.com/workers/), [D1](https://developers.cloudflare.com/d1/) and [R2](https://developers.cloudflare.com/r2/) for the API and media
-- [Netlify](https://www.netlify.com/) for hosting the site
+| `src/` | Website (Preact + Vite + Wavesurfer) |
+| `netlify/` | API functions: `/api/mixes` and `/api/stream` |
+| `shared/mix-themes.json` | Colour theme per session |
+| `shared/api-types.ts`, `shared/fixtures/` | API response types and fixtures shared by every test suite |
+| `scripts/mix-tools/` | Colour, artwork and SoundCloud tools |
 
 ## Website
 
 ```bash
 npm install
-npm run dev     # https://localhost:5173, uses https://api.olliekav.com
+npm run dev     # https://localhost:5173, with the API functions running locally
 npm test
+npm run typecheck && npm run lint
 ```
 
-Set `VITE_API_URL=http://localhost:8787` to use a local API.
+The functions need `SOUNDCLOUD_CLIENT_ID` and `SOUNDCLOUD_CLIENT_SECRET`: set them in Netlify, and in a root `.env` for local development.
 
-## API (`apps/api`)
+## API
 
-```bash
-cd apps/api
-npm install
-cp .dev.vars.example .dev.vars
-npm run db:migrate:local
-npm run dev     # http://localhost:8787
-npm test        # Vitest inside the Workers runtime, with coverage thresholds via `npm run coverage`
-```
+| Path | Returns |
+|---|---|
+| `GET /api/mixes` | The playlist as `{ mixes: Mix[] }`, numbered by position, with each mix's theme, SoundCloud waveform and artwork URLs. Cached on Netlify's CDN for 5 minutes |
+| `GET /api/stream?urn=soundcloud:tracks:<id>` | `{ url, format }`: a short-lived signed HLS URL (AAC 160k). Only for tracks in the playlist; never cached; rate limited per IP |
 
-Endpoints:
+Only the functions talk to SoundCloud, so the app credentials never reach clients. The app token is shared between function instances through Netlify Blobs, since SoundCloud caps token requests at 50 per 12 hours. Each `/api/stream` call counts towards SoundCloud's limit of 15,000 stream requests per day, which is why streams are resolved only when playback starts.
 
-| Method | Path | Notes |
-|---|---|---|
-| GET | `/v1/mixes` | Published mixes, newest first. Edge cached (5 min), ETag |
-| GET | `/v1/mixes/:slug` | One published mix |
-| POST | `/v1/mixes/:slug/plays` | `{ device_id, platform, completed? }`; one per device per mix per 30 min |
-| POST | `/v1/mixes/:slug/downloads` | `{ device_id, platform }`; one per device per mix per day |
-| GET | `/v1/admin/mixes` | Includes drafts. Bearer `ADMIN_TOKEN` |
-| PUT | `/v1/admin/mixes/:slug` | Create or update a mix |
-| GET | `/v1/admin/stats?from=&to=` | Plays, completions and downloads per mix and platform |
+SoundCloud's API terms apply to the apps: credit SoundCloud and link to each track, no offline listening or downloads, and no ads or paid unlocks around the mixes.
 
-Event endpoints are rate limited per IP and device, and only accept browser requests from `ALLOWED_ORIGINS`.
+## Colours and artwork
 
-### First deploy
+Each mix has a two-colour theme in `shared/mix-themes.json`, used by the website, the apps and the artwork: the OK logo and `#<number>` in the foreground colour on the background. Rendering artwork needs FF DIN Round Pro Black (licensed, not committed). Copy `scripts/mix-tools/.env.example` to `scripts/mix-tools/.env` and fill it in, then `cd scripts/mix-tools && npm install`.
 
 ```bash
-cd apps/api
-npx wrangler login
-npx wrangler d1 create ok-sessions      # copy the database_id into wrangler.jsonc
-npm run db:migrate:remote
-npx wrangler secret put ADMIN_TOKEN      # e.g. `openssl rand -hex 32`
-npm run deploy
-```
-
-Then in the Cloudflare dashboard:
-- R2: create the `ok-sessions-media` bucket, connect the custom domain `media.olliekav.com`, and add a CORS rule allowing `GET`/`HEAD` from `https://dj.olliekav.com` (the site fetches peaks and audio cross-origin).
-- Security: turn on Bot Fight Mode and Hotlink Protection for `media.olliekav.com`.
-- Zero Trust > Access: protect `api.olliekav.com/v1/admin/*`, with a service token for the publish CLI.
-
-## Publishing a mix
-
-Requires `ffmpeg`. Copy `scripts/publish-mix/.env.example` to `scripts/publish-mix/.env` and fill it in, then:
-
-```bash
-cd scripts/publish-mix && npm install && cd -
-npm run publish-mix -- ~/Music/ok-sessions-132.wav --number 132 --genre House --dry-run
-npm run publish-mix -- ~/Music/ok-sessions-132.wav --number 132 --genre House
-```
-
-This encodes an AAC (256k, faststart) stream and a 320k MP3 download, generates waveform peaks, uploads them to R2 under content-hashed keys, and registers the mix. Re-running with the same master skips the encode. Themes come from `shared/mix-themes.json`; for a new session add an entry there or pass `--bg`/`--fg`/`--dark`. Use `--draft` to upload without publishing.
-
-### Artwork and colours
-
-Each mix has a two-colour theme in `shared/mix-themes.json`, used by the website, the apps and the artwork: the OK logo and `#<number>` in the foreground colour on the background, matching the SoundCloud artwork. Rendering needs FF DIN Round Pro Black (licensed, not committed); set `ARTWORK_FONT` in `scripts/publish-mix/.env`.
-
-```bash
-npm run themes -- --generate 132        # a new mix: unique colours, deterministic
-npm run themes -- --reroll 27           # don't like one? pick again
-npm run artwork -- --only 132           # 2000×2000 JPGs on your Desktop, for SoundCloud
+npm run themes -- --generate 132        # colours for a new mix: unique, readable, deterministic
+npm run themes -- --reroll 27           # pick again
+npm run artwork -- --only 132           # 2000×2000 JPGs on your Desktop for SoundCloud
 npm run artwork -- --sheet              # contact sheet of every mix
 ```
 
-Generated themes keep within the contrast range of the hand-picked ones, avoid plain black/white logos, and are checked against every other mix so no two look alike. When publishing with `ARTWORK_FONT` set, each mix's artwork is uploaded (used by the apps for lock screen, CarPlay and Android Auto) and embedded in the download MP3, along with title, album, track number and `ARTIST` tags.
+Generated themes stay within the contrast range of the hand-picked ones, always include a light colour, avoid plain black or white logos and two shades of one colour, and are checked against every other mix so no two look alike.
 
 ### Updating SoundCloud
 
-SoundCloud keeps its own copies of the artwork and files, so after changing colours:
-
 ```bash
-npm run soundcloud-artwork -- --only 21-50 --dry-run   # check the playlist numbering
-npm run soundcloud-artwork -- --only 21-50             # replace artwork (2000×2000) via the API
+npm run soundcloud-artwork -- --dry-run                # check the playlist numbering
+npm run soundcloud-artwork                             # replace all artwork (2000×2000) via the API
 npm run soundcloud-artwork -- --only 21-50 --mp3s      # re-tagged originals for "Replace file"
 ```
 
-Replacing artwork signs in as you in the browser (SoundCloud Pro; add `http://localhost:8976/callback` as a redirect URI on your SoundCloud app first). It refuses to run if a track's title number doesn't match its playlist position. SoundCloud's API can't replace audio, so `--mp3s` saves each original with the new cover and tags embedded (audio copied untouched) to `~/Desktop/ok-sessions-mp3`, ready for **Replace file** in the track editor, which keeps plays and comments.
-
-### Importing from SoundCloud
-
-The original uploads in the OK Sessions playlist can be imported directly, numbered by their playlist position as on the old site. This uses SoundCloud's official download endpoint, so **downloads must be enabled** on each track (you can turn them off again afterwards). Add `SOUNDCLOUD_CLIENT_ID` and `SOUNDCLOUD_CLIENT_SECRET` to `scripts/publish-mix/.env`, then:
-
-```bash
-npm run publish-mix -- --from-soundcloud --dry-run          # list what would be imported
-npm run publish-mix -- --from-soundcloud --only 1 --draft   # try one
-npm run publish-mix -- --from-soundcloud                    # everything
-```
-
-Titles, descriptions, genres, upload dates and SoundCloud links come from SoundCloud. MP3 originals are kept as the download file rather than re-encoded. Re-running skips mixes already imported from the same track, so an interrupted import can simply be restarted; `--force` re-imports, and `--only 3,10-12` limits it to specific mixes. Failures are listed at the end and don't stop the run.
+Replacing artwork signs in as you in the browser (needs SoundCloud Pro, and `http://localhost:8976/callback` as the app's redirect URI). It refuses to run if a track's title number doesn't match its playlist position. SoundCloud's API can't replace audio, so `--mp3s` downloads each original (downloads must be enabled) and saves it with the new cover and O:K tags embedded, the audio copied untouched, to `~/Desktop/ok-sessions-mp3`, ready for **Replace file** in the track editor, which keeps plays and comments.
