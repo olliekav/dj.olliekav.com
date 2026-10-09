@@ -28,3 +28,10 @@ dist-ssr
 .netlify
 
 .claude/
+
+# Platform
+.wrangler
+coverage
+.env
+scripts/publish-mix/manifest.json
+.dev.vars

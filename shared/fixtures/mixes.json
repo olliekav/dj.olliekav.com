@@ -1,0 +1,86 @@
+{
+  "mixes": [
+    {
+      "id": 3,
+      "slug": "ok-sessions-21",
+      "number": 21,
+      "title": "OK Sessions #21",
+      "description": "Balearic, cosmic and slow disco.\n\nTracklist: https://dj.olliekav.com",
+      "genre": "Balearic",
+      "recorded_at": "2021-06-12",
+      "published_at": "2021-06-20T18:00:00.000Z",
+      "duration_ms": 5400000,
+      "audio": {
+        "m4a": "https://media.olliekav.com/mixes/ok-sessions-21/audio.m4a",
+        "mp3": "https://media.olliekav.com/mixes/ok-sessions-21/audio.mp3"
+      },
+      "peaks_url": "https://media.olliekav.com/mixes/ok-sessions-21/peaks.json",
+      "artwork_url": null,
+      "theme": {
+        "background": "#36D1DC",
+        "foreground": "#FFFFFF",
+        "accent": "#36D1DC",
+        "dark": false,
+        "gradient": { "angle": -45, "stops": ["#36D1DC", "#5B86E5"] }
+      },
+      "soundcloud_url": "https://soundcloud.com/olliekav/ok-sessions-21",
+      "share_url": "https://dj.olliekav.com/mixes/ok-sessions-21",
+      "access": "free",
+      "updated_at": "2026-10-09T09:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "slug": "ok-sessions-2",
+      "number": 2,
+      "title": "OK Sessions #2",
+      "description": "",
+      "genre": null,
+      "recorded_at": null,
+      "published_at": "2019-04-01T12:00:00.000Z",
+      "duration_ms": 3725000,
+      "audio": {
+        "m4a": "https://media.olliekav.com/mixes/ok-sessions-2/audio.m4a",
+        "mp3": null
+      },
+      "peaks_url": null,
+      "artwork_url": "https://media.olliekav.com/mixes/ok-sessions-2/artwork.png",
+      "theme": {
+        "background": "#EC1C24",
+        "foreground": "#2A10A6",
+        "accent": "#EC1C24",
+        "dark": false
+      },
+      "soundcloud_url": null,
+      "share_url": "https://dj.olliekav.com/mixes/ok-sessions-2",
+      "access": "free",
+      "updated_at": "2026-10-09T09:00:00.000Z"
+    },
+    {
+      "id": 1,
+      "slug": "ok-sessions-1",
+      "number": 1,
+      "title": "OK Sessions #1",
+      "description": "House and disco.",
+      "genre": "House",
+      "recorded_at": "2019-03-02",
+      "published_at": "2019-03-10T12:00:00.000Z",
+      "duration_ms": 3600000,
+      "audio": {
+        "m4a": "https://media.olliekav.com/mixes/ok-sessions-1/audio.m4a",
+        "mp3": "https://media.olliekav.com/mixes/ok-sessions-1/audio.mp3"
+      },
+      "peaks_url": "https://media.olliekav.com/mixes/ok-sessions-1/peaks.json",
+      "artwork_url": null,
+      "theme": {
+        "background": "#2A10A6",
+        "foreground": "#EC00A5",
+        "accent": "#EC00A5",
+        "dark": true
+      },
+      "soundcloud_url": "https://soundcloud.com/olliekav/ok-sessions-1",
+      "share_url": "https://dj.olliekav.com/mixes/ok-sessions-1",
+      "access": "free",
+      "updated_at": "2026-10-09T09:00:00.000Z"
+    }
+  ]
+}

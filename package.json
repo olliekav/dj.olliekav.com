@@ -4,27 +4,29 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"publish-mix": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/cli.ts",
+		"export-soundcloud-manifest": "node scripts/publish-mix/export-soundcloud.ts",
+		"test": "vitest run",
+		"lint": "eslint .",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@netlify/cache": "^4.0.2",
-		"@netlify/functions": "^6.0.2",
-		"classnames": "^2.5.1",
 		"preact": "^11.0.1",
 		"preact-iso": "^2.12.2",
 		"preact-render-to-string": "^6.8.0",
-		"react-device-detect": "^2.2.3",
-		"react-modal": "^3.16.3",
-		"react-process-string": "^1.2.0",
 		"wavesurfer.js": "^8.0.2"
 	},
 	"devDependencies": {
-		"@netlify/vite-plugin": "^3.0.1",
 		"@preact/preset-vite": "^2.10.6",
 		"eslint": "^9.39.5",
 		"eslint-config-preact": "^2.0.0",
+		"jsdom": "^29.1.1",
 		"sass-embedded": "^1.105.1",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.71.1",
 		"vite": "^8.3.4",
-		"vite-plugin-mkcert": "^2.1.0"
+		"vite-plugin-mkcert": "^2.1.0",
+		"vitest": "^5.0.3"
 	}
 }

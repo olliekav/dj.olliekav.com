@@ -1,25 +1,21 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  functions = "netlify/functions"
-
-[dev]
-  command = "npm run dev"
-  publish = "dist"
-  targetPort = 8080
-  functions = "netlify/functions"
-  [dev.https]
-    keyFile = "./.netlify/certs/localhost-key.pem"
-    certFile = "./.netlify/certs/localhost.pem"
-  https = true
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-  force = true
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net; font-src https://use.typekit.net; img-src 'self' data: https://p.typekit.net https://media.olliekav.com; connect-src 'self' https://api.olliekav.com https://media.olliekav.com https://p.typekit.net; media-src https://media.olliekav.com blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

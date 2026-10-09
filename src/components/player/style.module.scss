@@ -279,45 +279,35 @@
 
 // Modal window
 
-:global {
-  .modal-overlay {
-    align-items: center;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    padding: 3rem 3rem 6rem;
-    position: fixed;
-    right: 0;
-    opacity: 0;
-    transition: all .2s ease-in-out;
-    transform: translateY(-5rem);
-    top: 0;
-    z-index: 1000;
-  }
-
-  .ReactModal__Overlay--after-open.modal-overlay {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .ReactModal__Overlay--before-close.modal-overlay {
-    opacity: 0;
-    transform: translateY(-5rem);
-  }
-}
-
 .modal {
   background-color: var(--light-color);
+  border: 0;
   box-shadow: 0 0 5rem rgba(0, 0, 0, .4);
+  color: inherit;
   margin: auto;
   max-height: 50vh;
-  max-width: 62rem;
+  max-width: min(62rem, calc(100vw - 6rem));
   padding: 3rem;
   overflow: auto;
   outline: none;
-  position: relative;
   width: 100%;
+  opacity: 0;
+  transform: translateY(-5rem);
+  transition: opacity .2s ease-in-out, transform .2s ease-in-out, overlay .2s allow-discrete, display .2s allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    transform: translateY(0);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(-5rem);
+    }
+  }
+
+  &::backdrop {
+    background: transparent;
+  }
 
   @media (prefers-color-scheme: dark) {
     background-color: var(--dark-color);
