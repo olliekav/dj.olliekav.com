@@ -82,6 +82,19 @@ npm run publish-mix -- ~/Music/ok-sessions-132.wav --number 132 --genre House
 
 This encodes an AAC (256k, faststart) stream and a 320k MP3 download, generates waveform peaks, uploads them to R2 under content-hashed keys, and registers the mix. Re-running with the same master skips the encode. Themes come from `shared/mix-themes.json`; for a new session add an entry there or pass `--bg`/`--fg`/`--dark`. Use `--draft` to upload without publishing.
 
+### Artwork and colours
+
+Each mix has a two-colour theme in `shared/mix-themes.json`, used by the website, the apps and the artwork: the OK logo and `#<number>` in the foreground colour on the background, matching the SoundCloud artwork. Rendering needs FF DIN Round Pro Black (licensed, not committed); set `ARTWORK_FONT` in `scripts/publish-mix/.env`.
+
+```bash
+npm run themes -- --generate 132        # a new mix: unique colours, deterministic
+npm run themes -- --reroll 27           # don't like one? pick again
+npm run artwork -- --only 132           # 2000×2000 JPGs on your Desktop, for SoundCloud
+npm run artwork -- --sheet              # contact sheet of every mix
+```
+
+Generated themes keep within the contrast range of the hand-picked ones, avoid plain black/white logos, and are checked against every other mix so no two look alike. When publishing with `ARTWORK_FONT` set, each mix's artwork is uploaded (used by the apps for lock screen, CarPlay and Android Auto) and embedded in the download MP3, along with title, album, track number and `ARTIST` tags.
+
 ### Importing from SoundCloud
 
 The original uploads in the OK Sessions playlist can be imported directly, numbered by their playlist position as on the old site. This uses SoundCloud's official download endpoint, so **downloads must be enabled** on each track (you can turn them off again afterwards). Add `SOUNDCLOUD_CLIENT_ID` and `SOUNDCLOUD_CLIENT_SECRET` to `scripts/publish-mix/.env`, then:

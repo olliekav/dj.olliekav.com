@@ -11,7 +11,8 @@ import {
   run,
   sha256,
   sha256File,
-  transcode
+  encodeDownload,
+  encodeStream
 } from '../media.ts';
 import { fakeSpawn } from './helpers.ts';
 
@@ -78,20 +79,32 @@ describe('probeAudio', () => {
   });
 });
 
-describe('transcode', () => {
-  it('encodes faststart AAC and 320k MP3', async () => {
+describe('encodeStream', () => {
+  it('encodes faststart AAC without source metadata', async () => {
     const { spawnFn, calls } = fakeSpawn();
-    const out = await transcode('in.wav', '/tmp/x', { spawnFn });
-    expect(out).toEqual({ m4a: '/tmp/x/audio.m4a', mp3: '/tmp/x/audio.mp3' });
-    expect(calls[0]).toEqual(expect.arrayContaining(['aac', '256k', '+faststart', '/tmp/x/audio.m4a']));
-    expect(calls[1]).toEqual(expect.arrayContaining(['libmp3lame', '320k', '/tmp/x/audio.mp3']));
+    expect(await encodeStream('in.wav', '/tmp/x/audio.m4a', { spawnFn })).toBe('/tmp/x/audio.m4a');
+    expect(calls[0]).toEqual(
+      expect.arrayContaining(['-map', '0:a:0', '-map_metadata', '-1', 'aac', '256k', '+faststart', '/tmp/x/audio.m4a'])
+    );
+  });
+});
+
+describe('encodeDownload', () => {
+  it('encodes a 320k MP3 with tags', async () => {
+    const { spawnFn, calls } = fakeSpawn();
+    await encodeDownload('in.wav', '/tmp/x/audio.mp3', { spawnFn, tags: { title: 'OK Sessions #1', track: '1' } });
+    const args = calls[0]!;
+    expect(args).toEqual(expect.arrayContaining(['libmp3lame', '320k', '-id3v2_version', '3', '/tmp/x/audio.mp3']));
+    expect(args.join(' ')).toContain('-metadata title=OK Sessions #1 -metadata track=1');
+    expect(args).not.toContain('attached_pic');
   });
 
-  it('copies MP3 sources instead of re-encoding', async () => {
+  it('copies MP3 audio and embeds the cover', async () => {
     const { spawnFn, calls } = fakeSpawn();
-    await transcode('in.mp3', '/tmp/x', { spawnFn, sourceCodec: 'mp3' });
-    expect(calls[1]).toEqual(expect.arrayContaining(['-map', '0:a:0', '-c:a', 'copy', '/tmp/x/audio.mp3']));
-    expect(calls[1]).not.toContain('libmp3lame');
+    await encodeDownload('in.mp3', '/tmp/x/audio.mp3', { spawnFn, sourceCodec: 'mp3', cover: '/tmp/x/cover.jpg' });
+    const args = calls[0]!.join(' ');
+    expect(args).toContain('-i in.mp3 -i /tmp/x/cover.jpg -map 0:a:0 -c:a copy -map 1:v -c:v copy -disposition:v attached_pic');
+    expect(args).not.toContain('libmp3lame');
   });
 });
 
@@ -151,25 +164,37 @@ describe.runIf(hasFfmpeg)('with real ffmpeg', () => {
 
   afterAll(() => rm(dir, { recursive: true, force: true }));
 
-  it('probes, transcodes and generates peaks', async () => {
+  it('probes, encodes, tags and generates peaks', async () => {
     const { durationMs: duration, codec } = await probeAudio(wav);
     expect(duration).toBe(3000);
     expect(codec).toMatch(/^pcm_/);
 
-    const { m4a, mp3 } = await transcode(wav, dir, { sourceCodec: codec });
+    const m4a = await encodeStream(wav, path.join(dir, 'audio.m4a'));
     expect(await probeAudio(m4a)).toMatchObject({ codec: 'aac' });
-    expect(await probeAudio(mp3)).toMatchObject({ codec: 'mp3' });
 
-    // An MP3 source with cover art is copied: same audio, no image stream
-    const sourceMp3 = path.join(dir, 'source.mp3');
-    const cover = path.join(dir, 'cover.png');
-    execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'lavfi', '-i', 'color=c=red:s=16x16', '-frames:v', '1', cover]);
-    execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', mp3, '-i', cover, '-map', '0:a', '-map', '1:v', '-c:a', 'copy', '-c:v', 'png', '-disposition:v', 'attached_pic', sourceMp3]);
-    const copyDir = path.join(dir, 'copy');
-    await mkdir(copyDir);
-    const copied = await transcode(sourceMp3, copyDir, { sourceCodec: 'mp3' });
-    expect((await probeAudio(copied.mp3)).durationMs).toBe((await probeAudio(sourceMp3)).durationMs);
-    expect(await run('ffprobe', ['-v', 'error', '-show_entries', 'stream=codec_name', '-of', 'csv=p=0', copied.mp3])).toBe('mp3\n');
+    const cover = path.join(dir, 'cover.jpg');
+    execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'lavfi', '-i', 'color=c=red:s=64x64', '-frames:v', '1', cover]);
+    const mp3 = await encodeDownload(wav, path.join(dir, 'audio.mp3'), {
+      sourceCodec: codec,
+      cover,
+      tags: { title: 'OK Sessions #1', album: 'OK Sessions', track: '1' }
+    });
+    const probe = JSON.parse(
+      await run('ffprobe', ['-v', 'error', '-show_entries', 'stream=codec_name:stream_disposition=attached_pic:format_tags', '-of', 'json', mp3])
+    );
+    expect(probe.streams.map((s: { codec_name: string }) => s.codec_name)).toEqual(['mp3', 'mjpeg']);
+    expect(probe.streams[1].disposition.attached_pic).toBe(1);
+    expect(probe.format.tags).toMatchObject({ title: 'OK Sessions #1', album: 'OK Sessions', track: '1' });
+
+    // Re-tagging an MP3 copies the audio frames untouched and replaces old tags and art
+    const retagged = await encodeDownload(mp3, path.join(dir, 'retagged.mp3'), { sourceCodec: 'mp3', tags: { title: 'New' } });
+    const again = JSON.parse(
+      await run('ffprobe', ['-v', 'error', '-show_entries', 'stream=codec_name,bit_rate:format_tags', '-of', 'json', retagged])
+    );
+    expect(again.streams.map((s: { codec_name: string }) => s.codec_name)).toEqual(['mp3']);
+    expect(again.format.tags.title).toBe('New');
+    expect(again.format.tags.album).toBeUndefined();
+    expect((await probeAudio(retagged)).durationMs).toBe((await probeAudio(mp3)).durationMs);
 
     const { peaks } = await generatePeaks(wav, duration);
     expect(peaks).toHaveLength(PEAK_COUNT);

@@ -105,12 +105,23 @@ describe('main', () => {
     expect(log.mock.calls[0]?.[0]).toContain('Usage:');
   });
 
+  it('loads the artwork font and artist when configured', async () => {
+    const publish = fakePublish();
+    const loadFont = vi.fn(async () => ({}) as never);
+    const log = vi.fn();
+    await main(['mix.wav', '--number', '3', '--dry-run'], { env: { ARTWORK_FONT: '/f.otf', ARTIST: 'Ollie' }, log, publish, loadFont });
+    expect(loadFont).toHaveBeenCalledWith('/f.otf');
+    expect(publish.mock.calls[0]![1]).toMatchObject({ artist: 'Ollie', artworkFont: {} });
+    expect(log).not.toHaveBeenCalledWith(expect.stringContaining('without artwork'));
+  });
+
   it('publishes a single file with shared themes', async () => {
     const publish = fakePublish();
     await main(['mix.wav', '--number', '3', '--dry-run'], { env: {}, log: vi.fn(), publish });
     const [job, deps] = publish.mock.calls[0]!;
     expect(job).toMatchObject({ file: 'mix.wav', meta: { number: 3 }, dryRun: true, draft: false });
-    expect(deps.themes['3']?.background).toBe('#28C517');
+    expect(deps.themes['3']).toBeDefined();
+    expect(deps.artworkFont).toBeUndefined();
   });
 
   it('publishes every manifest entry', async () => {

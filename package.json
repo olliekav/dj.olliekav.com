@@ -8,7 +8,9 @@
 		"publish-mix": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/cli.ts",
 		"test": "vitest run",
 		"lint": "eslint .",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"themes": "node scripts/publish-mix/themes-cli.ts",
+		"artwork": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/artwork-cli.ts"
 	},
 	"dependencies": {
 		"preact": "^11.0.1",

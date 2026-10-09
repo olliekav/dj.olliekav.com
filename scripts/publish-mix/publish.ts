@@ -1,13 +1,16 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import type { Theme } from '../../shared/api-types.ts';
 import type { AdminMix, Api, MixInput } from './api.ts';
+import { artworkSvg, renderArtworkJpg, type ArtworkFont } from './artwork.ts';
 import * as media from './media.ts';
 import { exists, uploadOnce, type StorageClient, type UploadItem } from './storage.ts';
 
 // Bump when encoding settings change so new renditions get new keys
-export const ENCODING_VERSION = 1;
+export const ENCODING_VERSION = 2;
+
+export const ALBUM = 'OK Sessions';
 
 export type Themes = Record<string, Theme>;
 
@@ -38,10 +41,32 @@ export interface PublishDeps {
   api: Api | null;
   themes: Themes;
   log?: (message: string) => void;
-  media?: Pick<typeof media, 'sha256File' | 'sha256' | 'probeAudio' | 'transcode' | 'generatePeaks'>;
+  media?: Pick<typeof media, 'sha256File' | 'sha256' | 'probeAudio' | 'encodeStream' | 'encodeDownload' | 'generatePeaks'>;
   uploadOnce?: typeof uploadOnce;
   exists?: typeof exists;
+  /** FF DIN Round Pro Black, for generating artwork from the mix theme */
+  artworkFont?: ArtworkFont;
+  renderArtwork?: (font: ArtworkFont, theme: Theme, number: number) => Promise<Buffer>;
+  /** Artist tag for the MP3 download */
+  artist?: string;
 }
+
+export const ARTWORK_SIZE = 2000;
+
+const defaultRenderArtwork = (font: ArtworkFont, theme: Theme, number: number) =>
+  renderArtworkJpg(artworkSvg(font, theme, number), ARTWORK_SIZE);
+
+/** ID3 tags for the download MP3. */
+export const downloadTags = (input: Pick<MixInput, 'title' | 'number' | 'genre' | 'published_at'>, artist?: string) => {
+  const tags: Record<string, string> = { title: input.title, album: ALBUM, track: String(input.number) };
+  if (artist) {
+    tags.artist = artist;
+    tags.album_artist = artist;
+  }
+  if (input.genre) tags.genre = input.genre;
+  if (input.published_at) tags.date = input.published_at.slice(0, 4);
+  return tags;
+};
 
 export interface PublishResult {
   slug: string;
@@ -97,14 +122,9 @@ export const publishMix = async (
 
   log(`▶ ${title} (${slug})`);
   const sourceHash = await m.sha256File(file);
-  const version = m.sha256(`${sourceHash}:${ENCODING_VERSION}`).slice(0, 12);
-  const keys = {
-    m4a: `mixes/${slug}/audio-${version}.m4a`,
-    mp3: `mixes/${slug}/audio-${version}.mp3`,
-    peaks: `mixes/${slug}/peaks-${version}.json`
-  };
   const { durationMs, codec } = await m.probeAudio(file);
 
+  // Artwork: an explicit file, or generated from the theme when the font is available
   let artwork: UploadItem | null = null;
   if (meta.artwork) {
     const ext = path.extname(meta.artwork).toLowerCase();
@@ -114,7 +134,24 @@ export const publishMix = async (
     }
     const body = await readFile(meta.artwork);
     artwork = { bucket, key: `mixes/${slug}/artwork-${m.sha256(body).slice(0, 12)}${ext}`, body, contentType };
+  } else if (deps.artworkFont) {
+    const body = await (deps.renderArtwork ?? defaultRenderArtwork)(deps.artworkFont, theme, meta.number);
+    artwork = { bucket, key: `mixes/${slug}/artwork-${m.sha256(body).slice(0, 12)}.jpg`, body, contentType: 'image/jpeg' };
   }
+
+  const published_at = meta.published_at ?? null;
+  const tags = downloadTags({ title, number: meta.number, genre: meta.genre ?? null, published_at }, deps.artist);
+
+  // The stream depends only on the source; the download also carries the cover and tags
+  const streamVersion = m.sha256(`${sourceHash}:${ENCODING_VERSION}`).slice(0, 12);
+  const downloadVersion = m.sha256(
+    `${sourceHash}:${ENCODING_VERSION}:${artwork?.key ?? ''}:${JSON.stringify(tags)}`
+  ).slice(0, 12);
+  const keys = {
+    m4a: `mixes/${slug}/audio-${streamVersion}.m4a`,
+    peaks: `mixes/${slug}/peaks-${streamVersion}.json`,
+    mp3: `mixes/${slug}/audio-${downloadVersion}.mp3`
+  };
 
   const input: MixInput = {
     number: meta.number,
@@ -122,7 +159,7 @@ export const publishMix = async (
     description: meta.description ?? '',
     genre: meta.genre ?? null,
     recorded_at: meta.recorded_at ?? null,
-    published_at: meta.published_at ?? null,
+    published_at,
     duration_ms: durationMs,
     audio_m4a_key: keys.m4a,
     audio_mp3_key: keys.mp3,
@@ -150,20 +187,37 @@ export const publishMix = async (
     }
   };
 
-  const present = await Promise.all(Object.values(keys).map(key => has(client, bucket, key)));
-  if (present.every(Boolean)) {
-    log('  audio already uploaded, skipping encode');
-  } else {
-    const workDir = await mkdtemp(path.join(tmpdir(), `publish-${slug}-`));
-    try {
-      log(codec === 'mp3' ? '  encoding AAC (keeping the source MP3)…' : '  encoding AAC + MP3…');
-      const { m4a, mp3 } = await m.transcode(file, workDir, { sourceCodec: codec });
+  const [hasM4a, hasPeaks, hasMp3] = await Promise.all(
+    [keys.m4a, keys.peaks, keys.mp3].map(key => has(client, bucket, key))
+  );
+
+  const workDir = await mkdtemp(path.join(tmpdir(), `publish-${slug}-`));
+  try {
+    if (artwork) {
+      await uploadItem(artwork);
+    }
+
+    if (hasM4a && hasPeaks) {
+      log('  stream already uploaded');
+    } else {
+      log('  encoding AAC stream…');
+      const m4a = await m.encodeStream(file, path.join(workDir, 'audio.m4a'));
       log('  generating waveform peaks…');
       const peaks = await m.generatePeaks(file, durationMs);
-
-      log('  uploading…');
       await uploadItem({ bucket, key: keys.m4a, body: m4a, contentType: 'audio/mp4', filename: `${slug}.m4a` });
-      // The MP3 is the download rendition
+      await uploadItem({ bucket, key: keys.peaks, body: Buffer.from(JSON.stringify(peaks)), contentType: 'application/json' });
+    }
+
+    if (hasMp3) {
+      log('  download already uploaded');
+    } else {
+      log(codec === 'mp3' ? '  tagging MP3 download (audio copied)…' : '  encoding MP3 download…');
+      let cover: string | undefined;
+      if (artwork?.contentType === 'image/jpeg' && Buffer.isBuffer(artwork.body)) {
+        cover = path.join(workDir, 'cover.jpg');
+        await writeFile(cover, artwork.body);
+      }
+      const mp3 = await m.encodeDownload(file, path.join(workDir, 'audio.mp3'), { sourceCodec: codec, cover, tags });
       await uploadItem({
         bucket,
         key: keys.mp3,
@@ -172,14 +226,9 @@ export const publishMix = async (
         filename: `${slug}.mp3`,
         disposition: 'attachment'
       });
-      await uploadItem({ bucket, key: keys.peaks, body: Buffer.from(JSON.stringify(peaks)), contentType: 'application/json' });
-    } finally {
-      await rm(workDir, { recursive: true, force: true });
     }
-  }
-
-  if (artwork) {
-    await uploadItem(artwork);
+  } finally {
+    await rm(workDir, { recursive: true, force: true });
   }
 
   const mix = await api.putMix(slug, input);

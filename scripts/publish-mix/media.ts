@@ -60,30 +60,53 @@ export const probeAudio = async (file: string, deps?: ProcessDeps): Promise<Audi
   return { durationMs: Math.round(seconds * 1000), codec };
 };
 
-export interface Renditions {
-  m4a: string;
-  mp3: string;
-}
-
-/**
- * Encodes the streaming (AAC in MP4, faststart for range-request seeking) and download (MP3) renditions.
- * An MP3 source is copied rather than re-encoded, which would only lose quality.
- */
-export const transcode = async (
-  input: string,
-  outDir: string,
-  { sourceCodec, ...deps }: ProcessDeps & { sourceCodec?: string } = {}
-): Promise<Renditions> => {
-  const m4a = path.join(outDir, 'audio.m4a');
-  const mp3 = path.join(outDir, 'audio.mp3');
+/** Encodes the streaming rendition: AAC in MP4, faststart so players can seek with range requests. */
+export const encodeStream = async (input: string, output: string, deps?: ProcessDeps): Promise<string> => {
   await run(
     'ffmpeg',
-    ['-y', '-v', 'error', '-i', input, '-vn', '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', m4a],
+    ['-y', '-v', 'error', '-i', input, '-map', '0:a:0', '-map_metadata', '-1', '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', output],
     deps
   );
-  const mp3Codec = sourceCodec === 'mp3' ? ['-c:a', 'copy'] : ['-c:a', 'libmp3lame', '-b:a', '320k'];
-  await run('ffmpeg', ['-y', '-v', 'error', '-i', input, '-map', '0:a:0', ...mp3Codec, mp3], deps);
-  return { m4a, mp3 };
+  return output;
+};
+
+export interface DownloadOptions extends ProcessDeps {
+  /** ffprobe codec of the source; an MP3 is copied rather than re-encoded, which would only lose quality */
+  sourceCodec?: string;
+  /** JPEG embedded as the cover */
+  cover?: string;
+  /** ID3 tags, e.g. title, artist, album, track */
+  tags?: Record<string, string>;
+}
+
+/** Encodes the download rendition: a 320k MP3 with cover art and tags (any existing ones are replaced). */
+export const encodeDownload = async (
+  input: string,
+  output: string,
+  { sourceCodec, cover, tags = {}, ...deps }: DownloadOptions = {}
+): Promise<string> => {
+  const audio = sourceCodec === 'mp3' ? ['-c:a', 'copy'] : ['-c:a', 'libmp3lame', '-b:a', '320k'];
+  const art = cover
+    ? ['-map', '1:v', '-c:v', 'copy', '-disposition:v', 'attached_pic', '-metadata:s:v', 'title=Cover', '-metadata:s:v', 'comment=Cover (front)']
+    : [];
+  const metadata = Object.entries(tags).flatMap(([key, value]) => ['-metadata', `${key}=${value}`]);
+  await run(
+    'ffmpeg',
+    [
+      '-y', '-v', 'error',
+      '-i', input,
+      ...(cover ? ['-i', cover] : []),
+      '-map', '0:a:0',
+      ...audio,
+      ...art,
+      '-map_metadata', '-1',
+      ...metadata,
+      '-id3v2_version', '3',
+      output
+    ],
+    deps
+  );
+  return output;
 };
 
 /**

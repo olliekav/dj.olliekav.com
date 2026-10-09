@@ -5,6 +5,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createApi } from './api.ts';
+import { loadArtworkFont } from './artwork.ts';
 import { publishMix, type MixMeta, type PublishDeps, type PublishJob, type Themes } from './publish.ts';
 import { importFromSoundCloud, parseNumbers } from './import-soundcloud.ts';
 import { createSoundCloud, PLAYLIST_URL } from './soundcloud.ts';
@@ -37,7 +38,8 @@ SoundCloud import:
 Environment (.env next to this script):
   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET,
   API_URL, ADMIN_TOKEN, [CF_ACCESS_CLIENT_ID, CF_ACCESS_CLIENT_SECRET],
-  SOUNDCLOUD_CLIENT_ID, SOUNDCLOUD_CLIENT_SECRET (for --from-soundcloud)`;
+  SOUNDCLOUD_CLIENT_ID, SOUNDCLOUD_CLIENT_SECRET (for --from-soundcloud),
+  ARTWORK_FONT (DINRoundPro-Black.otf, to generate artwork), ARTIST (MP3 artist tag)`;
 
 export const parseCli = (argv: string[]) => {
   const { values, positionals } = parseArgs({
@@ -155,12 +157,14 @@ export const main = async (
     env = process.env,
     log = console.log,
     publish = publishMix,
-    importer = importFromSoundCloud
+    importer = importFromSoundCloud,
+    loadFont = loadArtworkFont
   }: {
     env?: Env;
     log?: (message: string) => void;
     publish?: typeof publishMix;
     importer?: typeof importFromSoundCloud;
+    loadFont?: typeof loadArtworkFont;
   } = {}
 ): Promise<number> => {
   const { values, positionals } = parseCli(argv);
@@ -174,7 +178,16 @@ export const main = async (
     await readFile(new URL('../../shared/mix-themes.json', import.meta.url), 'utf8')
   );
   const options = { draft: values.draft, dryRun: values['dry-run'] };
-  const deps = { ...createDeps(env, options), themes, log };
+  if (!env.ARTWORK_FONT) {
+    log('⚠ ARTWORK_FONT is not set, so mixes are published without artwork');
+  }
+  const deps = {
+    ...createDeps(env, options),
+    themes,
+    log,
+    artworkFont: env.ARTWORK_FONT ? await loadFont(env.ARTWORK_FONT) : undefined,
+    artist: env.ARTIST || undefined
+  };
 
   if (fromSoundCloud) {
     const soundcloud = createSoundCloud({
