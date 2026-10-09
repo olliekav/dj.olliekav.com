@@ -10,7 +10,8 @@
 		"lint": "eslint .",
 		"typecheck": "tsc --noEmit",
 		"themes": "node scripts/publish-mix/themes-cli.ts",
-		"artwork": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/artwork-cli.ts"
+		"artwork": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/artwork-cli.ts",
+		"soundcloud-artwork": "node --env-file-if-exists=scripts/publish-mix/.env scripts/publish-mix/soundcloud-artwork-cli.ts"
 	},
 	"dependencies": {
 		"preact": "^11.0.1",

@@ -95,6 +95,18 @@ npm run artwork -- --sheet              # contact sheet of every mix
 
 Generated themes keep within the contrast range of the hand-picked ones, avoid plain black/white logos, and are checked against every other mix so no two look alike. When publishing with `ARTWORK_FONT` set, each mix's artwork is uploaded (used by the apps for lock screen, CarPlay and Android Auto) and embedded in the download MP3, along with title, album, track number and `ARTIST` tags.
 
+### Updating SoundCloud
+
+SoundCloud keeps its own copies of the artwork and files, so after changing colours:
+
+```bash
+npm run soundcloud-artwork -- --only 21-50 --dry-run   # check the playlist numbering
+npm run soundcloud-artwork -- --only 21-50             # replace artwork (2000×2000) via the API
+npm run soundcloud-artwork -- --only 21-50 --mp3s      # re-tagged originals for "Replace file"
+```
+
+Replacing artwork signs in as you in the browser (SoundCloud Pro; add `http://localhost:8976/callback` as a redirect URI on your SoundCloud app first). It refuses to run if a track's title number doesn't match its playlist position. SoundCloud's API can't replace audio, so `--mp3s` saves each original with the new cover and tags embedded (audio copied untouched) to `~/Desktop/ok-sessions-mp3`, ready for **Replace file** in the track editor, which keeps plays and comments.
+
 ### Importing from SoundCloud
 
 The original uploads in the OK Sessions playlist can be imported directly, numbered by their playlist position as on the old site. This uses SoundCloud's official download endpoint, so **downloads must be enabled** on each track (you can turn them off again afterwards). Add `SOUNDCLOUD_CLIENT_ID` and `SOUNDCLOUD_CLIENT_SECRET` to `scripts/publish-mix/.env`, then:

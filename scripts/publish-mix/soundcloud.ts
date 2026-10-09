@@ -30,6 +30,8 @@ interface Page<T> {
 export interface SoundCloudClient {
   playlistTracks(playlistUrl?: string): Promise<SoundCloudTrack[]>;
   downloadOriginal(track: Pick<SoundCloudTrack, 'urn' | 'title'>, dest: string): Promise<void>;
+  /** Replaces a track's artwork; needs the owner's token (see soundcloud-auth.ts) and a Pro account */
+  updateArtwork(urn: string, jpeg: Buffer, userToken: string): Promise<void>;
 }
 
 export const createSoundCloud = ({
@@ -108,6 +110,19 @@ export const createSoundCloud = ({
         throw new Error(`No file returned for ${track.title}`);
       }
       await pipeline(Readable.fromWeb(res.body as ReadableStream), createWriteStream(dest));
+    },
+
+    async updateArtwork(urn, jpeg, userToken) {
+      const form = new FormData();
+      form.append('track[artwork_data]', new Blob([new Uint8Array(jpeg)], { type: 'image/jpeg' }), 'artwork.jpg');
+      const res = await fetchFn(`${API}/tracks/${encodeURIComponent(urn)}`, {
+        method: 'PUT',
+        headers: { accept: 'application/json; charset=utf-8', authorization: `OAuth ${userToken}` },
+        body: form
+      });
+      if (!res.ok) {
+        throw new Error(`Artwork update failed: ${res.status} ${await res.text().catch(() => '')}`.trim());
+      }
     }
   };
 };

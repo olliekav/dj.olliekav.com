@@ -15,7 +15,8 @@ describe('themeStyle', () => {
   });
 
   it('renders gradients', () => {
-    expect(themeStyle(themes['21'])['--mix-bg']).toBe('linear-gradient(-45deg, #36D1DC, #5B86E5)');
+    const gradient = { ...themes['1']!, gradient: { angle: -45, stops: ['#36D1DC', '#5B86E5'] } };
+    expect(themeStyle(gradient)['--mix-bg']).toBe('linear-gradient(-45deg, #36D1DC, #5B86E5)');
   });
 
   it('handles missing themes', () => {

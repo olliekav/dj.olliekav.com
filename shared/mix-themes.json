@@ -120,255 +120,184 @@
     "accent": "#FD8E8D"
   },
   "21": {
-    "background": "#36D1DC",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#36D1DC",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#36D1DC",
-        "#5B86E5"
-      ]
-    }
+    "background": "#41C5DA",
+    "foreground": "#794910",
+    "accent": "#41C5DA",
+    "dark": false
   },
   "22": {
-    "background": "#FF9966",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#FF9966",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#FF9966",
-        "#FF5E62"
-      ]
-    }
+    "background": "#F5F2FD",
+    "foreground": "#7C4614",
+    "accent": "#7C4614",
+    "dark": true
   },
   "23": {
-    "background": "#FF9966",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#FF9966",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#FF9966",
-        "#49C4AC"
-      ]
-    }
+    "background": "#BEA9F2",
+    "foreground": "#620E21",
+    "accent": "#620E21",
+    "dark": true
   },
   "24": {
-    "background": "#8CA6DB",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#8CA6DB",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#8CA6DB",
-        "#B993D6"
-      ]
-    }
+    "background": "#9E3F8D",
+    "foreground": "#FDE69B",
+    "accent": "#9E3F8D",
+    "dark": false
   },
   "25": {
-    "background": "#EF629F",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#EF629F",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#EF629F",
-        "#EECDA3"
-      ]
-    }
+    "background": "#2FDA68",
+    "foreground": "#056182",
+    "accent": "#2FDA68",
+    "dark": false
   },
   "26": {
-    "background": "#666969",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#666969",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#666969",
-        "#9BC5C3"
-      ]
-    }
+    "background": "#512BDB",
+    "foreground": "#F29E97",
+    "accent": "#512BDB",
+    "dark": false
   },
   "27": {
-    "background": "#3B8D99",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#3B8D99",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#3B8D99",
-        "#6B6B83",
-        "#AA4B6B"
-      ]
-    }
+    "background": "#7B310E",
+    "foreground": "#CEE82D",
+    "accent": "#CEE82D",
+    "dark": true
   },
   "28": {
-    "background": "#BD3F32",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#BD3F32",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#BD3F32",
-        "#CB356B"
-      ]
-    }
+    "background": "#A519C2",
+    "foreground": "#74F1C2",
+    "accent": "#A519C2",
+    "dark": false
   },
   "29": {
-    "background": "#2657EB",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#2657EB",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#2657EB",
-        "#DE6161"
-      ]
-    }
+    "background": "#7757B8",
+    "foreground": "#47FC56",
+    "accent": "#47FC56",
+    "dark": true
   },
   "30": {
-    "background": "#FDBB2D",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#FDBB2D",
-    "gradient": {
-      "angle": -45,
-      "stops": [
-        "#FDBB2D",
-        "#22C1C3"
-      ]
-    }
+    "background": "#92701D",
+    "foreground": "#6DF1DD",
+    "accent": "#6DF1DD",
+    "dark": true
   },
   "31": {
-    "background": "#CCFF00",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#CCFF00"
+    "background": "#121285",
+    "foreground": "#A6A4FB",
+    "accent": "#121285",
+    "dark": false
   },
   "32": {
-    "background": "#15F4EE",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#15F4EE"
+    "background": "#6E0340",
+    "foreground": "#6AD2B5",
+    "accent": "#6E0340",
+    "dark": false
   },
   "33": {
-    "background": "#F4158B",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#F4158B"
+    "background": "#015635",
+    "foreground": "#93F0FE",
+    "accent": "#015635",
+    "dark": false
   },
   "34": {
-    "background": "#1CF415",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#1CF415"
+    "background": "#4A0268",
+    "foreground": "#97BF37",
+    "accent": "#97BF37",
+    "dark": true
   },
   "35": {
-    "background": "#FF6D00",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#FF6D00"
+    "background": "#FB7DFA",
+    "foreground": "#083360",
+    "accent": "#FB7DFA",
+    "dark": false
   },
   "36": {
-    "background": "#B400FF",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#B400FF"
+    "background": "#29918D",
+    "foreground": "#D6F540",
+    "accent": "#D6F540",
+    "dark": true
   },
   "37": {
-    "background": "#0066FF",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#0066FF"
+    "background": "#FBB3E2",
+    "foreground": "#194504",
+    "accent": "#194504",
+    "dark": true
   },
   "38": {
-    "background": "#EC1C24",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#EC1C24"
+    "background": "#133900",
+    "foreground": "#7AC87C",
+    "accent": "#7AC87C",
+    "dark": true
   },
   "39": {
-    "background": "#FFF100",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#FFF100"
+    "background": "#1C17C3",
+    "foreground": "#C3B34B",
+    "accent": "#1C17C3",
+    "dark": false
   },
   "40": {
-    "background": "#00FFA4",
-    "foreground": "#000000",
-    "dark": false,
-    "accent": "#00FFA4"
+    "background": "#AE480C",
+    "foreground": "#D1B8F9",
+    "accent": "#AE480C",
+    "dark": false
   },
   "41": {
-    "background": "#3579C2",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#3579C2"
+    "background": "#3C3594",
+    "foreground": "#F9B9FE",
+    "accent": "#3C3594",
+    "dark": false
   },
   "42": {
-    "background": "#DE65C2",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#DE65C2"
+    "background": "#39EEFF",
+    "foreground": "#6B73B8",
+    "accent": "#39EEFF",
+    "dark": false
   },
   "43": {
-    "background": "#DE654E",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#DE654E"
+    "background": "#FEC596",
+    "foreground": "#4B6FC5",
+    "accent": "#4B6FC5",
+    "dark": true
   },
   "44": {
-    "background": "#47853C",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#47853C"
+    "background": "#4D6900",
+    "foreground": "#FFB294",
+    "accent": "#4D6900",
+    "dark": false
   },
   "45": {
-    "background": "#513D83",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#513D83"
+    "background": "#E0029E",
+    "foreground": "#BAE96B",
+    "accent": "#E0029E",
+    "dark": false
   },
   "46": {
-    "background": "#9E2946",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#9E2946"
+    "background": "#6CFE4E",
+    "foreground": "#B4612E",
+    "accent": "#6CFE4E",
+    "dark": false
   },
   "47": {
-    "background": "#48C3BD",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#48C3BD"
+    "background": "#7E67FF",
+    "foreground": "#D9F9AC",
+    "accent": "#7E67FF",
+    "dark": false
   },
   "48": {
-    "background": "#5C5C5C",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#5C5C5C"
+    "background": "#F79598",
+    "foreground": "#371960",
+    "accent": "#371960",
+    "dark": true
   },
   "49": {
-    "background": "#E5A913",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#E5A913"
+    "background": "#5EE1B4",
+    "foreground": "#CA0100",
+    "accent": "#CA0100",
+    "dark": true
   },
   "50": {
-    "background": "#D84861",
-    "foreground": "#FFFFFF",
-    "dark": false,
-    "accent": "#D84861"
+    "background": "#B965DB",
+    "foreground": "#99FFFD",
+    "accent": "#B965DB",
+    "dark": false
   },
   "51": {
     "background": "#3B5856",

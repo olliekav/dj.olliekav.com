@@ -7,8 +7,8 @@ import { contrast, distance, hexToOklch, maxChroma, oklchToHex } from './colour.
 export type Themes = Record<string, Theme>;
 
 export const RULES = {
-  // Contrast range of the existing pairs (10th percentile to just above the 90th)
-  minContrast: 2.4,
+  // Contrast range: the originals' lower quartile up to just above their 90th percentile
+  minContrast: 3,
   maxContrast: 7,
   // Pairs closer than this (summed OKLab distance of both colours) count as the same combination.
   // Originals sit a median 0.13 from their nearest neighbour; new pairs must beat 75% of them.
@@ -24,6 +24,8 @@ export const RULES = {
   minHueDifference: 70,
   hueExemptLightnessDifference: 0.45,
   neutralChroma: 0.04,
+  // One colour of each pair must be this light (OKLab), as in three-quarters of the originals
+  minLighterColour: 0.75,
   // A logo this close to white or black reads as the plain black/white style
   plainLogoChroma: 0.04,
   plainLogoLightness: [0.25, 0.95] as const,
@@ -98,12 +100,12 @@ const hueDifference = (a: number, b: number) => {
   return d > 180 ? 360 - d : d;
 };
 
-/** Background and logo read as clearly different colours, not two shades of one. */
+/** Background and logo read as clearly different colours (not two shades of one), and one is light. */
 export const isDistinctPair = ({ background, foreground }: Pick<Theme, 'background' | 'foreground'>) => {
   const bg = hexToOklch(background);
   const fg = hexToOklch(foreground);
   const lightness = Math.abs(bg.l - fg.l);
-  if (lightness < RULES.minLightnessDifference) {
+  if (lightness < RULES.minLightnessDifference || Math.max(bg.l, fg.l) < RULES.minLighterColour) {
     return false;
   }
   const neutral = bg.c < RULES.neutralChroma || fg.c < RULES.neutralChroma;
@@ -183,19 +185,33 @@ export const generateTheme = (number: number, others: Theme[], variant = 0, batc
   return best.theme;
 };
 
-/** Regenerates the given mixes in order, each unlike every other mix. */
+const BATCH_ATTEMPTS = 8;
+
+/**
+ * Regenerates the given mixes in order, each unlike every other mix. Choosing greedily
+ * can leave no room for the last few, so a stuck batch starts over with fresh seeds.
+ */
 export const regenerate = (themes: Themes, numbers: number[], variants: Record<number, number> = {}): Themes => {
-  const result = { ...themes };
-  for (const number of numbers) {
-    delete result[number];
+  let lastError: unknown;
+  for (let attempt = 0; attempt < BATCH_ATTEMPTS; attempt++) {
+    const result = { ...themes };
+    for (const number of numbers) {
+      delete result[number];
+    }
+    const batch: Theme[] = [];
+    try {
+      for (const number of numbers) {
+        const variant = (variants[number] ?? 0) + attempt * 1_000_003;
+        const theme = generateTheme(number, Object.values(result), variant, batch);
+        result[number] = theme;
+        batch.push(theme);
+      }
+      return result;
+    } catch (error) {
+      lastError = error;
+    }
   }
-  const batch: Theme[] = [];
-  for (const number of numbers) {
-    const theme = generateTheme(number, Object.values(result), variants[number] ?? 0, batch);
-    result[number] = theme;
-    batch.push(theme);
-  }
-  return result;
+  throw lastError;
 };
 
 /** Pairs that are too similar to another mix, for checking the whole set. */

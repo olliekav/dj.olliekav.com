@@ -110,4 +110,23 @@ describe('createSoundCloud', () => {
       createSoundCloud({ clientId: 'i', clientSecret: 's', fetchFn }).downloadOriginal({ urn: 'u', title: 'T' }, '/tmp/x')
     ).rejects.toThrow('No file returned for T');
   });
+
+  it('uploads artwork with the owner token', async () => {
+    const fetchFn = vi.fn<typeof fetch>(async () => json({}));
+    await createSoundCloud({ clientId: 'i', clientSecret: 's', fetchFn }).updateArtwork('soundcloud:tracks:7', Buffer.from('jpeg'), 'user');
+    const [url, init] = fetchFn.mock.calls[0]!;
+    expect(url).toBe('https://api.soundcloud.com/tracks/soundcloud%3Atracks%3A7');
+    expect(init?.method).toBe('PUT');
+    expect(new Headers(init?.headers).get('authorization')).toBe('OAuth user');
+    const file = (init?.body as FormData).get('track[artwork_data]') as File;
+    expect(file.type).toBe('image/jpeg');
+    expect(await file.text()).toBe('jpeg');
+  });
+
+  it('reports artwork failures', async () => {
+    const fetchFn = vi.fn<typeof fetch>(async () => new Response('Pro only', { status: 403 }));
+    await expect(
+      createSoundCloud({ clientId: 'i', clientSecret: 's', fetchFn }).updateArtwork('u', Buffer.from(''), 't')
+    ).rejects.toThrow('Artwork update failed: 403 Pro only');
+  });
 });

@@ -20,7 +20,8 @@ const track = (n: number, overrides: Partial<SoundCloudTrack> = {}): SoundCloudT
 const setup = (tracks: SoundCloudTrack[], existing: Partial<AdminMix>[] = []) => {
   const soundcloud = {
     playlistTracks: vi.fn<SoundCloudClient['playlistTracks']>(async () => tracks),
-    downloadOriginal: vi.fn<SoundCloudClient['downloadOriginal']>(async () => {})
+    downloadOriginal: vi.fn<SoundCloudClient['downloadOriginal']>(async () => {}),
+    updateArtwork: vi.fn<SoundCloudClient['updateArtwork']>(async () => {})
   };
   const api = {
     listMixes: vi.fn(async () => existing as AdminMix[]),
