@@ -25,7 +25,7 @@
 		"eslint-config-preact": "^2.0.0",
 		"sass-embedded": "^1.105.1",
 		"vite": "^8.3.4",
-		"vite-plugin-mkcert": "^1.17.12"
+		"vite-plugin-mkcert": "^2.1.0"
 	},
 	"eslintConfig": {
 		"extends": "preact"
