@@ -92,6 +92,19 @@ extension Theme {
         (luminance(background) ?? 1) < 0.179
     }
 
+    /// The colour for the played part of the waveform on a plain white (or black) panel: the
+    /// accent, like the website, unless it nearly disappears there (yellow on white, navy on
+    /// black); then whichever of the two colours stands out more.
+    public func waveformColor(onDarkPanel: Bool) -> Color {
+        let panel = onDarkPanel ? 0.0 : 1.0
+        func contrast(_ hex: String) -> Double {
+            let l = luminance(hex) ?? 0.5
+            return (max(l, panel) + 0.05) / (min(l, panel) + 0.05)
+        }
+        if contrast(accent) >= 2 { return accentColor }
+        return contrast(foreground) >= contrast(background) ? foregroundColor : backgroundColor
+    }
+
     /// The lighter of the two colours, for text and controls on a darkened background
     public var lighterColor: Color {
         (luminance(foreground) ?? 0) >= (luminance(background) ?? 0) ? foregroundColor : backgroundColor

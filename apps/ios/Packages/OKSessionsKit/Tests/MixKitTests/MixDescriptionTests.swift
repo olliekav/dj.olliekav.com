@@ -33,4 +33,25 @@ struct MixDescriptionTests {
     @Test func skipsRulesButKeepsShortDashes() {
         #expect(MixDescription("Tracklist\n---\nA - B\n-\n___").tracks == ["A - B", "-"])
     }
+
+    @Test func findsABareTracklistAtTheEnd() {
+        let text = """
+        Recorded live - all vinyl.
+
+        Bruce - Post Rave Wrestle
+        Cadans - 1 Bar FU (TOOL)
+        Wen - BLIPS
+        Thanks for listening
+        Yak - Mido
+        """
+        #expect(MixDescription(text) == MixDescription(
+            intro: "Recorded live - all vinyl.",
+            tracks: ["Bruce - Post Rave Wrestle", "Cadans - 1 Bar FU (TOOL)", "Wen - BLIPS", "Thanks for listening", "Yak - Mido"]
+        ))
+    }
+
+    @Test func needsThreeTracksWithoutAHeading() {
+        #expect(MixDescription("Intro\n\nA - B\nC - D").tracks.isEmpty)
+        #expect(MixDescription("One - two - three, a sentence.").tracks.isEmpty)
+    }
 }

@@ -1,7 +1,8 @@
 import Foundation
 
 /// A mix description split into its intro and tracklist, which the descriptions write as
-/// a "Tracklist" heading (often underlined with ===) followed by one track per line.
+/// a "Tracklist" heading (often underlined with ===) followed by one track per line, or as a
+/// bare closing block of "Artist - Title" lines.
 public struct MixDescription: Equatable, Sendable {
     public var intro: String
     public var tracks: [String]
@@ -14,7 +15,7 @@ public struct MixDescription: Equatable, Sendable {
     public init(_ text: String) {
         let lines = text.components(separatedBy: .newlines)
         guard let heading = lines.firstIndex(where: Self.isTracklistHeading) else {
-            self.init(intro: text.trimmingCharacters(in: .whitespacesAndNewlines), tracks: [])
+            self.init(withoutHeading: lines)
             return
         }
         let intro = lines[..<heading].joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -22,6 +23,42 @@ public struct MixDescription: Equatable, Sendable {
             .map { Self.stripNumbering($0.trimmingCharacters(in: .whitespaces)) }
             .filter { !$0.isEmpty && !Self.isRule($0) }
         self.init(intro: intro, tracks: tracks)
+    }
+
+    /// Without a heading, the closing paragraphs are the tracklist if they're mostly
+    /// "Artist - Title" lines (at least three in all). A one-line paragraph before them stays
+    /// in the intro, since a sentence can have a dash in it too.
+    private init(withoutHeading lines: [String]) {
+        let trimmed = lines.map { $0.trimmingCharacters(in: .whitespaces) }
+        // Paragraphs as ranges of non-empty lines
+        var paragraphs: [Range<Int>] = []
+        var index = 0
+        while index < trimmed.count {
+            if trimmed[index].isEmpty { index += 1; continue }
+            let start = index
+            while index < trimmed.count, !trimmed[index].isEmpty { index += 1 }
+            paragraphs.append(start..<index)
+        }
+        var start = trimmed.count
+        for (position, paragraph) in paragraphs.enumerated().reversed() {
+            let block = trimmed[paragraph]
+            let isLast = position == paragraphs.count - 1
+            guard block.filter(Self.looksLikeTrack).count * 5 >= block.count * 4,
+                  block.count > 1 || isLast
+            else { break }
+            start = paragraph.lowerBound
+        }
+        let tracks = trimmed[start...].filter { !$0.isEmpty }.map(Self.stripNumbering)
+        guard tracks.count >= 3 else {
+            self.init(intro: lines.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines), tracks: [])
+            return
+        }
+        let intro = lines[..<start].joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        self.init(intro: intro, tracks: tracks)
+    }
+
+    private static func looksLikeTrack(_ line: String) -> Bool {
+        line.contains(" - ") || line.contains(" – ") || line.contains(" — ")
     }
 
     private static func isTracklistHeading(_ line: String) -> Bool {

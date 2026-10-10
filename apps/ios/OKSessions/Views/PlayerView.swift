@@ -70,6 +70,7 @@ struct PlayerView: View {
 /// Title, waveform, times, transport and footer.
 private struct PlayerControls: View {
     @Environment(AppModel.self) private var model
+    @Environment(\.colorScheme) private var colorScheme
     let mix: Mix
     /// Tighter, for short screens
     var compact = false
@@ -91,7 +92,7 @@ private struct PlayerControls: View {
                 WaveformView(
                     waveform: player.waveform,
                     progress: player.progress,
-                    played: mix.theme.accentColor,
+                    played: mix.theme.waveformColor(onDarkPanel: colorScheme == .dark),
                     unplayed: WaveformView.unplayedColor
                 ) { fraction in
                     player.seek(to: fraction * player.duration)
