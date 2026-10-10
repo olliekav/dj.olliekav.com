@@ -1,10 +1,12 @@
 import XCTest
 
 /// Runs the app against the bundled API fixture (`-ui-testing`), with a local tone instead of streams.
+// XCUIApplication and its elements are main-actor APIs; UI tests run on the main thread anyway
+@MainActor
 final class OKSessionsUITests: XCTestCase {
     var app: XCUIApplication!
 
-    override func setUp() {
+    override func setUp() async throws {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]
