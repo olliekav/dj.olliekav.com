@@ -88,11 +88,12 @@ private struct SearchOverlay: View {
                     Image(systemName: "xmark")
                         .font(.body.weight(.semibold))
                         .frame(width: 48, height: 48)
+                        // Glass inside the button, so it can't take touches meant for it
+                        .glassEffect(.regular.interactive(), in: .circle)
                         // The whole circle is tappable, not just the glyph
                         .contentShape(.circle)
                 }
                 .buttonStyle(.plain)
-                .glassEffect(.regular.interactive(), in: .circle)
                 .accessibilityLabel("Close search")
                 .accessibilityIdentifier("close-search")
             }
