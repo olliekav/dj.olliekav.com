@@ -40,9 +40,9 @@ No accounts, no ads, no tracking.
 
 ## Keywords (100)
 
-dj,mix,techno,drum and bass,dnb,breakbeat,dubstep,garage,bass,electronic,soundcloud,radio,carplay
+dj,mix,techno,drum and bass,dnb,breakbeat,dubstep,garage,bass,electronic,jungle,radio,club,house
 
-(97 characters. Apple already indexes the name and subtitle, so they aren't repeated.)
+(96 characters. Apple already indexes the name and subtitle, so they aren't repeated; other companies' names, like SoundCloud, are left out because Apple rejects them in keywords.)
 
 ## What's new (1.0)
 
