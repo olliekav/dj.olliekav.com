@@ -1,0 +1,48 @@
+{
+  "mixes": [
+    {
+      "id": 101,
+      "urn": "soundcloud:tracks:101",
+      "number": 1,
+      "slug": "ok-sessions-1",
+      "title": "OK Sessions #1",
+      "description": "House and disco.\nTracklist: https://dj.olliekav.com",
+      "genre": "House",
+      "duration_ms": 3600000,
+      "published_at": "2019-03-10T12:00:00.000Z",
+      "artwork_url": "https://i1.sndcdn.com/artworks-abc-t500x500.jpg",
+      "artwork_original_url": "https://i1.sndcdn.com/artworks-abc-original.jpg",
+      "waveform_url": "https://wave.sndcdn.com/abc_m.json",
+      "permalink_url": "https://soundcloud.com/olliekav/ok-sessions-1",
+      "playback_count": 1234,
+      "theme": {
+        "background": "#2A10A6",
+        "foreground": "#EC00A5",
+        "dark": true,
+        "accent": "#EC00A5"
+      }
+    },
+    {
+      "id": 102,
+      "urn": "soundcloud:tracks:102",
+      "number": 2,
+      "slug": "ok-sessions-2",
+      "title": "OK Sessions #2",
+      "description": "",
+      "genre": null,
+      "duration_ms": 3725000,
+      "published_at": "2019-04-01T12:00:00.000Z",
+      "artwork_url": null,
+      "artwork_original_url": null,
+      "waveform_url": null,
+      "permalink_url": "https://soundcloud.com/olliekav/ok-sessions-2",
+      "playback_count": null,
+      "theme": {
+        "background": "#EC1C24",
+        "foreground": "#2A10A6",
+        "dark": false,
+        "accent": "#EC1C24"
+      }
+    }
+  ]
+}

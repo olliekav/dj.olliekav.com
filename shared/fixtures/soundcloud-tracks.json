@@ -1,0 +1,30 @@
+[
+  {
+    "id": 101,
+    "urn": "soundcloud:tracks:101",
+    "title": "OK Sessions #1",
+    "description": "House and disco.\nTracklist: https://dj.olliekav.com",
+    "genre": "House",
+    "duration": 3600000,
+    "created_at": "2019/03/10 12:00:00 +0000",
+    "artwork_url": "https://i1.sndcdn.com/artworks-abc-large.jpg",
+    "waveform_url": "https://wave.sndcdn.com/abc_m.png",
+    "permalink_url": "https://soundcloud.com/olliekav/ok-sessions-1",
+    "playback_count": 1234,
+    "streamable": true
+  },
+  {
+    "id": 102,
+    "urn": "soundcloud:tracks:102",
+    "title": "OK Sessions #2",
+    "description": null,
+    "genre": "",
+    "duration": 3725000,
+    "created_at": "2019/04/01 12:00:00 +0000",
+    "artwork_url": null,
+    "waveform_url": null,
+    "permalink_url": "https://soundcloud.com/olliekav/ok-sessions-2",
+    "playback_count": null,
+    "streamable": true
+  }
+]

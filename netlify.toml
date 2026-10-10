@@ -3,23 +3,20 @@
   publish = "dist"
   functions = "netlify/functions"
 
-[dev]
-  command = "npm run dev"
-  publish = "dist"
-  targetPort = 8080
-  functions = "netlify/functions"
-  [dev.https]
-    keyFile = "./.netlify/certs/localhost-key.pem"
-    certFile = "./.netlify/certs/localhost.pem"
-  https = true
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-  force = true
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net; font-src https://use.typekit.net; img-src 'self' data: https://p.typekit.net https://*.sndcdn.com; connect-src 'self' https://*.sndcdn.com https://*.soundcloud.cloud https://p.typekit.net; media-src 'self' https://*.sndcdn.com https://*.soundcloud.cloud blob:; frame-src https://app.netlify.com; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

@@ -1,0 +1,567 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0AFFAE162D65D7236D04F395 /* Previews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030B1ABEEDF40429581A6CDB /* Previews.swift */; };
+		0D142001A09774CE95F3F68D /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69E91B839F715E2B65A2074 /* PlayerView.swift */; };
+		155D059C2D412184F0907BFE /* MixArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BDC857A20DD25A2B067D53 /* MixArtwork.swift */; };
+		1942E7E131C15AEAF256265E /* UITestHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0B63309ABD56318EB8FF87 /* UITestHTTPClient.swift */; };
+		376D74299668EFC8F4B2952E /* MixGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6505AC515AD4647C35C1181 /* MixGridView.swift */; };
+		517A082ED34D6ED359599381 /* mixes.json in Resources */ = {isa = PBXBuildFile; fileRef = 6A406E0FA30395CA5276D71B /* mixes.json */; };
+		60E96DD82047D3FFDAC94682 /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C3F8C0A653389C741E1845 /* CarPlaySceneDelegate.swift */; };
+		66E0546D9307197F0B4673F3 /* ui-test-tone.m4a in Resources */ = {isa = PBXBuildFile; fileRef = FC8CE4E34B7F8CF5FA0962EB /* ui-test-tone.m4a */; };
+		6CDF8ABC1A5D8FD5BA172C86 /* OKSessionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6295C78BE496D1C0D2C73 /* OKSessionsApp.swift */; };
+		77F09A8642B45386FD008F83 /* PlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = A151E468CCDE412BC24C7D33 /* PlayerKit */; };
+		80F4424F68B8712B2654EE9E /* OKSessionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699FB2143FFCAD25D5598B83 /* OKSessionsUITests.swift */; };
+		88D1EF6DF34DAE63C26B73CE /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7F0ECCD026BBB5276F0C3F /* AppModel.swift */; };
+		89FECA7D3822192BA26A5D15 /* RoutePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B676B65E9D79F5AC2FC9F50D /* RoutePicker.swift */; };
+		A21B197EF573F775905971C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB2C16E2B3AFC8B351F00BDC /* Assets.xcassets */; };
+		A2B2F37ED1368484A224B2E2 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA6A296F23E52B2C9952F77 /* WaveformView.swift */; };
+		A5BAD7C035B4ED211D9332FD /* AudioSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05CD55AA63BEDB72071D2B4 /* AudioSession.swift */; };
+		EEBA2EF1A4C290064CD80881 /* MixKit in Frameworks */ = {isa = PBXBuildFile; productRef = 915ACD73B32B4429B92B50B4 /* MixKit */; };
+		F2B2950DBDF8F8A8E7B9B001 /* MiniPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3EBB48DCDF7CB6AA61FD4A7 /* MiniPlayer.swift */; };
+		FB5EF61A1FB96AA618D75D4A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21B2B76B2DC00F6D6DA999F /* RootView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DC7976F94578CE4B0E53051D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0AC5690B5F632E18EDB526A6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 000CB83D7DADE9A196769445;
+			remoteInfo = OKSessions;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		030B1ABEEDF40429581A6CDB /* Previews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Previews.swift; sourceTree = "<group>"; };
+		0D50CC39520D236C803B4872 /* OKSessions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OKSessions.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BB32211F8594DC80F169728 /* OKSessionsKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = OKSessionsKit; path = Packages/OKSessionsKit; sourceTree = SOURCE_ROOT; };
+		4202146087D0B2D58CB39D25 /* OKSessionsUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = OKSessionsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FE6295C78BE496D1C0D2C73 /* OKSessionsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OKSessionsApp.swift; sourceTree = "<group>"; };
+		699FB2143FFCAD25D5598B83 /* OKSessionsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OKSessionsUITests.swift; sourceTree = "<group>"; };
+		6A406E0FA30395CA5276D71B /* mixes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = mixes.json; path = ../../../../shared/fixtures/mixes.json; sourceTree = "<group>"; };
+		6E7F0ECCD026BBB5276F0C3F /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		7E0B63309ABD56318EB8FF87 /* UITestHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestHTTPClient.swift; sourceTree = "<group>"; };
+		8DA6A296F23E52B2C9952F77 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		93AF18154F929BD1458C6D81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		98BDC857A20DD25A2B067D53 /* MixArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixArtwork.swift; sourceTree = "<group>"; };
+		A05CD55AA63BEDB72071D2B4 /* AudioSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSession.swift; sourceTree = "<group>"; };
+		B4C3F8C0A653389C741E1845 /* CarPlaySceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift; sourceTree = "<group>"; };
+		B676B65E9D79F5AC2FC9F50D /* RoutePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePicker.swift; sourceTree = "<group>"; };
+		C21B2B76B2DC00F6D6DA999F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		C69E91B839F715E2B65A2074 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		CB2C16E2B3AFC8B351F00BDC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E6505AC515AD4647C35C1181 /* MixGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixGridView.swift; sourceTree = "<group>"; };
+		EC8127E3DB6D385AF24C6597 /* OKSessions.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OKSessions.entitlements; sourceTree = "<group>"; };
+		F3EBB48DCDF7CB6AA61FD4A7 /* MiniPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayer.swift; sourceTree = "<group>"; };
+		FC8CE4E34B7F8CF5FA0962EB /* ui-test-tone.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ui-test-tone.m4a"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D9FF788D13ED57D136EFFF7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEBA2EF1A4C290064CD80881 /* MixKit in Frameworks */,
+				77F09A8642B45386FD008F83 /* PlayerKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FA79493A556838A1C12B96 = {
+			isa = PBXGroup;
+			children = (
+				EF932E5915B0F006EBA8EE08 /* OKSessions */,
+				93D7B5FE0872FBAB172D9288 /* OKSessionsUITests */,
+				2D6BEDF59815ECA5A54E9B8E /* Packages */,
+				77E11A160BEDEF26EBA462CF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		28F6B35893DF7C69374E1497 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				6A406E0FA30395CA5276D71B /* mixes.json */,
+				030B1ABEEDF40429581A6CDB /* Previews.swift */,
+				7E0B63309ABD56318EB8FF87 /* UITestHTTPClient.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		2D6BEDF59815ECA5A54E9B8E /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				2BB32211F8594DC80F169728 /* OKSessionsKit */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		3AA0FAA9B4A5793B3EBEC110 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CB2C16E2B3AFC8B351F00BDC /* Assets.xcassets */,
+				FC8CE4E34B7F8CF5FA0962EB /* ui-test-tone.m4a */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		77E11A160BEDEF26EBA462CF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0D50CC39520D236C803B4872 /* OKSessions.app */,
+				4202146087D0B2D58CB39D25 /* OKSessionsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7C4ACD387DB3FA6A2503DBE0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F3EBB48DCDF7CB6AA61FD4A7 /* MiniPlayer.swift */,
+				98BDC857A20DD25A2B067D53 /* MixArtwork.swift */,
+				E6505AC515AD4647C35C1181 /* MixGridView.swift */,
+				C69E91B839F715E2B65A2074 /* PlayerView.swift */,
+				C21B2B76B2DC00F6D6DA999F /* RootView.swift */,
+				B676B65E9D79F5AC2FC9F50D /* RoutePicker.swift */,
+				8DA6A296F23E52B2C9952F77 /* WaveformView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		93D7B5FE0872FBAB172D9288 /* OKSessionsUITests */ = {
+			isa = PBXGroup;
+			children = (
+				699FB2143FFCAD25D5598B83 /* OKSessionsUITests.swift */,
+			);
+			path = OKSessionsUITests;
+			sourceTree = "<group>";
+		};
+		B6934ED743ABD5806F292C69 /* CarPlay */ = {
+			isa = PBXGroup;
+			children = (
+				B4C3F8C0A653389C741E1845 /* CarPlaySceneDelegate.swift */,
+			);
+			path = CarPlay;
+			sourceTree = "<group>";
+		};
+		EF932E5915B0F006EBA8EE08 /* OKSessions */ = {
+			isa = PBXGroup;
+			children = (
+				93AF18154F929BD1458C6D81 /* Info.plist */,
+				EC8127E3DB6D385AF24C6597 /* OKSessions.entitlements */,
+				FD5E1EC75A29477679F36C2A /* App */,
+				B6934ED743ABD5806F292C69 /* CarPlay */,
+				3AA0FAA9B4A5793B3EBEC110 /* Resources */,
+				28F6B35893DF7C69374E1497 /* Support */,
+				7C4ACD387DB3FA6A2503DBE0 /* Views */,
+			);
+			path = OKSessions;
+			sourceTree = "<group>";
+		};
+		FD5E1EC75A29477679F36C2A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6E7F0ECCD026BBB5276F0C3F /* AppModel.swift */,
+				A05CD55AA63BEDB72071D2B4 /* AudioSession.swift */,
+				4FE6295C78BE496D1C0D2C73 /* OKSessionsApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		000CB83D7DADE9A196769445 /* OKSessions */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FF9CACF850022B878AB302D /* Build configuration list for PBXNativeTarget "OKSessions" */;
+			buildPhases = (
+				E0F9EE197DCBF29440C1A2FD /* Sources */,
+				20C82C46405C17B18E474305 /* Resources */,
+				8D9FF788D13ED57D136EFFF7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OKSessions;
+			packageProductDependencies = (
+				915ACD73B32B4429B92B50B4 /* MixKit */,
+				A151E468CCDE412BC24C7D33 /* PlayerKit */,
+			);
+			productName = OKSessions;
+			productReference = 0D50CC39520D236C803B4872 /* OKSessions.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2F8FC4E88004C529836CFD27 /* OKSessionsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4640ACF2F1A2C61A4EBF86C6 /* Build configuration list for PBXNativeTarget "OKSessionsUITests" */;
+			buildPhases = (
+				2281C86B28A0FD6AEE194BB0 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				82A4D6FD2AE60564E4F7527D /* PBXTargetDependency */,
+			);
+			name = OKSessionsUITests;
+			packageProductDependencies = (
+			);
+			productName = OKSessionsUITests;
+			productReference = 4202146087D0B2D58CB39D25 /* OKSessionsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0AC5690B5F632E18EDB526A6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					000CB83D7DADE9A196769445 = {
+						DevelopmentTeam = 3B26SQGP8Q;
+					};
+					2F8FC4E88004C529836CFD27 = {
+						DevelopmentTeam = 3B26SQGP8Q;
+						TestTargetID = 000CB83D7DADE9A196769445;
+					};
+				};
+			};
+			buildConfigurationList = 2134A9F6A3F374F88CE75938 /* Build configuration list for PBXProject "OKSessions" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 08FA79493A556838A1C12B96;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				44802AB83CBC0DDC2F583473 /* XCLocalSwiftPackageReference "Packages/OKSessionsKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 77E11A160BEDEF26EBA462CF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				000CB83D7DADE9A196769445 /* OKSessions */,
+				2F8FC4E88004C529836CFD27 /* OKSessionsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		20C82C46405C17B18E474305 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A21B197EF573F775905971C0 /* Assets.xcassets in Resources */,
+				517A082ED34D6ED359599381 /* mixes.json in Resources */,
+				66E0546D9307197F0B4673F3 /* ui-test-tone.m4a in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2281C86B28A0FD6AEE194BB0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				80F4424F68B8712B2654EE9E /* OKSessionsUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0F9EE197DCBF29440C1A2FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				88D1EF6DF34DAE63C26B73CE /* AppModel.swift in Sources */,
+				A5BAD7C035B4ED211D9332FD /* AudioSession.swift in Sources */,
+				60E96DD82047D3FFDAC94682 /* CarPlaySceneDelegate.swift in Sources */,
+				F2B2950DBDF8F8A8E7B9B001 /* MiniPlayer.swift in Sources */,
+				155D059C2D412184F0907BFE /* MixArtwork.swift in Sources */,
+				376D74299668EFC8F4B2952E /* MixGridView.swift in Sources */,
+				6CDF8ABC1A5D8FD5BA172C86 /* OKSessionsApp.swift in Sources */,
+				0D142001A09774CE95F3F68D /* PlayerView.swift in Sources */,
+				0AFFAE162D65D7236D04F395 /* Previews.swift in Sources */,
+				FB5EF61A1FB96AA618D75D4A /* RootView.swift in Sources */,
+				89FECA7D3822192BA26A5D15 /* RoutePicker.swift in Sources */,
+				1942E7E131C15AEAF256265E /* UITestHTTPClient.swift in Sources */,
+				A2B2F37ED1368484A224B2E2 /* WaveformView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		82A4D6FD2AE60564E4F7527D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 000CB83D7DADE9A196769445 /* OKSessions */;
+			targetProxy = DC7976F94578CE4B0E53051D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1F648A8E7D15F9BB76CEF7D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 3B26SQGP8Q;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		2EDC72D96E08BCA2DBA13220 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = OKSessions/OKSessions.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = OKSessions/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OK_API_BASE_URL = "https://dj.olliekav.com";
+				PRODUCT_BUNDLE_IDENTIFIER = com.olliekav.oksessions;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3024427CF97506F31AE64144 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.olliekav.oksessions.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = OKSessions;
+			};
+			name = Debug;
+		};
+		725EB47C413F60B2E85DFC20 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.olliekav.oksessions.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = OKSessions;
+			};
+			name = Release;
+		};
+		AF3F67D3705557F2A5F5ABA4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = OKSessions/OKSessions.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = OKSessions/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OK_API_BASE_URL = "https://dj.olliekav.com";
+				PRODUCT_BUNDLE_IDENTIFIER = com.olliekav.oksessions;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FAAAF720F85A90E50A6279A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 3B26SQGP8Q;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2134A9F6A3F374F88CE75938 /* Build configuration list for PBXProject "OKSessions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1F648A8E7D15F9BB76CEF7D1 /* Debug */,
+				FAAAF720F85A90E50A6279A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4640ACF2F1A2C61A4EBF86C6 /* Build configuration list for PBXNativeTarget "OKSessionsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3024427CF97506F31AE64144 /* Debug */,
+				725EB47C413F60B2E85DFC20 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5FF9CACF850022B878AB302D /* Build configuration list for PBXNativeTarget "OKSessions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF3F67D3705557F2A5F5ABA4 /* Debug */,
+				2EDC72D96E08BCA2DBA13220 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		44802AB83CBC0DDC2F583473 /* XCLocalSwiftPackageReference "Packages/OKSessionsKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/OKSessionsKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		915ACD73B32B4429B92B50B4 /* MixKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MixKit;
+		};
+		A151E468CCDE412BC24C7D33 /* PlayerKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PlayerKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 0AC5690B5F632E18EDB526A6 /* Project object */;
+}
