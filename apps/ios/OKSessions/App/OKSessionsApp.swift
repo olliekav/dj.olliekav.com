@@ -34,7 +34,7 @@ struct OKSessionsApp: App {
     }
     #endif
 
-    /// Titles in the rounded heavy of the artwork numbers.
+    /// Titles in SF Rounded, on a transparent bar.
     private static func styleNavigationTitles() {
         func rounded(_ style: UIFont.TextStyle, weight: UIFont.Weight) -> UIFont {
             let base = UIFont.preferredFont(forTextStyle: style)
@@ -42,8 +42,15 @@ struct OKSessionsApp: App {
             guard let descriptor = font.fontDescriptor.withDesign(.rounded) else { return font }
             return UIFontMetrics(forTextStyle: style).scaledFont(for: UIFont(descriptor: descriptor, size: base.pointSize))
         }
-        let appearance = UINavigationBar.appearance()
-        appearance.largeTitleTextAttributes = [.font: rounded(.largeTitle, weight: .heavy)]
-        appearance.titleTextAttributes = [.font: rounded(.headline, weight: .bold)]
+        // Transparent, so scrolled content gets only the soft edge fade rather than a bar.
+        // Set here with the fonts: hiding the bar from SwiftUI replaces the whole appearance
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.largeTitleTextAttributes = [.font: rounded(.largeTitle, weight: .bold)]
+        appearance.titleTextAttributes = [.font: rounded(.headline, weight: .semibold)]
+        let bar = UINavigationBar.appearance()
+        bar.standardAppearance = appearance
+        bar.scrollEdgeAppearance = appearance
+        bar.compactAppearance = appearance
     }
 }
