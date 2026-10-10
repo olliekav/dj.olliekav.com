@@ -44,6 +44,11 @@ public final class PlayerController {
     @ObservationIgnored private let engine: AudioEngine
     @ObservationIgnored private let api: PlayerAPI
     @ObservationIgnored private var loadTask: Task<Void, Never>?
+    @ObservationIgnored private var waveformTask: Task<Void, Never>?
+    /// Waveforms already fetched, so reopening a mix shows its waveform straight away
+    @ObservationIgnored private var waveforms: [Int: Waveform] = [:]
+    /// Seeks the engine hasn't finished; while any are pending, its reported times are stale
+    @ObservationIgnored private var pendingSeeks = 0
     @ObservationIgnored private var playWhenReady = true
     @ObservationIgnored private var retriedStream = false
     /// The queue in session order, so shuffle can be turned off again
@@ -147,6 +152,7 @@ public final class PlayerController {
     public func seek(to time: TimeInterval) {
         let clamped = min(max(0, time), duration)
         currentTime = clamped
+        pendingSeeks += 1
         engine.seek(to: clamped)
         onChange?()
     }
@@ -157,7 +163,9 @@ public final class PlayerController {
 
     public func stop() {
         loadTask?.cancel()
+        waveformTask?.cancel()
         engine.stop()
+        pendingSeeks = 0
         index = nil
         status = .idle
         currentTime = 0
@@ -172,12 +180,12 @@ public final class PlayerController {
         currentTime = time
         playWhenReady = autoplay
         retriedStream = false
-        waveform = nil
+        pendingSeeks = 0
+        let mix = queue[index]
+        loadWaveform(for: mix)
         onChange?()
 
-        let mix = queue[index]
         loadTask = Task { [api, engine] in
-            async let waveform = try? api.waveform(for: mix)
             do {
                 let stream = try await api.stream(for: mix)
                 guard !Task.isCancelled else { return }
@@ -188,9 +196,22 @@ public final class PlayerController {
                 self.status = .failed(error.localizedDescription)
                 self.onChange?()
             }
-            let peaks = await waveform
-            if !Task.isCancelled, self.current?.id == mix.id {
-                self.waveform = peaks ?? nil
+        }
+    }
+
+    /// Shows the waveform as soon as it arrives, without waiting for the stream.
+    private func loadWaveform(for mix: Mix) {
+        waveformTask?.cancel()
+        if let cached = waveforms[mix.id] {
+            waveform = cached
+            return
+        }
+        waveform = nil
+        waveformTask = Task { [api] in
+            guard let peaks = try? await api.waveform(for: mix), !Task.isCancelled else { return }
+            self.waveforms[mix.id] = peaks
+            if self.current?.id == mix.id {
+                self.waveform = peaks
             }
         }
     }
@@ -198,9 +219,7 @@ public final class PlayerController {
     /// Fetches a fresh stream (they expire) and continues from `time`.
     private func reload(at time: TimeInterval) {
         guard let index else { return }
-        let waveform = self.waveform
         load(index: index, autoplay: true, at: time)
-        self.waveform = waveform
     }
 
     private func handle(_ event: AudioEngineEvent) {
@@ -210,9 +229,12 @@ public final class PlayerController {
                 status = playWhenReady ? .loading : .paused
             }
         case .time(let time):
-            if status != .loading || time > 0 {
+            // Mid-seek the engine still reports the old position; ignore it
+            if pendingSeeks == 0, status != .loading || time > 0 {
                 currentTime = time
             }
+        case .seeked:
+            pendingSeeks = max(0, pendingSeeks - 1)
         case .playing(let playing):
             if playing {
                 status = .playing

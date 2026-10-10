@@ -25,14 +25,21 @@ final class FakeAPI: PlayerAPI, @unchecked Sendable {
     var failStreams = false
     var streamCount = 0
     var waveform: Waveform? = Waveform(width: 2, height: 10, samples: [5, 10])
+    var waveformCount = 0
+    /// Holds stream requests open, like a slow /api/stream
+    var holdStreams = false
 
     func stream(for mix: Mix) async throws -> MixKit.Stream {
+        while holdStreams { try await Task.sleep(for: .milliseconds(5)) }
         streamCount += 1
         if failStreams { throw URLError(.notConnectedToInternet) }
         return Stream(url: URL(string: "https://cdn.test/\(mix.id)-\(streamCount).m3u8")!, format: .hlsAac160)
     }
 
-    func waveform(for mix: Mix) async throws -> Waveform? { waveform }
+    func waveform(for mix: Mix) async throws -> Waveform? {
+        waveformCount += 1
+        return waveform
+    }
 }
 
 func makeMix(_ n: Int, duration: Int = 600_000) -> Mix {
