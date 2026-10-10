@@ -34,12 +34,12 @@ struct PlayerView: View {
                 .background(Color(uiColor: .systemBackground).ignoresSafeArea())
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        HeaderButton(title: "Close", systemImage: "chevron.down") { dismiss() }
+                        HeaderButton(tint: theme.foregroundColor, title: "Close", systemImage: "chevron.down") { dismiss() }
                             .accessibilityIdentifier("close-player")
                     }
                     .sharedBackgroundVisibility(.hidden)
                     ToolbarItem(placement: .topBarTrailing) {
-                        HeaderButton(title: "About this mix", systemImage: "info") { showsInfo = true }
+                        HeaderButton(tint: theme.foregroundColor, title: "About this mix", systemImage: "info") { showsInfo = true }
                     }
                     .sharedBackgroundVisibility(.hidden)
                 }
@@ -154,6 +154,8 @@ private struct TransportControls: View {
 
 /// A circular glass button, the same size whatever its symbol.
 private struct HeaderButton: View {
+    /// The mix's logo colour
+    let tint: Color
     let title: String
     let systemImage: String
     let action: () -> Void
@@ -167,7 +169,7 @@ private struct HeaderButton: View {
                 .contentShape(.circle)
         }
         .buttonStyle(.plain)
-        .glassEffect(.clear.interactive(), in: .circle)
+        .glassEffect(.clear.tint(tint).interactive(), in: .circle)
         .accessibilityLabel(title)
     }
 }
