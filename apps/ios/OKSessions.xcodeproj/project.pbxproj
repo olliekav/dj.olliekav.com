@@ -385,8 +385,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = OKSessions/OKSessions.entitlements;
-				"CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" = OKSessions/CarPlay.entitlements;
+				CODE_SIGN_ENTITLEMENTS = OKSessions/CarPlay.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = OKSessions/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -439,8 +438,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = OKSessions/OKSessions.entitlements;
-				"CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" = OKSessions/CarPlay.entitlements;
+				CODE_SIGN_ENTITLEMENTS = OKSessions/CarPlay.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = OKSessions/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -55,12 +55,9 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_STRICT_CONCURRENCY: complete
-        # CarPlay needs Apple's CarPlay Audio entitlement, and a device or App Store build
-        # can't be signed with it until Apple approves it for the App ID. Until then device
-        # builds leave it out; once approved, switch this to OKSessions/CarPlay.entitlements
-        CODE_SIGN_ENTITLEMENTS: OKSessions/OKSessions.entitlements
-        # The simulator doesn't check, so it always has CarPlay for testing
-        CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]: OKSessions/CarPlay.entitlements
+        # CarPlay Audio, approved by Apple and enabled on the App ID. If signing ever fails
+        # on it (a new App ID, say), OKSessions/OKSessions.entitlements builds without CarPlay
+        CODE_SIGN_ENTITLEMENTS: OKSessions/CarPlay.entitlements
   OKSessionsUITests:
     type: bundle.ui-testing
     platform: iOS
