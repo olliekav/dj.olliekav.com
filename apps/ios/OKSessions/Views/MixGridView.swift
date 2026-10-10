@@ -6,10 +6,10 @@ struct MixGridView: View {
     @Environment(AppModel.self) private var model
     var mixes: [Mix]
 
-    private let columns = [GridItem(.adaptive(minimum: 150, maximum: 260), spacing: 2)]
+    private let columns = [GridItem(.adaptive(minimum: 150, maximum: 260), spacing: 0)]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 2) {
+        LazyVGrid(columns: columns, spacing: 0) {
             ForEach(mixes) { mix in
                 MixTile(mix: mix, isCurrent: model.player.current?.id == mix.id, isPlaying: model.player.isPlaying)
                     .onTapGesture { model.play(mix) }

@@ -79,7 +79,7 @@ struct PlayPauseButton: View {
         }
         .labelStyle(.iconOnly)
         .contentTransition(.symbolEffect(.replace))
-        .font(size == .large ? .system(size: 34) : .title3)
+        .font(size == .large ? .system(size: 48) : .title3)
         .frame(width: size == .large ? 80 : 32, height: size == .large ? 80 : 32)
         .overlay {
             if player.status == .loading || player.isBuffering {

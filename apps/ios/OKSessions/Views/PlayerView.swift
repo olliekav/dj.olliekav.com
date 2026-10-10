@@ -101,24 +101,25 @@ private struct TransportControls: View {
 
     var body: some View {
         let player = model.player
-        GlassEffectContainer(spacing: 16) {
-            HStack(spacing: 16) {
-                TransportButton(title: "Previous", systemImage: "backward.fill") { player.previous() }
-                TransportButton(title: "Back \(Int(NowPlaying.skipInterval)) seconds", systemImage: "gobackward.15", glass: false) {
-                    player.skip(by: -NowPlaying.skipInterval)
-                }
+        HStack(spacing: 0) {
+            TransportButton(title: "Back \(Int(NowPlaying.skipInterval)) seconds", systemImage: "gobackward.15", size: 22) {
+                player.skip(by: -NowPlaying.skipInterval)
+            }
+            Spacer(minLength: 0)
+            // Previous, play and next grouped in the centre
+            HStack(spacing: 20) {
+                TransportButton(title: "Previous", systemImage: "backward.fill", size: 30) { player.previous() }
                 PlayPauseButton(size: .large)
-                    .glassEffect(.mixTinted(player.current?.theme).interactive(), in: .circle)
-                TransportButton(title: "Forward \(Int(NowPlaying.skipInterval)) seconds", systemImage: "goforward.15", glass: false) {
-                    player.skip(by: NowPlaying.skipInterval)
-                }
-                TransportButton(title: "Next", systemImage: "forward.fill") { player.next() }
+                TransportButton(title: "Next", systemImage: "forward.fill", size: 30) { player.next() }
                     .disabled(!player.hasNext)
             }
-            .buttonStyle(.plain)
-            .frame(minHeight: 80)
+            Spacer(minLength: 0)
+            TransportButton(title: "Forward \(Int(NowPlaying.skipInterval)) seconds", systemImage: "goforward.15", size: 22) {
+                player.skip(by: NowPlaying.skipInterval)
+            }
         }
-        .controlSize(.large)
+        .buttonStyle(.plain)
+        .frame(minHeight: 80)
     }
 }
 
@@ -171,19 +172,19 @@ extension Glass {
 }
 
 private struct TransportButton: View {
-    @Environment(AppModel.self) private var model
     let title: String
     let systemImage: String
-    var glass = true
+    var size: CGFloat
     let action: () -> Void
 
     var body: some View {
-        Button(title, systemImage: systemImage, action: action)
-            .labelStyle(.iconOnly)
-            .font(.title2)
-            .frame(width: 56, height: 56)
-            .contentShape(.circle)
-            .glassEffect(glass ? .mixTinted(model.player.current?.theme).interactive() : .identity, in: .circle)
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: size, weight: .semibold))
+                .frame(width: 56, height: 56)
+                .contentShape(.rect)
+        }
+        .accessibilityLabel(title)
     }
 }
 
