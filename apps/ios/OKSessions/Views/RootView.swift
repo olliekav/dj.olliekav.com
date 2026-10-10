@@ -13,8 +13,6 @@ struct RootView: View {
         NavigationStack {
             LibraryContent(mixes: model.library.search(query), isSearching: !query.isEmpty, transition: transition)
                 .navigationTitle("O:K Sessions")
-                // No bar behind the title when scrolled, just the soft fade at the top edge
-                .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
                 .toolbar(isSearching ? .hidden : .visible, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
