@@ -5,7 +5,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
 import com.olliekav.oksessions.core.Mix
-import com.olliekav.oksessions.ui.ArtworkRenderer
 
 /** Media IDs and stream URIs for mixes, shared by the UI, the service and Android Auto. */
 object MediaItems {
@@ -30,6 +29,8 @@ object MediaItems {
         .setMediaMetadata(metadata(mix))
         .build()
 
+    fun artworkUri(mix: Mix): Uri = Uri.Builder().scheme(STREAM_SCHEME).authority("artwork").appendPath("${mix.number}").build()
+
     fun metadata(mix: Mix): MediaMetadata = MediaMetadata.Builder()
         .setTitle(mix.title)
         .setDisplayTitle(mix.title)
@@ -37,7 +38,8 @@ object MediaItems {
         .setSubtitle(mix.genre)
         .setGenre(mix.genre)
         .setDurationMs(mix.durationMs)
-        .setArtworkData(ArtworkRenderer.png(mix), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+        // Drawn only when something shows it (see ArtworkBitmapLoader), not for every queued mix
+        .setArtworkUri(artworkUri(mix))
         .setIsBrowsable(false)
         .setIsPlayable(true)
         .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)

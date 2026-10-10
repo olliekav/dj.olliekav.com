@@ -17,7 +17,6 @@ import androidx.core.graphics.createBitmap
 import com.olliekav.oksessions.core.Logo
 import com.olliekav.oksessions.core.Mix
 import com.olliekav.oksessions.core.argb
-import java.io.ByteArrayOutputStream
 
 /**
  * Draws a mix's artwork natively: the OK logo and "#<number>" in the theme's colours, like the
@@ -50,13 +49,6 @@ object ArtworkRenderer {
     }
 
     fun bitmap(mix: Mix, size: Int): Bitmap = createBitmap(size, size).also { draw(Canvas(it), mix, size.toFloat()) }
-
-    /** PNG bytes for media metadata (the notification, lock screen and Android Auto). */
-    fun png(mix: Mix, size: Int = 512): ByteArray =
-        ByteArrayOutputStream().use { out ->
-            bitmap(mix, size).compress(Bitmap.CompressFormat.PNG, 100, out)
-            out.toByteArray()
-        }
 }
 
 @Composable

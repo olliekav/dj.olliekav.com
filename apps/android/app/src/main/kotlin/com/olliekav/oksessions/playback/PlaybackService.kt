@@ -53,6 +53,7 @@ class PlaybackService : MediaLibraryService() {
         )
         session = MediaLibrarySession.Builder(this, player, Callback())
             .setSessionActivity(openApp)
+            .setBitmapLoader(ArtworkBitmapLoader(app.library))
             .build()
     }
 

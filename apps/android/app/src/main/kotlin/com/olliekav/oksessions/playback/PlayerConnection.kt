@@ -31,6 +31,8 @@ class PlayerConnection(
     private var controller: MediaController? = null
     private var ticker: Job? = null
     private val waveforms = mutableMapOf<Int, Waveform>()
+    /** The mix just asked for, shown until the service reports it, so the player opens at once */
+    private var pending: Mix? = null
 
     var current by mutableStateOf<Mix?>(null)
         private set
@@ -67,7 +69,7 @@ class PlayerConnection(
         // Position isn't an event; poll it while connected
         ticker = scope.launch {
             while (isActive) {
-                controller?.let { positionMs = it.currentPosition.coerceAtLeast(0) }
+                if (pending == null) controller?.let { positionMs = it.currentPosition.coerceAtLeast(0) }
                 delay(250)
             }
         }
@@ -87,6 +89,13 @@ class PlayerConnection(
             player.play()
             return
         }
+        // Show it now; the service takes a moment to queue the playlist and report back
+        pending = mix
+        show(mix)
+        isLoading = true
+        isPlaying = false
+        positionMs = 0
+        error = null
         player.setMediaItem(MediaItems.request(mix))
         player.prepare()
         player.play()
@@ -123,17 +132,26 @@ class PlayerConnection(
     }
 
     private fun sync(player: Player) {
-        val mix = player.currentMediaItem?.mediaId?.let(MediaItems::number)?.let(library::mix)
-        if (mix?.number != current?.number) {
-            current = mix
-            loadWaveform(mix)
+        val reported = player.currentMediaItem?.mediaId?.let(MediaItems::number)?.let(library::mix)
+        val waiting = pending
+        if (waiting != null && reported?.number != waiting.number && player.playerError == null) {
+            // The service hasn't caught up with the mix just picked; keep showing it as loading
+            return
         }
+        pending = null
+        show(reported)
         isPlaying = player.isPlaying
         isLoading = player.playbackState == Player.STATE_BUFFERING
         isShuffled = player.shuffleModeEnabled
         hasNext = player.hasNextMediaItem()
         error = player.playerError?.let { "Couldn't play this mix." }
         if (player.duration != C.TIME_UNSET) positionMs = player.currentPosition.coerceAtLeast(0)
+    }
+
+    private fun show(mix: Mix?) {
+        if (mix?.number == current?.number) return
+        current = mix
+        loadWaveform(mix)
     }
 
     /** Shown as soon as it arrives, and kept so reopening a mix shows it straight away. */
