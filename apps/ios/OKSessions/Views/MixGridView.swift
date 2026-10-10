@@ -40,11 +40,10 @@ struct MixTile: View {
                 if isCurrent {
                     Image(systemName: isPlaying ? "waveform" : "pause.fill")
                         .symbolEffect(.variableColor.iterative, isActive: isPlaying)
-                        .font(.footnote.weight(.bold))
+                        .font(.title3.weight(.bold))
                         .foregroundStyle(mix.theme.foregroundColor)
-                        .padding(8)
-                        .glassEffect(.regular.tint(mix.theme.backgroundColor.opacity(0.6)), in: .circle)
-                        .padding(8)
+                        .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
+                        .padding(14)
                 }
             }
             .contentShape(.rect)

@@ -45,7 +45,7 @@ struct MiniPlayer: View {
             .padding(.trailing, 16)
             .padding(.vertical, 8)
             .contentShape(.capsule)
-            .glassEffect(.regular.tint(mix.theme.backgroundColor.opacity(0.8)).interactive(), in: .capsule)
+            .glassEffect(.regular.tint(mix.theme.backgroundColor.opacity(0.5)).interactive(), in: .capsule)
             .animation(.easeInOut(duration: 0.4), value: mix.id)
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("mini-player")
