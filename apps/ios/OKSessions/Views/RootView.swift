@@ -6,13 +6,33 @@ struct RootView: View {
     @Environment(AppModel.self) private var model
     @Namespace private var transition
     @State private var query = ""
+    @State private var isSearching = false
 
     var body: some View {
         @Bindable var model = model
         NavigationStack {
             LibraryContent(mixes: model.library.search(query), isSearching: !query.isEmpty)
                 .navigationTitle("OK Sessions")
-                .searchable(text: $query, placement: .navigationBarDrawer, prompt: "Number, title or genre")
+                .toolbar(isSearching ? .hidden : .visible, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Search", systemImage: "magnifyingglass") {
+                            withAnimation(.spring(duration: 0.35)) { isSearching = true }
+                        }
+                        .accessibilityIdentifier("search-button")
+                    }
+                }
+                .overlay(alignment: .top) {
+                    if isSearching {
+                        SearchOverlay(query: $query) {
+                            withAnimation(.spring(duration: 0.35)) {
+                                isSearching = false
+                                query = ""
+                            }
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
         }
         .safeAreaInset(edge: .bottom) {
             if model.player.current != nil {
@@ -28,6 +48,53 @@ struct RootView: View {
                 .navigationTransition(.zoom(sourceID: "player", in: transition))
         }
         .tint(model.player.current?.theme.accentColor ?? .primary)
+    }
+}
+
+/// A glass search field over the top of the grid, focused as it appears.
+private struct SearchOverlay: View {
+    @Binding var query: String
+    var close: () -> Void
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        GlassEffectContainer(spacing: 8) {
+            HStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    TextField("Number, title or genre", text: $query)
+                        .focused($focused)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .submitLabel(.search)
+                        .accessibilityIdentifier("search-field")
+                    if !query.isEmpty {
+                        Button("Clear", systemImage: "xmark.circle.fill") { query = "" }
+                            .labelStyle(.iconOnly)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .frame(height: 48)
+                .glassEffect(.regular, in: .capsule)
+
+                Button(action: close) {
+                    Image(systemName: "xmark")
+                        .font(.body.weight(.semibold))
+                        .frame(width: 48, height: 48)
+                }
+                .buttonStyle(.plain)
+                .glassEffect(.regular.interactive(), in: .circle)
+                .accessibilityLabel("Close search")
+                .accessibilityIdentifier("close-search")
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        // A plain header behind the field, so it reads over the colourful grid
+        .background(.background, ignoresSafeAreaEdges: .top)
+        .onAppear { focused = true }
     }
 }
 

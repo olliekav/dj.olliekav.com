@@ -49,14 +49,17 @@ final class OKSessionsUITests: XCTestCase {
 
     func testSearchByNumber() {
         XCTAssertTrue(app.buttons["mix-2"].waitForExistence(timeout: 10))
-        // Search is tucked under the title; pull down to reveal it
-        app.buttons["mix-1"].swipeDown()
-        let field = app.searchFields.firstMatch
+        // Search opens from the header as an overlay, already focused
+        app.buttons["search-button"].tap()
+        let field = app.textFields["search-field"]
         XCTAssertTrue(field.waitForExistence(timeout: 5))
-        field.tap()
         field.typeText("#1")
         XCTAssertTrue(app.buttons["mix-1"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["mix-2"].exists)
+
+        // Closing clears the search
+        app.buttons["close-search"].tap()
+        XCTAssertTrue(app.buttons["mix-2"].waitForExistence(timeout: 5))
     }
 
     private func labeled(_ label: String) -> XCUIElement {
