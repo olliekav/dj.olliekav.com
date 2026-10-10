@@ -3,35 +3,39 @@ import PlayerKit
 import SwiftUI
 
 /// The full-screen player: the artwork on the mix's colour above, the controls on a plain
-/// white (or black, in dark mode) panel below.
+/// white (or black, in dark mode) panel below. Side by side in landscape.
 struct PlayerView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var showsInfo = false
+    @State private var isLandscape = false
 
     var body: some View {
         if let mix = model.player.current {
             let theme = mix.theme
+            let sideBySide = isLandscape
+            let layout = sideBySide ? AnyLayout(HStackLayout(spacing: 0)) : AnyLayout(VStackLayout(spacing: 0))
             NavigationStack {
-                VStack(spacing: 0) {
-                    // Top: the artwork, edge to edge on its own colour
-                    theme.backgroundColor
-                        .overlay {
-                            MixArtwork(mix: mix)
-                                .padding(.horizontal, 24)
-                                .padding(.bottom, 8)
-                                .frame(maxWidth: 520)
-                        }
+                layout {
+                    // The artwork on its own colour, running to the screen edges
+                    MixArtwork(mix: mix)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, sideBySide ? 16 : 8)
+                        .frame(maxWidth: 520)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background { theme.backgroundColor.ignoresSafeArea() }
                         .layoutPriority(1)
 
-                    // Bottom: everything else, on a plain panel
-                    PlayerControls(mix: mix)
+                    // Everything else, on a plain panel
+                    PlayerControls(mix: mix, compact: verticalSizeClass == .compact)
                         .padding(.horizontal, 24)
-                        .padding(.vertical, 28)
+                        .padding(.vertical, verticalSizeClass == .compact ? 8 : 28)
                         .frame(maxWidth: 560)
                         .frame(maxWidth: .infinity)
                 }
                 .background(Color(uiColor: .systemBackground).ignoresSafeArea())
+                .onGeometryChange(for: Bool.self) { $0.size.width > $0.size.height } action: { isLandscape = $0 }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         HeaderButton(tint: theme.foregroundColor, title: "Close", systemImage: "chevron.down") { dismiss() }
@@ -44,9 +48,10 @@ struct PlayerView: View {
                     .sharedBackgroundVisibility(.hidden)
                 }
                 .navigationBarTitleDisplayMode(.inline)
-                // The bar takes the mix colour; its scheme sets the status bar to black or white
+                // The bar takes the mix colour; its scheme sets the status bar to black or white.
+                // Side by side it spans both halves (and there's no status bar), so it's clear
                 .toolbarBackground(theme.backgroundColor, for: .navigationBar)
-                .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+                .toolbarBackgroundVisibility(sideBySide ? .hidden : .visible, for: .navigationBar)
                 .toolbarColorScheme(theme.hasDarkBackground ? .dark : .light, for: .navigationBar)
                 .foregroundStyle(.primary)
             }
@@ -66,10 +71,12 @@ struct PlayerView: View {
 private struct PlayerControls: View {
     @Environment(AppModel.self) private var model
     let mix: Mix
+    /// Tighter, for short screens
+    var compact = false
 
     var body: some View {
         let player = model.player
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: compact ? 10 : 20) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(mix.title)
                     .font(.system(.title2, design: .rounded, weight: .heavy))
@@ -89,7 +96,7 @@ private struct PlayerControls: View {
                 ) { fraction in
                     player.seek(to: fraction * player.duration)
                 }
-                .frame(height: 60)
+                .frame(height: compact ? 44 : 60)
                 HStack {
                     Text(Formatting.time(player.currentTime))
                     Spacer()
