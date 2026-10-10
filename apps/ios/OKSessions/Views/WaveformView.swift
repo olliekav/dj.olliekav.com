@@ -14,7 +14,8 @@ struct WaveformView: View {
 
     var body: some View {
         Canvas { context, size in
-            let barWidth: CGFloat = 3
+            // Matches the website's wavesurfer bars
+            let barWidth: CGFloat = 4
             let gap: CGFloat = 2
             let count = max(1, Int(size.width / (barWidth + gap)))
             let peaks = waveform?.peaks(count: count) ?? Array(repeating: 0.08, count: count)
@@ -23,7 +24,7 @@ struct WaveformView: View {
                 let height = max(2, CGFloat(peak) * size.height)
                 let rect = CGRect(x: CGFloat(i) * (barWidth + gap), y: (size.height - height) / 2, width: barWidth, height: height)
                 let isPlayed = Double(i) / Double(count) < shown
-                context.fill(Path(roundedRect: rect, cornerRadius: barWidth / 2), with: .color(isPlayed ? played : unplayed))
+                context.fill(Path(roundedRect: rect, cornerRadius: min(3, height / 2)), with: .color(isPlayed ? played : unplayed))
             }
         }
         .contentShape(.rect)
@@ -44,6 +45,11 @@ struct WaveformView: View {
         .accessibilityIdentifier("waveform")
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
     }
+
+    /// The website's unplayed bars: light grey, or near black in dark mode
+    static let unplayedColor = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(white: 0x26 / 255, alpha: 1) : UIColor(white: 0xCC / 255, alpha: 1)
+    })
 
     private func fraction(at x: CGFloat) -> Double {
         Double(min(1, max(0, x / max(width, 1))))

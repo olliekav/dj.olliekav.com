@@ -84,12 +84,12 @@ private struct PlayerControls: View {
                 WaveformView(
                     waveform: player.waveform,
                     progress: player.progress,
-                    played: .primary,
-                    unplayed: .primary.opacity(0.15)
+                    played: mix.theme.accentColor,
+                    unplayed: WaveformView.unplayedColor
                 ) { fraction in
                     player.seek(to: fraction * player.duration)
                 }
-                .frame(height: 44)
+                .frame(height: 60)
                 HStack {
                     Text(Formatting.time(player.currentTime))
                     Spacer()
