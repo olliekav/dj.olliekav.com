@@ -13,6 +13,22 @@ final class AppModel {
     let player: PlayerController
     /// The full-screen player is showing
     var isPlayerPresented = false
+    /// What the player zooms from: a tile's mix id, or the mini player
+    var playerSource: AnyHashable = AppModel.miniPlayerSource
+    static let miniPlayerSource: AnyHashable = "mini-player"
+
+    /// Plays a mix and opens the player, zooming from its tile.
+    func open(_ mix: Mix) {
+        play(mix)
+        playerSource = mix.id
+        isPlayerPresented = true
+    }
+
+    /// Opens the player for what's playing, zooming from the mini player.
+    func openPlayer() {
+        playerSource = Self.miniPlayerSource
+        isPlayerPresented = true
+    }
 
     private init() {
         let api = Self.makeAPI()

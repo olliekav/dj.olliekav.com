@@ -80,6 +80,9 @@ struct PlayerView: View {
                 }
             }
             .padding(24)
+            // A comfortable column on iPad, centred over the full-screen background
+            .frame(maxWidth: 560)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .foregroundStyle(ink)
             .tint(ink)
             .background { BlurredArtwork(mix: mix) }
@@ -129,12 +132,15 @@ private struct BlurredArtwork: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let side = max(proxy.size.width, proxy.size.height) * 1.2
+            // Oversized so the blur's soft edges fall outside the screen
+            let side = max(proxy.size.width, proxy.size.height) * 1.5
             MixArtwork(mix: mix)
                 .frame(width: side, height: side)
-                .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
-                .blur(radius: 60, opaque: true)
+                .blur(radius: 60)
+                .frame(width: proxy.size.width, height: proxy.size.height)
+                .clipped()
         }
+        .background(mix.theme.backgroundColor)
         .overlay(Color.black.opacity(0.45))
         .ignoresSafeArea()
         .animation(.easeInOut(duration: 0.6), value: mix.id)

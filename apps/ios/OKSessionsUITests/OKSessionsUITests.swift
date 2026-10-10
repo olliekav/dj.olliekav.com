@@ -17,22 +17,23 @@ final class OKSessionsUITests: XCTestCase {
         XCTAssertTrue(second.waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["mix-1"].exists)
 
+        // Tapping a mix plays it and opens the player
         second.tap()
-        let mini = element("mini-player")
-        XCTAssertTrue(mini.waitForExistence(timeout: 10))
+        XCTAssertTrue(element("waveform").waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["OK Sessions #2"].waitForExistence(timeout: 5))
+        XCTAssertTrue(labeled("Listen on SoundCloud").exists)
 
-        // Pausing from the mini player
+        // Closing leaves the mini player, which pauses and reopens the player
+        app.buttons["close-player"].tap()
+        let mini = element("mini-player")
+        XCTAssertTrue(mini.waitForExistence(timeout: 5))
         let playPause = app.buttons["play-pause"].firstMatch
         XCTAssertTrue(playPause.waitForExistence(timeout: 5))
         waitFor(playPause, label: "Pause")
         playPause.tap()
         waitFor(playPause, label: "Play")
-
-        // The full player
         app.buttons["open-player"].tap()
         XCTAssertTrue(element("waveform").waitForExistence(timeout: 5))
-        XCTAssertTrue(labeled("Listen on SoundCloud").exists)
 
         // Previous restarts the mix after a few seconds, then goes to #1 (the queue is in session order)
         app.buttons["Previous"].tap()

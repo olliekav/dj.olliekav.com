@@ -11,7 +11,7 @@ struct RootView: View {
     var body: some View {
         @Bindable var model = model
         NavigationStack {
-            LibraryContent(mixes: model.library.search(query), isSearching: !query.isEmpty)
+            LibraryContent(mixes: model.library.search(query), isSearching: !query.isEmpty, transition: transition)
                 .navigationTitle("OK Sessions")
                 .toolbar(isSearching ? .hidden : .visible, for: .navigationBar)
                 .toolbar {
@@ -36,8 +36,8 @@ struct RootView: View {
         }
         .safeAreaInset(edge: .bottom) {
             if model.player.current != nil {
-                MiniPlayer { model.isPlayerPresented = true }
-                    .matchedTransitionSource(id: "player", in: transition)
+                MiniPlayer { model.openPlayer() }
+                    .matchedTransitionSource(id: AppModel.miniPlayerSource, in: transition)
                     .padding(.horizontal)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
@@ -45,7 +45,7 @@ struct RootView: View {
         .animation(.spring(duration: 0.4), value: model.player.current != nil)
         .fullScreenCover(isPresented: $model.isPlayerPresented) {
             PlayerView()
-                .navigationTransition(.zoom(sourceID: "player", in: transition))
+                .navigationTransition(.zoom(sourceID: model.playerSource, in: transition))
         }
         .tint(model.player.current?.theme.accentColor ?? .primary)
     }
@@ -103,10 +103,11 @@ private struct LibraryContent: View {
     @Environment(AppModel.self) private var model
     let mixes: [Mix]
     let isSearching: Bool
+    let transition: Namespace.ID
 
     var body: some View {
         ScrollView {
-            MixGridView(mixes: mixes)
+            MixGridView(mixes: mixes, transition: transition)
         }
         .refreshable { await model.library.refresh() }
         .overlay {

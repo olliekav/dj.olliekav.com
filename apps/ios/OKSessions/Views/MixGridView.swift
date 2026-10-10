@@ -5,20 +5,27 @@ import SwiftUI
 struct MixGridView: View {
     @Environment(AppModel.self) private var model
     var mixes: [Mix]
+    var transition: Namespace.ID
 
-    private let columns = [GridItem(.adaptive(minimum: 150, maximum: 260), spacing: 0)]
+    @State private var width: CGFloat = 0
+
+    private var columns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 0), count: GridLayout.columns(for: width))
+    }
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: 0) {
             ForEach(mixes) { mix in
                 MixTile(mix: mix, isCurrent: model.player.current?.id == mix.id, isPlaying: model.player.isPlaying)
-                    .onTapGesture { model.play(mix) }
+                    .matchedTransitionSource(id: mix.id, in: transition)
+                    .onTapGesture { model.open(mix) }
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("\(mix.title), \(Formatting.time(mix.duration))\(mix.genre.map { ", \($0)" } ?? "")")
                     .accessibilityAddTraits(.isButton)
                     .accessibilityIdentifier("mix-\(mix.number)")
             }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
     }
 }
 
@@ -45,6 +52,7 @@ struct MixTile: View {
 }
 
 #Preview {
-    MixGridView(mixes: [.preview])
+    @Previewable @Namespace var transition
+    MixGridView(mixes: [.preview], transition: transition)
         .environment(AppModel.shared)
 }

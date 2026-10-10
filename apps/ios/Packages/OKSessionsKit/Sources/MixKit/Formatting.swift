@@ -23,6 +23,15 @@ extension Theme {
     public var accentColor: Color { Color(hex: accent) }
 }
 
+public enum GridLayout {
+    /// Columns for a width, one per ~185pt: two on every iPhone in portrait, 4–5 in
+    /// landscape and on iPads, and one in very narrow spaces like iPad Slide Over.
+    public static func columns(for width: CGFloat, minimumTileWidth: CGFloat = 185) -> Int {
+        guard width.isFinite, width > 0 else { return 2 }
+        return max(1, Int(width / minimumTileWidth))
+    }
+}
+
 public enum Formatting {
     /// H:MM:SS, as on the website.
     public static func time(_ seconds: TimeInterval) -> String {

@@ -147,6 +147,20 @@ struct LogoTests {
     }
 }
 
+@Suite("GridLayout")
+struct GridLayoutTests {
+    @Test(arguments: [
+        (375.0, 2), (402.0, 2), (440.0, 2),   // iPhones in portrait
+        (874.0, 4), (956.0, 5),               // iPhones in landscape
+        (834.0, 4), (1032.0, 5),              // iPads in portrait
+        (320.0, 1),                           // Slide Over
+        (1376.0, 7), (0.0, 2), (.infinity, 2)
+    ])
+    func choosesColumns(width: Double, columns: Int) {
+        #expect(GridLayout.columns(for: width) == columns)
+    }
+}
+
 @Suite("Formatting")
 struct FormattingTests {
     @Test(arguments: [(0.0, "0:00:00"), (59.9, "0:00:59"), (3725, "1:02:05"), (-1, "0:00:00"), (.nan, "0:00:00")])
