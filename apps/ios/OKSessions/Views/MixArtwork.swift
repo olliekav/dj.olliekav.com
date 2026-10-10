@@ -22,15 +22,15 @@ struct MixArtwork: View {
             if showsNumber {
                 let text = context.resolve(
                     Text(verbatim: "#\(mix.number)")
-                        .font(.system(size: Logo.numberSize * scale, weight: .heavy, design: .rounded))
+                        .font(.system(size: Self.numberSize * scale, weight: .heavy, design: .rounded))
                         .foregroundStyle(foreground)
                 )
                 let measured = text.measure(in: CGSize(width: CGFloat.infinity, height: .infinity))
                 // Sit the text's baseline where the artwork's is
                 let baseline = text.firstBaseline(in: measured)
                 context.draw(text, in: CGRect(
-                    x: square.minX + Logo.numberOrigin.x * scale,
-                    y: square.minY + Logo.numberOrigin.y * scale - baseline,
+                    x: square.minX + Self.numberOrigin.x * scale,
+                    y: square.minY + Self.numberOrigin.y * scale - baseline,
                     width: measured.width,
                     height: measured.height
                 ))
@@ -42,6 +42,11 @@ struct MixArtwork: View {
 
     /// Rendered artwork for the lock screen and CarPlay.
     @MainActor
+    // SF Rounded Heavy is bigger and wider than the artwork's DIN Round, so it's set a little
+    // smaller and further right; the baseline rises to keep it centred on the arrow
+    private static let numberSize = Logo.numberSize * 0.88
+    private static let numberOrigin = CGPoint(x: Logo.numberOrigin.x + 16, y: Logo.numberOrigin.y - 6)
+
     static func image(for mix: Mix, size: CGFloat) -> UIImage? {
         let renderer = ImageRenderer(content: MixArtwork(mix: mix).frame(width: size, height: size))
         renderer.scale = 1
