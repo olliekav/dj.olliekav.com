@@ -91,9 +91,7 @@ private struct SearchOverlay: View {
             }
         }
         .padding(.horizontal)
-        .padding(.vertical, 8)
-        // A plain header behind the field, so it reads over the colourful grid
-        .background(.background, ignoresSafeAreaEdges: .top)
+        .padding(.top, 8)
         .onAppear { focused = true }
     }
 }
