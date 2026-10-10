@@ -18,7 +18,7 @@ struct OKSessionsApp: App {
         }
     }
 
-    /// Titles in the rounded black of the artwork numbers.
+    /// Titles in the rounded heavy of the artwork numbers.
     private static func styleNavigationTitles() {
         func rounded(_ style: UIFont.TextStyle, weight: UIFont.Weight) -> UIFont {
             let base = UIFont.preferredFont(forTextStyle: style)
@@ -27,7 +27,7 @@ struct OKSessionsApp: App {
             return UIFontMetrics(forTextStyle: style).scaledFont(for: UIFont(descriptor: descriptor, size: base.pointSize))
         }
         let appearance = UINavigationBar.appearance()
-        appearance.largeTitleTextAttributes = [.font: rounded(.largeTitle, weight: .black)]
-        appearance.titleTextAttributes = [.font: rounded(.headline, weight: .heavy)]
+        appearance.largeTitleTextAttributes = [.font: rounded(.largeTitle, weight: .heavy)]
+        appearance.titleTextAttributes = [.font: rounded(.headline, weight: .bold)]
     }
 }

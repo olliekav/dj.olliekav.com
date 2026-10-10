@@ -22,7 +22,7 @@ struct MixArtwork: View {
             if showsNumber {
                 let text = context.resolve(
                     Text(verbatim: "#\(mix.number)")
-                        .font(.system(size: Logo.numberSize * scale, weight: .black, design: .rounded))
+                        .font(.system(size: Logo.numberSize * scale, weight: .heavy, design: .rounded))
                         .foregroundStyle(foreground)
                 )
                 let measured = text.measure(in: CGSize(width: CGFloat.infinity, height: .infinity))
