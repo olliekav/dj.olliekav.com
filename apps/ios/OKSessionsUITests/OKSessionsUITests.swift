@@ -57,8 +57,8 @@ final class OKSessionsUITests: XCTestCase {
         XCTAssertTrue(app.buttons["mix-1"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["mix-2"].exists)
 
-        // Closing clears the search
-        app.buttons["close-search"].tap()
+        // Closing clears the search; tap near the edge of the button, not just its glyph
+        app.buttons["close-search"].coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).tap()
         XCTAssertTrue(app.buttons["mix-2"].waitForExistence(timeout: 5))
     }
 

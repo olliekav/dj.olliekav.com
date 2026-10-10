@@ -12,6 +12,8 @@ struct PlayerView: View {
         if let mix = model.player.current {
             let player = model.player
             let theme = mix.theme
+            // Text and controls in the mix's lighter colour, over the darkened artwork
+            let ink = theme.lighterColor
             VStack(spacing: 24) {
                 HStack {
                     HeaderButton(title: "Close", systemImage: "chevron.down") { dismiss() }
@@ -21,9 +23,9 @@ struct PlayerView: View {
                 }
 
                 MixArtwork(mix: mix)
-                    .frame(maxWidth: 420)
                     .clipShape(.rect(cornerRadius: 24))
-                    .shadow(color: .black.opacity(0.3), radius: 30, y: 12)
+                    .shadow(color: .black.opacity(0.35), radius: 30, y: 12)
+                    .frame(maxWidth: 420)
                     .scaleEffect(player.isPlaying ? 1 : 0.92)
                     .animation(.spring(duration: 0.5), value: player.isPlaying)
                     .layoutPriority(-1)
@@ -43,8 +45,8 @@ struct PlayerView: View {
                     WaveformView(
                         waveform: player.waveform,
                         progress: player.progress,
-                        played: theme.foregroundColor,
-                        unplayed: theme.foregroundColor.opacity(0.3)
+                        played: ink,
+                        unplayed: .white.opacity(0.25)
                     ) { fraction in
                         player.seek(to: fraction * player.duration)
                     }
@@ -72,16 +74,16 @@ struct PlayerView: View {
                             .font(.footnote.weight(.semibold))
                     }
                     Spacer()
-                    RoutePicker(tint: UIColor(theme.foregroundColor))
+                    RoutePicker(tint: UIColor(ink))
                         .frame(width: 44, height: 44)
                         .accessibilityLabel("AirPlay")
                 }
             }
             .padding(24)
-            .foregroundStyle(theme.foregroundColor)
-            .tint(theme.foregroundColor)
-            .background(theme.backgroundColor.ignoresSafeArea())
-            .preferredColorScheme(theme.hasDarkBackground ? .dark : .light)
+            .foregroundStyle(ink)
+            .tint(ink)
+            .background { BlurredArtwork(mix: mix) }
+            .preferredColorScheme(.dark)
             .sheet(isPresented: $showsInfo) {
                 MixInfoView(mix: mix)
                     .presentationDetents([.medium, .large])
@@ -120,6 +122,25 @@ private struct TransportControls: View {
     }
 }
 
+/// The artwork enlarged and blurred to fill the screen, darkened so the player reads over it.
+private struct BlurredArtwork: View {
+    let mix: Mix
+
+    var body: some View {
+        GeometryReader { proxy in
+            let side = max(proxy.size.width, proxy.size.height) * 1.2
+            MixArtwork(mix: mix)
+                .frame(width: side, height: side)
+                .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
+                .blur(radius: 60, opaque: true)
+        }
+        .overlay(Color.black.opacity(0.45))
+        .ignoresSafeArea()
+        .animation(.easeInOut(duration: 0.6), value: mix.id)
+        .accessibilityHidden(true)
+    }
+}
+
 /// A circular glass button, the same size whatever its symbol.
 private struct HeaderButton: View {
     @Environment(AppModel.self) private var model
@@ -132,6 +153,8 @@ private struct HeaderButton: View {
             Image(systemName: systemImage)
                 .font(.body.weight(.semibold))
                 .frame(width: 44, height: 44)
+                // The whole circle is tappable, not just the glyph
+                .contentShape(.circle)
         }
         .buttonStyle(.plain)
         .glassEffect(.mixTinted(model.player.current?.theme).interactive(), in: .circle)
@@ -143,7 +166,7 @@ extension Glass {
     /// Glass faintly tinted with the mix's foreground, so it reads against its background
     static func mixTinted(_ theme: Theme?) -> Glass {
         guard let theme else { return .regular }
-        return .regular.tint(theme.foregroundColor.opacity(0.18))
+        return .regular.tint(theme.lighterColor.opacity(0.18))
     }
 }
 

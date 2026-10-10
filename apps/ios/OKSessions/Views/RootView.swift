@@ -83,6 +83,8 @@ private struct SearchOverlay: View {
                     Image(systemName: "xmark")
                         .font(.body.weight(.semibold))
                         .frame(width: 48, height: 48)
+                        // The whole circle is tappable, not just the glyph
+                        .contentShape(.circle)
                 }
                 .buttonStyle(.plain)
                 .glassEffect(.regular.interactive(), in: .circle)

@@ -169,6 +169,13 @@ struct FormattingTests {
         #expect(Theme(background: hex, foreground: "#FFFFFF", accent: "#FFFFFF", dark: false).hasDarkBackground == dark)
     }
 
+    @Test func picksTheLighterColour() {
+        let navyOnSage = Theme(background: "#9EB59D", foreground: "#45428A", accent: "#9EB59D", dark: false)
+        #expect(navyOnSage.lighterColor == Color(hex: "#9EB59D"))
+        let pinkOnPurple = Theme(background: "#2A10A6", foreground: "#EC00A5", accent: "#EC00A5", dark: true)
+        #expect(pinkOnPurple.lighterColor == Color(hex: "#EC00A5"))
+    }
+
     @Test func parsesHexColours() {
         #expect(Color(hex: "#FF0000") == Color(red: 1, green: 0, blue: 0))
         #expect(Color(hex: "00FF00") == Color(red: 0, green: 1, blue: 0))
