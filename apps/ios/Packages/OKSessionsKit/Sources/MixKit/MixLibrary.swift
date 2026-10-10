@@ -36,18 +36,18 @@ public final class MixLibrary {
         }
     }
 
-    /// Newest first, as the playlist grows over time.
-    public var latestFirst: [Mix] { mixes.sorted { $0.number > $1.number } }
+    /// In session order, #1 first, as on the website.
+    public var inOrder: [Mix] { mixes.sorted { $0.number < $1.number } }
 
     /// Matches "#12" or "12" to the session number, otherwise title and genre.
     public func search(_ query: String) -> [Mix] {
         let trimmed = query.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return latestFirst }
+        guard !trimmed.isEmpty else { return inOrder }
         let digits = trimmed.hasPrefix("#") ? String(trimmed.dropFirst()) : trimmed
         if let number = Int(digits) {
-            return latestFirst.filter { String($0.number).hasPrefix(String(number)) }
+            return inOrder.filter { String($0.number).hasPrefix(String(number)) }
         }
-        return latestFirst.filter {
+        return inOrder.filter {
             $0.title.localizedStandardContains(trimmed) || ($0.genre?.localizedStandardContains(trimmed) ?? false)
         }
     }

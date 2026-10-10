@@ -13,12 +13,12 @@ struct MixLibraryTests {
 
     let mixes = [mix(1, genre: "House"), mix(2, genre: "Techno"), mix(12, genre: "Deep House"), mix(21)]
 
-    @Test func loadsAndOrdersNewestFirst() async {
-        let library = MixLibrary { [mixes] in mixes }
+    @Test func loadsInSessionOrder() async {
+        let library = MixLibrary { [mixes] in mixes.reversed() }
         #expect(library.state == .idle)
         await library.refresh()
         #expect(library.state == .loaded)
-        #expect(library.latestFirst.map(\.number) == [21, 12, 2, 1])
+        #expect(library.inOrder.map(\.number) == [1, 2, 12, 21])
     }
 
     @Test func keepsLoadedMixesWhenARefreshFails() async {
@@ -38,10 +38,10 @@ struct MixLibraryTests {
     @Test func searchesByNumberTitleAndGenre() async {
         let library = MixLibrary { [mixes] in mixes }
         await library.refresh()
-        #expect(library.search("").map(\.number) == [21, 12, 2, 1])
-        #expect(library.search("#1").map(\.number) == [12, 1])
-        #expect(library.search("2").map(\.number) == [21, 2])
-        #expect(library.search("house").map(\.number) == [12, 1])
+        #expect(library.search("").map(\.number) == [1, 2, 12, 21])
+        #expect(library.search("#1").map(\.number) == [1, 12])
+        #expect(library.search("2").map(\.number) == [2, 21])
+        #expect(library.search("house").map(\.number) == [1, 12])
         #expect(library.search("Sessions #21").map(\.number) == [21])
     }
 

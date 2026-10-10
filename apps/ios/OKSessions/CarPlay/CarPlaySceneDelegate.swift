@@ -2,7 +2,7 @@ import CarPlay
 import MixKit
 import PlayerKit
 
-/// CarPlay: a list of sessions (newest first) and the system Now Playing screen.
+/// CarPlay: a list of sessions in order and the system Now Playing screen.
 /// Playback state is shared with the phone through AppModel.
 @MainActor
 final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
@@ -50,7 +50,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             list.emptyViewSubtitleVariants = [message]
         }
         let currentID = model.player.current?.id
-        let items = model.library.latestFirst.map { mix in
+        let items = model.library.inOrder.map { mix in
             let item = CPListItem(
                 text: mix.title,
                 detailText: [mix.genre, Formatting.time(mix.duration)].compactMap { $0 }.joined(separator: " · "),

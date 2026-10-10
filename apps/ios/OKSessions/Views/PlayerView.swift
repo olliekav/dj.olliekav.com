@@ -14,14 +14,10 @@ struct PlayerView: View {
             let theme = mix.theme
             VStack(spacing: 24) {
                 HStack {
-                    Button("Close", systemImage: "chevron.down") { dismiss() }
-                        .labelStyle(.iconOnly)
-                        .buttonStyle(.glass)
+                    HeaderButton(title: "Close", systemImage: "chevron.down") { dismiss() }
                         .accessibilityIdentifier("close-player")
                     Spacer()
-                    Button("About this mix", systemImage: "info.circle") { showsInfo = true }
-                        .labelStyle(.iconOnly)
-                        .buttonStyle(.glass)
+                    HeaderButton(title: "About this mix", systemImage: "info") { showsInfo = true }
                 }
 
                 MixArtwork(mix: mix)
@@ -85,6 +81,7 @@ struct PlayerView: View {
             .foregroundStyle(theme.foregroundColor)
             .tint(theme.foregroundColor)
             .background(theme.backgroundColor.ignoresSafeArea())
+            .preferredColorScheme(theme.hasDarkBackground ? .dark : .light)
             .sheet(isPresented: $showsInfo) {
                 MixInfoView(mix: mix)
                     .presentationDetents([.medium, .large])
@@ -109,7 +106,7 @@ private struct TransportControls: View {
                     player.skip(by: -NowPlaying.skipInterval)
                 }
                 PlayPauseButton(size: .large)
-                    .glassEffect(.regular.interactive(), in: .circle)
+                    .glassEffect(.mixTinted(player.current?.theme).interactive(), in: .circle)
                 TransportButton(title: "Forward \(Int(NowPlaying.skipInterval)) seconds", systemImage: "goforward.15", glass: false) {
                     player.skip(by: NowPlaying.skipInterval)
                 }
@@ -123,7 +120,35 @@ private struct TransportControls: View {
     }
 }
 
+/// A circular glass button, the same size whatever its symbol.
+private struct HeaderButton: View {
+    @Environment(AppModel.self) private var model
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.body.weight(.semibold))
+                .frame(width: 44, height: 44)
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.mixTinted(model.player.current?.theme).interactive(), in: .circle)
+        .accessibilityLabel(title)
+    }
+}
+
+extension Glass {
+    /// Glass faintly tinted with the mix's foreground, so it reads against its background
+    static func mixTinted(_ theme: Theme?) -> Glass {
+        guard let theme else { return .regular }
+        return .regular.tint(theme.foregroundColor.opacity(0.18))
+    }
+}
+
 private struct TransportButton: View {
+    @Environment(AppModel.self) private var model
     let title: String
     let systemImage: String
     var glass = true
@@ -135,7 +160,7 @@ private struct TransportButton: View {
             .font(.title2)
             .frame(width: 56, height: 56)
             .contentShape(.circle)
-            .glassEffect(glass ? .regular.interactive() : .identity, in: .circle)
+            .glassEffect(glass ? .mixTinted(model.player.current?.theme).interactive() : .identity, in: .circle)
     }
 }
 
@@ -143,11 +168,29 @@ struct MixInfoView: View {
     let mix: Mix
 
     var body: some View {
+        let description = MixDescription(mix.description)
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text(Formatting.description(mix.description))
-                        .textSelection(.enabled)
+            List {
+                if !description.intro.isEmpty {
+                    Section {
+                        Text(Formatting.description(description.intro))
+                            .textSelection(.enabled)
+                    }
+                }
+                if !description.tracks.isEmpty {
+                    Section("Tracklist") {
+                        ForEach(Array(description.tracks.enumerated()), id: \.offset) { index, track in
+                            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                                Text("\(index + 1)")
+                                    .foregroundStyle(.secondary)
+                                    .monospacedDigit()
+                                    .frame(minWidth: 22, alignment: .trailing)
+                                Text(track)
+                            }
+                        }
+                    }
+                }
+                Section {
                     LabeledContent("Length", value: Formatting.time(mix.duration))
                     if let genre = mix.genre {
                         LabeledContent("Genre", value: genre)
@@ -155,14 +198,14 @@ struct MixInfoView: View {
                     if let plays = mix.playbackCount {
                         LabeledContent("Plays on SoundCloud", value: plays.formatted())
                     }
-                    Link("Listen on SoundCloud", destination: mix.permalinkUrl)
-                        .buttonStyle(.glassProminent)
+                } footer: {
                     Text("Streaming from SoundCloud.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+                Section {
+                    Link(destination: mix.permalinkUrl) {
+                        Label("Listen on SoundCloud", systemImage: "arrow.up.right")
+                    }
+                }
             }
             .navigationTitle(mix.title)
             .navigationBarTitleDisplayMode(.inline)

@@ -12,7 +12,7 @@ final class OKSessionsUITests: XCTestCase {
     }
 
     func testBrowsePlayAndControlAMix() {
-        // Newest first: the fixture has sessions #1 and #2
+        // In session order: the fixture has sessions #1 and #2
         let second = app.buttons["mix-2"]
         XCTAssertTrue(second.waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["mix-1"].exists)
@@ -30,7 +30,7 @@ final class OKSessionsUITests: XCTestCase {
         waitFor(playPause, label: "Play")
 
         // The full player
-        mini.tap()
+        app.buttons["open-player"].tap()
         XCTAssertTrue(element("waveform").waitForExistence(timeout: 5))
         XCTAssertTrue(labeled("Listen on SoundCloud").exists)
 
@@ -49,7 +49,8 @@ final class OKSessionsUITests: XCTestCase {
 
     func testSearchByNumber() {
         XCTAssertTrue(app.buttons["mix-2"].waitForExistence(timeout: 10))
-        app.buttons["Search"].firstMatch.tap()
+        // Search is tucked under the title; pull down to reveal it
+        app.buttons["mix-1"].swipeDown()
         let field = app.searchFields.firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 5))
         field.tap()

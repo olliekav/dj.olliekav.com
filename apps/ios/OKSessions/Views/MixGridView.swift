@@ -36,7 +36,7 @@ struct MixTile: View {
                         .font(.footnote.weight(.bold))
                         .foregroundStyle(mix.theme.foregroundColor)
                         .padding(8)
-                        .glassEffect(.regular, in: .circle)
+                        .glassEffect(.regular.tint(mix.theme.backgroundColor.opacity(0.6)), in: .circle)
                         .padding(8)
                 }
             }

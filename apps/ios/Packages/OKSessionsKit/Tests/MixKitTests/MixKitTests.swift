@@ -164,6 +164,11 @@ struct FormattingTests {
         #expect(links.map(\.0) == ["https://dj.olliekav.com/x", "@olliekav"])
     }
 
+    @Test(arguments: [("#000000", true), ("#2A10A6", true), ("#41C5DA", false), ("#FFFFFF", false), ("#9EB59D", false), ("nope", false)])
+    func detectsDarkBackgrounds(hex: String, dark: Bool) {
+        #expect(Theme(background: hex, foreground: "#FFFFFF", accent: "#FFFFFF", dark: false).hasDarkBackground == dark)
+    }
+
     @Test func parsesHexColours() {
         #expect(Color(hex: "#FF0000") == Color(red: 1, green: 0, blue: 0))
         #expect(Color(hex: "00FF00") == Color(red: 0, green: 1, blue: 0))

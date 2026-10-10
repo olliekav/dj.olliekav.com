@@ -1,6 +1,7 @@
 import MixKit
 import SwiftUI
 
+/// The sessions grid (#1 first) with a pull-down search, and a floating mini player.
 struct RootView: View {
     @Environment(AppModel.self) private var model
     @Namespace private var transition
@@ -8,27 +9,20 @@ struct RootView: View {
 
     var body: some View {
         @Bindable var model = model
-        TabView {
-            Tab("Sessions", systemImage: "square.grid.2x2.fill") {
-                NavigationStack {
-                    LibraryContent(mixes: model.library.latestFirst)
-                        .navigationTitle("OK Sessions")
-                }
-            }
-            Tab(role: .search) {
-                NavigationStack {
-                    LibraryContent(mixes: model.library.search(query))
-                        .navigationTitle("Search")
-                        .searchable(text: $query, prompt: "Number, title or genre")
-                }
+        NavigationStack {
+            LibraryContent(mixes: model.library.search(query), isSearching: !query.isEmpty)
+                .navigationTitle("OK Sessions")
+                .searchable(text: $query, placement: .navigationBarDrawer, prompt: "Number, title or genre")
+        }
+        .safeAreaInset(edge: .bottom) {
+            if model.player.current != nil {
+                MiniPlayer { model.isPlayerPresented = true }
+                    .matchedTransitionSource(id: "player", in: transition)
+                    .padding(.horizontal)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .tabBarMinimizeBehavior(.onScrollDown)
-        .tabViewBottomAccessory(isEnabled: model.player.current != nil) {
-            MiniPlayer()
-                .matchedTransitionSource(id: "player", in: transition)
-                .onTapGesture { model.isPlayerPresented = true }
-        }
+        .animation(.spring(duration: 0.4), value: model.player.current != nil)
         .fullScreenCover(isPresented: $model.isPlayerPresented) {
             PlayerView()
                 .navigationTransition(.zoom(sourceID: "player", in: transition))
@@ -41,6 +35,7 @@ struct RootView: View {
 private struct LibraryContent: View {
     @Environment(AppModel.self) private var model
     let mixes: [Mix]
+    let isSearching: Bool
 
     var body: some View {
         ScrollView {
@@ -60,7 +55,7 @@ private struct LibraryContent: View {
                     Button("Try Again") { Task { await model.library.refresh() } }
                         .buttonStyle(.glass)
                 }
-            case .loaded where mixes.isEmpty:
+            case .loaded where mixes.isEmpty && isSearching:
                 ContentUnavailableView.search
             default:
                 EmptyView()

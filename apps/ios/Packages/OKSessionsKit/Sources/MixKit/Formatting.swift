@@ -64,3 +64,18 @@ public enum Formatting {
         return result
     }
 }
+
+extension Theme {
+    /// Whether the background is dark, so status bar and controls should be light
+    public var hasDarkBackground: Bool {
+        let value = background.hasPrefix("#") ? String(background.dropFirst()) : background
+        guard value.count == 6, let rgb = UInt32(value, radix: 16) else { return false }
+        func linear(_ channel: UInt32) -> Double {
+            let c = Double(channel) / 255
+            return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4)
+        }
+        let luminance = 0.2126 * linear(rgb >> 16 & 0xFF) + 0.7152 * linear(rgb >> 8 & 0xFF) + 0.0722 * linear(rgb & 0xFF)
+        // Above this, black text has more contrast than white
+        return luminance < 0.179
+    }
+}
