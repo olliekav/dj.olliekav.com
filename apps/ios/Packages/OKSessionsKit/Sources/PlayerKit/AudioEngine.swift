@@ -8,6 +8,8 @@ public enum AudioEngineEvent: Equatable, Sendable {
     /// Actually producing sound (false while paused or buffering)
     case playing(Bool)
     case buffering(Bool)
+    /// A seek has completed (or was superseded); times reported before this are stale
+    case seeked
     case finished
     case failed(String)
 }
@@ -85,7 +87,13 @@ public final class AVPlayerEngine: AudioEngine {
     public func pause() { player.pause() }
 
     public func seek(to time: TimeInterval) {
-        player.seek(to: CMTime(seconds: max(0, time), preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+        player.seek(
+            to: CMTime(seconds: max(0, time), preferredTimescale: 600),
+            toleranceBefore: .zero,
+            toleranceAfter: .zero
+        ) { [weak self] _ in
+            Task { @MainActor in self?.onEvent?(.seeked) }
+        }
     }
 
     public func stop() {

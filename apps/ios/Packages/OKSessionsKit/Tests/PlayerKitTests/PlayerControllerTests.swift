@@ -178,6 +178,41 @@ struct PlayerControllerTests {
         #expect(player.currentTime == 0)
     }
 
+    @Test func ignoresStaleTimesUntilTheSeekFinishes() async {
+        let player = player()
+        player.play(mixes[0], in: mixes)
+        await until { !engine.loaded.isEmpty }
+        engine.send(.ready)
+        engine.send(.playing(true))
+        engine.send(.time(30))
+
+        player.seek(to: 400)
+        // The engine still reports where it was until the seek completes
+        engine.send(.time(30))
+        engine.send(.time(0))
+        #expect(player.currentTime == 400)
+        engine.send(.seeked)
+        engine.send(.time(400.5))
+        #expect(player.currentTime == 400.5)
+    }
+
+    @Test func showsTheWaveformBeforeTheStreamAndKeepsIt() async {
+        let player = player()
+        api.holdStreams = true
+        player.play(mixes[0], in: mixes)
+        await until { player.waveform != nil }
+        #expect(engine.loaded.isEmpty)
+        api.holdStreams = false
+        await until { !engine.loaded.isEmpty }
+
+        // Back to it later: no second fetch
+        player.next()
+        await until { api.waveformCount == 2 }
+        player.previous()
+        #expect(player.waveform == api.waveform)
+        #expect(api.waveformCount == 2)
+    }
+
     @Test func refetchesAnExpiredStreamOnceFromTheSamePosition() async {
         let player = player()
         player.play(mixes[0], in: mixes)
