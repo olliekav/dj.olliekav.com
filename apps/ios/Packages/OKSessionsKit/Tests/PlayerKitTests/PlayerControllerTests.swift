@@ -116,6 +116,56 @@ struct PlayerControllerTests {
         #expect(player.currentTime == 0)
     }
 
+    @Test func shufflesEverythingAndAutoAdvancesInThatOrder() async {
+        let player = player()
+        player.shuffler = { $0.reversed() }
+        player.shuffle(mixes)
+        #expect(player.isShuffled)
+        #expect(player.current?.id == 3)
+        engine.send(.finished)
+        #expect(player.current?.id == 2)
+        player.next()
+        #expect(player.current?.id == 1)
+        player.previous()
+        #expect(player.current?.id == 2)
+    }
+
+    @Test func turningShuffleOnAndOffKeepsTheCurrentMix() async {
+        let player = player()
+        player.shuffler = { $0.reversed() }
+        let five = (1...5).map { makeMix($0) }
+        player.play(five[1], in: five)
+        await until { engine.loaded.count == 1 }
+
+        // On: the current mix stays, the rest follow shuffled
+        player.setShuffle(true)
+        #expect(player.current?.id == 2)
+        #expect(player.queue.map(\.id) == [2, 5, 4, 3, 1])
+        #expect(!player.hasPrevious)
+        player.next()
+        #expect(player.current?.id == 5)
+        await until { engine.loaded.count == 2 }
+
+        // Off: back to session order, carrying on from the current mix
+        player.setShuffle(false)
+        #expect(player.queue.map(\.id) == [1, 2, 3, 4, 5])
+        #expect(player.current?.id == 5)
+        #expect(!player.hasNext)
+        #expect(engine.loaded.count == 2) // toggling never reloads
+    }
+
+    @Test func pickingAMixWhileShuffledShufflesTheRest() async {
+        let player = player()
+        player.shuffler = { $0.reversed() }
+        player.setShuffle(true)
+        player.play(mixes[0], in: mixes)
+        #expect(player.queue.map(\.id) == [1, 3, 2])
+        // Picking it again carries on without reshuffling
+        player.shuffler = { $0 }
+        player.play(mixes[0], in: mixes)
+        #expect(player.queue.map(\.id) == [1, 3, 2])
+    }
+
     @Test func seeksWithinTheMix() async {
         let player = player()
         player.play(mixes[0], in: mixes)

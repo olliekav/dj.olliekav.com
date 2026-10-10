@@ -22,12 +22,15 @@ struct OKSessionsApp: App {
     }
 
     #if DEBUG
-    /// `-landscape` launches the app turned sideways, for checking layouts in a headless simulator.
+    /// `-landscape` or `-portrait` turns the app at launch, for checking layouts in a headless simulator.
     private static func rotateIfAsked() {
-        guard CommandLine.arguments.contains("-landscape"),
+        let arguments = CommandLine.arguments
+        let orientations: UIInterfaceOrientationMask? =
+            arguments.contains("-landscape") ? .landscapeRight : arguments.contains("-portrait") ? .portrait : nil
+        guard let orientations,
               let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first
         else { return }
-        scene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight))
+        scene.requestGeometryUpdate(.iOS(interfaceOrientations: orientations))
     }
     #endif
 

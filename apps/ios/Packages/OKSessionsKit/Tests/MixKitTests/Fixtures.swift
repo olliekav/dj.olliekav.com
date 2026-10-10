@@ -2,18 +2,15 @@ import Foundation
 @testable import MixKit
 
 /// shared/fixtures/mixes.json: the API contract the website and functions test against too.
+/// It's bundled with the tests (Resources/mixes.json links to it).
 enum Fixtures {
-    static let repoRoot = URL(filePath: #filePath)
-        .deletingLastPathComponent() // MixKitTests
-        .deletingLastPathComponent() // Tests
-        .deletingLastPathComponent() // OKSessionsKit
-        .deletingLastPathComponent() // Packages
-        .deletingLastPathComponent() // ios
-        .deletingLastPathComponent() // apps
-        .deletingLastPathComponent() // repo
-
     static var mixesData: Data {
-        get throws { try Data(contentsOf: repoRoot.appending(path: "shared/fixtures/mixes.json")) }
+        get throws {
+            guard let url = Bundle.module.url(forResource: "mixes", withExtension: "json") else {
+                throw CocoaError(.fileNoSuchFile)
+            }
+            return try Data(contentsOf: url)
+        }
     }
 }
 

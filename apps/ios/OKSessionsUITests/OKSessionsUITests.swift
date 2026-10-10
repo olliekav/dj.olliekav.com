@@ -48,6 +48,24 @@ final class OKSessionsUITests: XCTestCase {
         XCTAssertTrue(mini.waitForExistence(timeout: 5))
     }
 
+    func testShuffleAllAndToggle() {
+        let shuffleAll = app.buttons["shuffle-all"]
+        XCTAssertTrue(shuffleAll.waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["mix-2"].waitForExistence(timeout: 10))
+
+        // Shuffle all plays a random mix and opens the player with shuffle on
+        shuffleAll.tap()
+        XCTAssertTrue(element("waveform").waitForExistence(timeout: 10))
+        let shuffle = app.buttons["shuffle"]
+        XCTAssertTrue(shuffle.waitForExistence(timeout: 5))
+        XCTAssertEqual(shuffle.value as? String, "On")
+
+        shuffle.tap()
+        waitFor(shuffle, value: "Off")
+        shuffle.tap()
+        waitFor(shuffle, value: "On")
+    }
+
     func testSearchByNumber() {
         XCTAssertTrue(app.buttons["mix-2"].waitForExistence(timeout: 10))
         // Search opens from the header as an overlay, already focused
@@ -69,6 +87,12 @@ final class OKSessionsUITests: XCTestCase {
 
     private func element(_ identifier: String) -> XCUIElement {
         app.descendants(matching: .any)[identifier].firstMatch
+    }
+
+    private func waitFor(_ element: XCUIElement, value: String, file: StaticString = #filePath, line: UInt = #line) {
+        let predicate = NSPredicate(format: "value == %@", value)
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
+        XCTAssertEqual(XCTWaiter().wait(for: [expectation], timeout: 10), .completed, "Expected \(value)", file: file, line: line)
     }
 
     private func waitFor(_ element: XCUIElement, label: String, file: StaticString = #filePath, line: UInt = #line) {

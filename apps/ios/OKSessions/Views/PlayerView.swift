@@ -123,8 +123,11 @@ private struct PlayerControls: View {
                 }
                 .foregroundStyle(.secondary)
                 Spacer()
+                ShuffleButton(accent: mix.theme.waveformColor(onDarkPanel: colorScheme == .dark))
+                // The picker draws its icon small; scaled up to sit with the transport controls
                 RoutePicker(tint: .label)
                     .frame(width: 44, height: 44)
+                    .scaleEffect(1.5)
                     .accessibilityLabel("AirPlay")
             }
         }
@@ -157,6 +160,32 @@ private struct TransportControls: View {
         }
         .buttonStyle(.plain)
         .frame(minHeight: 80)
+    }
+}
+
+/// Shuffle on or off; lit up in the mix's colour when on.
+private struct ShuffleButton: View {
+    @Environment(AppModel.self) private var model
+    let accent: Color
+
+    var body: some View {
+        let isOn = model.player.isShuffled
+        Button {
+            model.toggleShuffle()
+        } label: {
+            Image(systemName: "shuffle")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(isOn ? accent : .primary)
+                .frame(width: 44, height: 44)
+                .background(accent.opacity(isOn ? 0.15 : 0), in: .circle)
+                .contentShape(.circle)
+        }
+        .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.2), value: isOn)
+        .accessibilityLabel("Shuffle")
+        .accessibilityValue(isOn ? "On" : "Off")
+        .accessibilityAddTraits(isOn ? .isSelected : [])
+        .accessibilityIdentifier("shuffle")
     }
 }
 

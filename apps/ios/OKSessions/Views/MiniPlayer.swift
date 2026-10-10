@@ -15,13 +15,13 @@ struct MiniPlayer: View {
                     HStack(spacing: 12) {
                         MixArtwork(mix: mix, showsNumber: false)
                             .frame(width: 40, height: 40)
-                            .clipShape(.rect(cornerRadius: 8))
+                            .clipShape(.circle)
                         VStack(alignment: .leading, spacing: 1) {
                             Text(mix.title)
                                 .font(.subheadline.weight(.semibold))
                                 .lineLimit(1)
                             Text(NowPlayingSubtitle(player: model.player).text)
-                                .font(.caption)
+                                .font(.caption.weight(.semibold))
                                 .opacity(0.75)
                                 .monospacedDigit()
                         }
@@ -73,6 +73,7 @@ struct PlayPauseButton: View {
 
     var body: some View {
         let player = model.player
+        let isLoading = player.status == .loading || player.isBuffering
         Button(player.isPlaying ? "Pause" : "Play", systemImage: player.isPlaying ? "pause.fill" : "play.fill") {
             AudioSession.activate()
             player.togglePlayPause()
@@ -80,14 +81,16 @@ struct PlayPauseButton: View {
         .labelStyle(.iconOnly)
         .contentTransition(.symbolEffect(.replace))
         .font(size == .large ? .system(size: 48) : .title3)
+        // While loading, the spinner takes the button's place rather than sitting on top of it
+        .opacity(isLoading ? 0 : 1)
         .frame(width: size == .large ? 80 : 32, height: size == .large ? 80 : 32)
         .overlay {
-            if player.status == .loading || player.isBuffering {
+            if isLoading {
                 ProgressView().controlSize(size == .large ? .large : .small)
                     .allowsHitTesting(false)
-                    .opacity(0.6)
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: isLoading)
         .accessibilityIdentifier("play-pause")
     }
 }
