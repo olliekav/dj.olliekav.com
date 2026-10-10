@@ -17,6 +17,7 @@
 		66E0546D9307197F0B4673F3 /* ui-test-tone.m4a in Resources */ = {isa = PBXBuildFile; fileRef = FC8CE4E34B7F8CF5FA0962EB /* ui-test-tone.m4a */; };
 		6CDF8ABC1A5D8FD5BA172C86 /* OKSessionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6295C78BE496D1C0D2C73 /* OKSessionsApp.swift */; };
 		77F09A8642B45386FD008F83 /* PlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = A151E468CCDE412BC24C7D33 /* PlayerKit */; };
+		7D799A226E13406CE6E36D40 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF102F306B4FE17BB243A85 /* Notifications.swift */; };
 		80F4424F68B8712B2654EE9E /* OKSessionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699FB2143FFCAD25D5598B83 /* OKSessionsUITests.swift */; };
 		88D1EF6DF34DAE63C26B73CE /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7F0ECCD026BBB5276F0C3F /* AppModel.swift */; };
 		89FECA7D3822192BA26A5D15 /* RoutePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B676B65E9D79F5AC2FC9F50D /* RoutePicker.swift */; };
@@ -24,6 +25,7 @@
 		A2B2F37ED1368484A224B2E2 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA6A296F23E52B2C9952F77 /* WaveformView.swift */; };
 		A5BAD7C035B4ED211D9332FD /* AudioSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05CD55AA63BEDB72071D2B4 /* AudioSession.swift */; };
 		EEBA2EF1A4C290064CD80881 /* MixKit in Frameworks */ = {isa = PBXBuildFile; productRef = 915ACD73B32B4429B92B50B4 /* MixKit */; };
+		EFF626CFD73CE0A4A9AA543A /* NotificationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3CF5D12B35E01DED2DB1CCF /* NotificationViews.swift */; };
 		F2B2950DBDF8F8A8E7B9B001 /* MiniPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3EBB48DCDF7CB6AA61FD4A7 /* MiniPlayer.swift */; };
 		FB5EF61A1FB96AA618D75D4A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21B2B76B2DC00F6D6DA999F /* RootView.swift */; };
 /* End PBXBuildFile section */
@@ -60,6 +62,8 @@
 		CB2C16E2B3AFC8B351F00BDC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E6505AC515AD4647C35C1181 /* MixGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixGridView.swift; sourceTree = "<group>"; };
 		EC8127E3DB6D385AF24C6597 /* OKSessions.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OKSessions.entitlements; sourceTree = "<group>"; };
+		ECF102F306B4FE17BB243A85 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		F3CF5D12B35E01DED2DB1CCF /* NotificationViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViews.swift; sourceTree = "<group>"; };
 		F3EBB48DCDF7CB6AA61FD4A7 /* MiniPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayer.swift; sourceTree = "<group>"; };
 		FC8CE4E34B7F8CF5FA0962EB /* ui-test-tone.m4a */ = {isa = PBXFileReference; path = "ui-test-tone.m4a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -129,6 +133,7 @@
 				F3EBB48DCDF7CB6AA61FD4A7 /* MiniPlayer.swift */,
 				98BDC857A20DD25A2B067D53 /* MixArtwork.swift */,
 				E6505AC515AD4647C35C1181 /* MixGridView.swift */,
+				F3CF5D12B35E01DED2DB1CCF /* NotificationViews.swift */,
 				C69E91B839F715E2B65A2074 /* PlayerView.swift */,
 				C21B2B76B2DC00F6D6DA999F /* RootView.swift */,
 				B676B65E9D79F5AC2FC9F50D /* RoutePicker.swift */,
@@ -173,6 +178,7 @@
 			children = (
 				6E7F0ECCD026BBB5276F0C3F /* AppModel.swift */,
 				A05CD55AA63BEDB72071D2B4 /* AudioSession.swift */,
+				ECF102F306B4FE17BB243A85 /* Notifications.swift */,
 				4FE6295C78BE496D1C0D2C73 /* OKSessionsApp.swift */,
 			);
 			path = App;
@@ -293,6 +299,8 @@
 				F2B2950DBDF8F8A8E7B9B001 /* MiniPlayer.swift in Sources */,
 				155D059C2D412184F0907BFE /* MixArtwork.swift in Sources */,
 				376D74299668EFC8F4B2952E /* MixGridView.swift in Sources */,
+				EFF626CFD73CE0A4A9AA543A /* NotificationViews.swift in Sources */,
+				7D799A226E13406CE6E36D40 /* Notifications.swift in Sources */,
 				6CDF8ABC1A5D8FD5BA172C86 /* OKSessionsApp.swift in Sources */,
 				0D142001A09774CE95F3F68D /* PlayerView.swift in Sources */,
 				0AFFAE162D65D7236D04F395 /* Previews.swift in Sources */,

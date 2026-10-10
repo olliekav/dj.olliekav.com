@@ -18,6 +18,12 @@ enum Fixtures {
 final class StubClient: HTTPClient, @unchecked Sendable {
     var responses: [String: (Int, Data)] = [:]
     private(set) var requested: [URL] = []
+    private(set) var requests: [URLRequest] = []
+
+    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+        requests.append(request)
+        return try await data(from: request.url!)
+    }
 
     func data(from url: URL) async throws -> (Data, URLResponse) {
         requested.append(url)

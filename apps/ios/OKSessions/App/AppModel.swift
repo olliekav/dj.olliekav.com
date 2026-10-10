@@ -11,6 +11,7 @@ final class AppModel {
 
     let library: MixLibrary
     let player: PlayerController
+    let alerts: NewMixAlerts
     /// The full-screen player is showing
     var isPlayerPresented = false
     /// What the player zooms from: a tile's mix id, or the mini player
@@ -24,6 +25,16 @@ final class AppModel {
         isPlayerPresented = true
     }
 
+    /// Plays a mix by session number, from a tapped notification. On a cold launch the
+    /// list may still be loading, or may predate the new mix, so it's loaded again if needed.
+    func openMix(number: Int) async {
+        if library.mixes.first(where: { $0.number == number }) == nil {
+            await library.refresh()
+        }
+        guard let mix = library.mixes.first(where: { $0.number == number }) else { return }
+        open(mix)
+    }
+
     /// Opens the player for what's playing, zooming from the mini player.
     func openPlayer() {
         playerSource = Self.miniPlayerSource
@@ -34,6 +45,7 @@ final class AppModel {
         let api = Self.makeAPI()
         library = MixLibrary(api: api)
         player = PlayerController(engine: AVPlayerEngine(), api: api)
+        alerts = Self.makeAlerts(api: api)
         player.onChange = { [weak self] in self?.updateNowPlaying() }
         NowPlaying.registerRemoteCommands(for: player)
         AudioSession.configure(player: player)
@@ -84,19 +96,39 @@ final class AppModel {
     }
 
     /// Elapsed time is extrapolated by the system while playing; resync it now and then.
+    /// Listening time counts towards offering new-mix notifications.
     private func startNowPlayingClock() {
         Task { [weak self] in
+            let tick: TimeInterval = 5
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(5))
-                if self?.player.isPlaying == true { self?.updateNowPlaying() }
+                try? await Task.sleep(for: .seconds(tick))
+                guard let self, player.isPlaying else { continue }
+                updateNowPlaying()
+                alerts.recordListening(tick)
             }
         }
     }
 
     // MARK: API
 
+    static var isUITesting: Bool { ProcessInfo.processInfo.arguments.contains("-ui-testing") }
+
+    private static func makeAlerts(api: MixAPI) -> NewMixAlerts {
+        guard isUITesting else { return NewMixAlerts(system: SystemNotifications(), registry: api) }
+        // A clean slate each launch, without the system alert; `-prompt-after <seconds>` brings the prompt forward
+        let defaults = UserDefaults(suiteName: "ui-testing")!
+        defaults.removePersistentDomain(forName: "ui-testing")
+        let arguments = UserDefaults.standard
+        let delay = arguments.object(forKey: "prompt-after") == nil ? nil : arguments.double(forKey: "prompt-after")
+        let system = UITestNotifications()
+        let alerts = NewMixAlerts(system: system, registry: api, defaults: defaults,
+                                  promptDelay: delay ?? NewMixAlerts.defaultPromptDelay)
+        system.alerts = alerts
+        return alerts
+    }
+
     private static func makeAPI() -> MixAPI {
-        if ProcessInfo.processInfo.arguments.contains("-ui-testing") {
+        if isUITesting {
             return MixAPI(baseURL: URL(string: "https://stub.test")!, client: UITestHTTPClient())
         }
         let configured = (Bundle.main.object(forInfoDictionaryKey: "OKAPIBaseURL") as? String).flatMap(URL.init(string:))
