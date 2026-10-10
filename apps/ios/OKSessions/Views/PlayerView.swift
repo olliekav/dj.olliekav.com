@@ -123,8 +123,10 @@ private struct PlayerControls: View {
                 }
                 .foregroundStyle(.secondary)
                 Spacer()
+                // The picker draws its icon small; scaled up to sit with the transport controls
                 RoutePicker(tint: .label)
                     .frame(width: 44, height: 44)
+                    .scaleEffect(1.5)
                     .accessibilityLabel("AirPlay")
             }
         }
