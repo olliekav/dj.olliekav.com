@@ -12,8 +12,9 @@ struct PlayerView: View {
         if let mix = model.player.current {
             let player = model.player
             let theme = mix.theme
-            // Text and controls in the mix's lighter colour, over the darkened artwork
-            let ink = theme.lighterColor
+            // White text and controls over the darkened artwork; the mix colour is the accent
+            let ink = Color.white
+            let accent = theme.lighterColor
             VStack(spacing: 24) {
                 HStack {
                     HeaderButton(title: "Close", systemImage: "chevron.down") { dismiss() }
@@ -36,7 +37,7 @@ struct PlayerView: View {
                     if let genre = mix.genre {
                         Text(genre)
                             .font(.subheadline)
-                            .opacity(0.75)
+                            .opacity(0.7)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -45,7 +46,7 @@ struct PlayerView: View {
                     WaveformView(
                         waveform: player.waveform,
                         progress: player.progress,
-                        played: ink,
+                        played: accent,
                         unplayed: .white.opacity(0.25)
                     ) { fraction in
                         player.seek(to: fraction * player.duration)
@@ -74,7 +75,7 @@ struct PlayerView: View {
                             .font(.footnote.weight(.semibold))
                     }
                     Spacer()
-                    RoutePicker(tint: UIColor(ink))
+                    RoutePicker(tint: UIColor(accent))
                         .frame(width: 44, height: 44)
                         .accessibilityLabel("AirPlay")
                 }
@@ -141,7 +142,7 @@ private struct BlurredArtwork: View {
                 .clipped()
         }
         .background(mix.theme.backgroundColor)
-        .overlay(Color.black.opacity(0.45))
+        .overlay(Color.black.opacity(0.55))
         .ignoresSafeArea()
         .animation(.easeInOut(duration: 0.6), value: mix.id)
         .accessibilityHidden(true)
@@ -173,7 +174,7 @@ extension Glass {
     /// Glass faintly tinted with the mix's foreground, so it reads against its background
     static func mixTinted(_ theme: Theme?) -> Glass {
         guard let theme else { return .regular }
-        return .regular.tint(theme.lighterColor.opacity(0.18))
+        return .regular.tint(theme.lighterColor.opacity(0.12))
     }
 }
 
