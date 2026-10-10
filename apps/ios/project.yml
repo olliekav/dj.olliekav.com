@@ -30,11 +30,6 @@ targets:
         product: MixKit
       - package: OKSessionsKit
         product: PlayerKit
-    entitlements:
-      path: OKSessions/OKSessions.entitlements
-      properties:
-        # Requested from Apple; needed to run CarPlay on a device
-        com.apple.developer.carplay-audio: true
     info:
       path: OKSessions/Info.plist
       properties:
@@ -60,6 +55,12 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_STRICT_CONCURRENCY: complete
+        # CarPlay needs Apple's CarPlay Audio entitlement, and a device or App Store build
+        # can't be signed with it until Apple approves it for the App ID. Until then device
+        # builds leave it out; once approved, switch this to OKSessions/CarPlay.entitlements
+        CODE_SIGN_ENTITLEMENTS: OKSessions/OKSessions.entitlements
+        # The simulator doesn't check, so it always has CarPlay for testing
+        CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]: OKSessions/CarPlay.entitlements
   OKSessionsUITests:
     type: bundle.ui-testing
     platform: iOS

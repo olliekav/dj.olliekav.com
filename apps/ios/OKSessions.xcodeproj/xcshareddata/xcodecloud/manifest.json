@@ -1,0 +1,9 @@
+{
+  "id" : "9c10c117-5738-4b35-bf1a-da57f854944c",
+  "targets" : [
+    {
+      "id" : "15bc1800-f6a5-4bb2-b765-d1e5c8dbb2ee",
+      "name" : "OKSessions"
+    }
+  ]
+}
