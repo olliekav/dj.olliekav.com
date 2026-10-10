@@ -1,18 +1,26 @@
+import { generateKeyPairSync } from 'node:crypto';
 import { vi } from 'vitest';
 import tracks from '../../../shared/fixtures/soundcloud-tracks.json' with { type: 'json' };
-import type { TokenStore } from '../soundcloud';
+import type { APNsResponse } from '../apns';
+import type { PushStore } from '../push';
 
 export const json = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify(body), { status, headers });
 
 export const memoryStore = (initial: Record<string, unknown> = {}) => {
   const data = new Map(Object.entries(initial));
-  const store: TokenStore & { data: Map<string, unknown> } = {
+  const store: PushStore & { data: Map<string, unknown> } = {
     data,
     get: vi.fn(async (key: string) => data.get(key) ?? null),
     setJSON: vi.fn(async (key: string, value: unknown) => {
       data.set(key, value);
-    })
+    }),
+    delete: vi.fn(async (key: string) => {
+      data.delete(key);
+    }),
+    list: vi.fn(async ({ prefix }: { prefix: string }) => ({
+      blobs: [...data.keys()].filter(key => key.startsWith(prefix)).map(key => ({ key }))
+    }))
   };
   return store;
 };
@@ -41,3 +49,25 @@ export const soundcloudRoutes = (overrides: Record<string, Route> = {}) => ({
     new Response(null, { status: 302, headers: { location: 'https://cf-hls-media.sndcdn.com/playlist/101.m3u8?Policy=x' } }),
   ...overrides
 });
+
+const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' });
+export const testPublicKey = publicKey;
+
+/** An APNs-style .p8 key (P-256, PKCS #8) */
+export const testKey = privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
+
+/** A transport answering each request in turn, recording what was sent. */
+export const fakeTransport = (...responses: (APNsResponse | Error)[]) => {
+  const sent: { path: string; headers: Record<string, string>; body: unknown }[] = [];
+  const transport = {
+    sent,
+    send: vi.fn(async (path: string, headers: Record<string, string>, body: string) => {
+      sent.push({ path, headers, body: JSON.parse(body) });
+      const response = responses.length > 1 ? responses.shift()! : responses[0] ?? { status: 200, body: '' };
+      if (response instanceof Error) throw response;
+      return response;
+    }),
+    close: vi.fn()
+  };
+  return transport;
+};

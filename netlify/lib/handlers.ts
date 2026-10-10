@@ -8,10 +8,12 @@ interface CachedMixes {
   fetchedAt: number;
 }
 
+export const MIXES_CACHE_TAG = 'mixes';
+
 // How long the stored playlist is trusted for checking stream requests
 const PLAYLIST_TTL_MS = 60 * 60 * 1000;
 
-const json = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
+export const json = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify(body), {
     status,
     headers: { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', ...headers }
@@ -29,7 +31,9 @@ export const handleMixes = async ({ soundcloud, store }: { soundcloud: SoundClou
     return json({ mixes }, 200, {
       'cache-control': 'public, max-age=60',
       // Netlify's CDN serves this for 5 minutes, then revalidates in the background
-      'netlify-cdn-cache-control': 'public, durable, s-maxage=300, stale-while-revalidate=86400'
+      'netlify-cdn-cache-control': 'public, durable, s-maxage=300, stale-while-revalidate=86400',
+      // Purged when a new mix is announced, so tapping the notification finds it
+      'netlify-cache-tag': MIXES_CACHE_TAG
     });
   } catch (error) {
     console.error(error);
