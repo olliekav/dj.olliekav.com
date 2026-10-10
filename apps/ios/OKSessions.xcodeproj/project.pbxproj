@@ -40,7 +40,7 @@
 
 /* Begin PBXFileReference section */
 		030B1ABEEDF40429581A6CDB /* Previews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Previews.swift; sourceTree = "<group>"; };
-		0D50CC39520D236C803B4872 /* OKSessions.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = OKSessions.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D50CC39520D236C803B4872 /* OKSessions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OKSessions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BB32211F8594DC80F169728 /* OKSessionsKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = OKSessionsKit; path = Packages/OKSessionsKit; sourceTree = SOURCE_ROOT; };
 		4202146087D0B2D58CB39D25 /* OKSessionsUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = OKSessionsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FE6295C78BE496D1C0D2C73 /* OKSessionsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OKSessionsApp.swift; sourceTree = "<group>"; };
@@ -60,7 +60,7 @@
 		E6505AC515AD4647C35C1181 /* MixGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixGridView.swift; sourceTree = "<group>"; };
 		EC8127E3DB6D385AF24C6597 /* OKSessions.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OKSessions.entitlements; sourceTree = "<group>"; };
 		F3EBB48DCDF7CB6AA61FD4A7 /* MiniPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayer.swift; sourceTree = "<group>"; };
-		FC8CE4E34B7F8CF5FA0962EB /* ui-test-tone.m4a */ = {isa = PBXFileReference; path = "ui-test-tone.m4a"; sourceTree = "<group>"; };
+		FC8CE4E34B7F8CF5FA0962EB /* ui-test-tone.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ui-test-tone.m4a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -386,6 +386,7 @@
 				CODE_SIGN_ENTITLEMENTS = OKSessions/OKSessions.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = OKSessions/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -439,6 +440,7 @@
 				CODE_SIGN_ENTITLEMENTS = OKSessions/OKSessions.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = OKSessions/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

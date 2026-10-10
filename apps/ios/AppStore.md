@@ -48,13 +48,17 @@ dj,mix,techno,drum and bass,dnb,breakbeat,dubstep,garage,bass,electronic,jungle,
 
 The first release: every OK Sessions mix, with background playback, AirPlay and CarPlay.
 
+## Content rights
+
+App Store Connect asks "Does your app contain, show, or access third-party content?" Answer **Yes**: the mixes are hosted on SoundCloud, and they contain other artists' tracks. Then confirm you have the rights, on the basis below (it's also in the review notes).
+
 ## Notes for App Review
 
-OK Sessions is the official app for my own DJ mix series (https://dj.olliekav.com). I'm the artist and publish every mix in the app.
+OK Sessions is the official app for my own DJ mix series (https://dj.olliekav.com). I'm the DJ who made every mix in the app, and I publish them on my own SoundCloud account (https://soundcloud.com/olliekav).
 
-The mixes are hosted on SoundCloud and streamed through the official SoundCloud API under its terms: SoundCloud is credited and each mix links to its SoundCloud page ("Listen on SoundCloud" in the player and the About screen). The app has no downloads or offline playback, as the SoundCloud API terms require.
+The app doesn't host or serve any audio itself. Every mix streams from SoundCloud through SoundCloud's official public API, under the SoundCloud API Terms of Use, using the app's registered API credentials. Playback in apps through this API is how SoundCloud distributes its catalogue, and is covered by SoundCloud's licensing arrangements for the tracks in each mix. As those terms require, SoundCloud is credited, and every mix links to its SoundCloud page ("Listen on SoundCloud" in the player and in About this mix). The app has no downloads or offline playback, and no ads or paid features.
 
-There's no sign-in, so no demo account is needed. Tap any mix to play it. The player has background audio, lock screen controls, AirPlay and CarPlay (audio app, using the CarPlay Audio entitlement).
+There's no sign-in, so no demo account is needed. Tap any mix to play it. The player has background audio, lock screen controls, AirPlay and CarPlay (an audio app, using the CarPlay Audio entitlement).
 
 ## Screenshots
 
