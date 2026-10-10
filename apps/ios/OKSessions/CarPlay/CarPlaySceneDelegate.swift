@@ -16,7 +16,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     ) {
         self.interfaceController = interfaceController
         let model = AppModel.shared
-        let list = CPListTemplate(title: "OK Sessions", sections: [])
+        let list = CPListTemplate(title: "O:K Sessions", sections: [])
         list.tabImage = UIImage(systemName: "square.grid.2x2.fill")
         list.emptyViewTitleVariants = ["Loading sessions…"]
         interfaceController.setRootTemplate(list, animated: false, completion: nil)

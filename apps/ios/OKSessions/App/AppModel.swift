@@ -40,11 +40,25 @@ final class AppModel {
         startNowPlayingClock()
     }
 
-    /// Plays `mix` with the rest of the playlist queued in session order.
+    /// Plays `mix` with the rest of the playlist queued in session order (or shuffled).
     func play(_ mix: Mix) {
         AudioSession.activate()
-        player.play(mix, in: library.mixes.sorted { $0.number < $1.number })
+        player.play(mix, in: sessionOrder)
     }
+
+    /// Plays every mix in a random order and opens the player.
+    func shuffleAll() {
+        AudioSession.activate()
+        player.shuffle(sessionOrder)
+        playerSource = player.current?.id ?? Self.miniPlayerSource
+        isPlayerPresented = player.current != nil
+    }
+
+    func toggleShuffle() {
+        player.setShuffle(!player.isShuffled)
+    }
+
+    private var sessionOrder: [Mix] { library.mixes.sorted { $0.number < $1.number } }
 
     // MARK: Lock screen, Control Center and CarPlay
 

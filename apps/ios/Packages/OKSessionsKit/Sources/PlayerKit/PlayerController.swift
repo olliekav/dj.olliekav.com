@@ -28,6 +28,8 @@ public final class PlayerController {
     public private(set) var isBuffering = false
     public private(set) var currentTime: TimeInterval = 0
     public private(set) var waveform: Waveform?
+    /// Whether the queue plays in a random order; next, previous and auto-advance follow it
+    public private(set) var isShuffled = false
 
     public var current: Mix? { index.map { queue[$0] } }
     public var duration: TimeInterval { current?.duration ?? 0 }
@@ -44,6 +46,10 @@ public final class PlayerController {
     @ObservationIgnored private var loadTask: Task<Void, Never>?
     @ObservationIgnored private var playWhenReady = true
     @ObservationIgnored private var retriedStream = false
+    /// The queue in session order, so shuffle can be turned off again
+    @ObservationIgnored private var orderedQueue: [Mix] = []
+    /// Puts mixes in a random order; replaceable so tests are predictable
+    @ObservationIgnored public var shuffler: ([Mix]) -> [Mix] = { $0.shuffled() }
 
     /// Restart the current mix instead of going back if it has played this long
     public static let restartThreshold: TimeInterval = 3
@@ -54,17 +60,48 @@ public final class PlayerController {
         engine.onEvent = { [weak self] event in self?.handle(event) }
     }
 
-    /// Plays `mix`, with `queue` (in order) for next/previous and auto-advance.
+    /// Plays `mix`, with `queue` (in order) for next/previous and auto-advance. When
+    /// shuffled, the rest of the queue follows in a random order.
     public func play(_ mix: Mix, in queue: [Mix]) {
-        self.queue = queue.isEmpty ? [mix] : queue
-        guard let position = self.queue.firstIndex(where: { $0.id == mix.id }) else {
-            self.queue = [mix]
-            return load(index: 0, autoplay: true)
-        }
-        if position == index, status != .idle {
+        orderedQueue = queue.contains(where: { $0.id == mix.id }) ? queue : [mix]
+        if current?.id == mix.id, status != .idle {
+            // Already playing: carry on, keeping the shuffled order if there is one
+            if !isShuffled {
+                self.queue = orderedQueue
+                index = orderedQueue.firstIndex { $0.id == mix.id }
+            }
             return resume()
         }
-        load(index: position, autoplay: true)
+        self.queue = arranged(startingWith: mix)
+        load(index: self.queue.firstIndex { $0.id == mix.id } ?? 0, autoplay: true)
+    }
+
+    /// Plays all of `mixes` in a random order.
+    public func shuffle(_ mixes: [Mix]) {
+        guard !mixes.isEmpty else { return }
+        isShuffled = true
+        orderedQueue = mixes
+        queue = shuffler(mixes)
+        load(index: 0, autoplay: true)
+    }
+
+    /// Turns shuffle on or off without interrupting the current mix.
+    public func setShuffle(_ shuffled: Bool) {
+        guard shuffled != isShuffled else { return }
+        isShuffled = shuffled
+        guard let mix = current else {
+            queue = shuffled ? shuffler(orderedQueue) : orderedQueue
+            return
+        }
+        queue = arranged(startingWith: mix)
+        index = queue.firstIndex { $0.id == mix.id }
+        onChange?()
+    }
+
+    /// The queue for playing `mix`: in session order, or `mix` then the rest shuffled.
+    private func arranged(startingWith mix: Mix) -> [Mix] {
+        guard isShuffled else { return orderedQueue }
+        return [mix] + shuffler(orderedQueue.filter { $0.id != mix.id })
     }
 
     public func togglePlayPause() {

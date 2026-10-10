@@ -41,43 +41,47 @@ struct MixTile: View {
                     PlayingBars(isPlaying: isPlaying)
                         .foregroundStyle(mix.theme.foregroundColor)
                         .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
-                        .padding(16)
+                        .padding(10)
                 }
             }
             .contentShape(.rect)
     }
 }
 
-/// Bouncing level bars for the mix that's playing, like Music's; they settle when paused.
+/// Level bars for the mix that's playing, like the Dynamic Island's: thin bars that swell
+/// from the middle, the outer ones shorter. They settle when paused.
 struct PlayingBars: View {
     var isPlaying: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // Each bar moves at its own pace so they never fall into step
-    private static let speeds: [Double] = [5.1, 7.3, 4.4, 6.2]
-    private static let phases: [Double] = [0, 1.7, 3.1, 0.9]
-    private static let resting: [Double] = [0.35, 0.6, 0.45, 0.3]
+    private static let speeds: [Double] = [6.3, 8.1, 5.2, 7.4, 6.8]
+    private static let phases: [Double] = [0.4, 2.1, 0, 3.3, 1.2]
+    // Outer bars stay shorter, so the shape reads as a waveform
+    private static let reach: [Double] = [0.55, 0.85, 1, 0.85, 0.55]
+    private static let height: CGFloat = 14
 
     var body: some View {
         TimelineView(.animation(paused: !isPlaying || reduceMotion)) { context in
             let time = context.date.timeIntervalSinceReferenceDate
-            HStack(alignment: .bottom, spacing: 2.5) {
-                ForEach(0..<4, id: \.self) { bar in
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .frame(width: 3.5, height: 18 * level(bar, at: time))
+            HStack(alignment: .center, spacing: 2) {
+                ForEach(0..<5, id: \.self) { bar in
+                    Capsule()
+                        .frame(width: 2.5, height: max(2.5, Self.height * level(bar, at: time)))
                 }
             }
-            .frame(width: 22, height: 18, alignment: .bottom)
+            .frame(width: 20, height: Self.height)
         }
         .accessibilityHidden(true)
     }
 
     private func level(_ bar: Int, at time: TimeInterval) -> Double {
-        guard isPlaying, !reduceMotion else { return Self.resting[bar] }
+        let reach = Self.reach[bar]
+        guard isPlaying, !reduceMotion else { return reach * 0.3 }
         let speed = Self.speeds[bar], phase = Self.phases[bar]
         // Two sines at different rates read as music rather than a metronome
         let wave = sin(time * speed + phase) * 0.6 + sin(time * speed * 1.7 + phase * 2) * 0.4
-        return 0.2 + 0.8 * abs(wave)
+        return reach * (0.25 + 0.75 * abs(wave))
     }
 }
 

@@ -12,11 +12,16 @@ struct RootView: View {
         @Bindable var model = model
         NavigationStack {
             LibraryContent(mixes: model.library.search(query), isSearching: !query.isEmpty, transition: transition)
-                .navigationTitle("OK Sessions")
+                .navigationTitle("O:K Sessions")
                 // No bar behind the title when scrolled, just the soft fade at the top edge
                 .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
                 .toolbar(isSearching ? .hidden : .visible, for: .navigationBar)
                 .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Shuffle all", systemImage: "shuffle") { model.shuffleAll() }
+                            .disabled(model.library.mixes.isEmpty)
+                            .accessibilityIdentifier("shuffle-all")
+                    }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Search", systemImage: "magnifyingglass") {
                             withAnimation(.spring(duration: 0.35)) { isSearching = true }
