@@ -154,7 +154,7 @@ private struct TransportControls: View {
 
 /// A circular glass button, the same size whatever its symbol.
 private struct HeaderButton: View {
-    /// The mix's logo colour
+    /// The mix's logo colour, for the icon
     let tint: Color
     let title: String
     let systemImage: String
@@ -169,7 +169,8 @@ private struct HeaderButton: View {
                 .contentShape(.circle)
         }
         .buttonStyle(.plain)
-        .glassEffect(.clear.tint(tint).interactive(), in: .circle)
+        .foregroundStyle(tint)
+        .glassEffect(.clear.interactive(), in: .circle)
         .accessibilityLabel(title)
     }
 }
