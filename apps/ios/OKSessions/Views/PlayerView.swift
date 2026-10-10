@@ -7,14 +7,11 @@ import SwiftUI
 struct PlayerView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
     @State private var showsInfo = false
 
     var body: some View {
         if let mix = model.player.current {
             let theme = mix.theme
-            // The same black or white as the transport controls (the bar's own scheme follows the mix colour)
-            let ink: Color = colorScheme == .dark ? .white : .black
             NavigationStack {
                 VStack(spacing: 0) {
                     // Top: the artwork, edge to edge on its own colour
@@ -39,14 +36,10 @@ struct PlayerView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         HeaderButton(title: "Close", systemImage: "chevron.down") { dismiss() }
                             .accessibilityIdentifier("close-player")
-                            .foregroundStyle(ink)
-                            .environment(\.colorScheme, colorScheme)
                     }
                     .sharedBackgroundVisibility(.hidden)
                     ToolbarItem(placement: .topBarTrailing) {
                         HeaderButton(title: "About this mix", systemImage: "info") { showsInfo = true }
-                            .foregroundStyle(ink)
-                            .environment(\.colorScheme, colorScheme)
                     }
                     .sharedBackgroundVisibility(.hidden)
                 }
@@ -161,8 +154,6 @@ private struct TransportControls: View {
 
 /// A circular glass button, the same size whatever its symbol.
 private struct HeaderButton: View {
-    /// The glass inside the bar follows the bar's scheme, so it's tinted to the app's own
-    @Environment(\.colorScheme) private var colorScheme
     let title: String
     let systemImage: String
     let action: () -> Void
@@ -176,7 +167,7 @@ private struct HeaderButton: View {
                 .contentShape(.circle)
         }
         .buttonStyle(.plain)
-        .glassEffect(.regular.tint(colorScheme == .dark ? .black : .white).interactive(), in: .circle)
+        .glassEffect(.clear.interactive(), in: .circle)
         .accessibilityLabel(title)
     }
 }
