@@ -33,7 +33,7 @@ targets:
     info:
       path: OKSessions/Info.plist
       properties:
-        CFBundleDisplayName: OK Sessions
+        CFBundleDisplayName: O:K Sessions
         LSApplicationCategoryType: public.app-category.music
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen:

@@ -21,7 +21,7 @@ struct MiniPlayer: View {
                                 .font(.subheadline.weight(.semibold))
                                 .lineLimit(1)
                             Text(NowPlayingSubtitle(player: model.player).text)
-                                .font(.caption)
+                                .font(.caption.weight(.semibold))
                                 .opacity(0.75)
                                 .monospacedDigit()
                         }
