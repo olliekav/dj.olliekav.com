@@ -9,7 +9,7 @@ This is a showcase site for my [OK Sessions DJ mixes](https://soundcloud.com/oll
 | Path | What |
 |---|---|
 | `src/` | Website (Preact + Vite + Wavesurfer) |
-| `netlify/` | API functions: `/api/mixes` and `/api/stream` |
+| `netlify/` | API functions: `/api/mixes`, `/api/stream`, `/api/devices`, and the hourly new-mix notifications |
 | `shared/mix-themes.json` | Colour theme per session |
 | `shared/api-types.ts`, `shared/fixtures/` | API response types and fixtures shared by every test suite |
 | `scripts/mix-tools/` | Colour, artwork and SoundCloud tools |
@@ -31,8 +31,26 @@ The functions need `SOUNDCLOUD_CLIENT_ID` and `SOUNDCLOUD_CLIENT_SECRET`: set th
 |---|---|
 | `GET /api/mixes` | The playlist as `{ mixes: Mix[] }`, numbered by position, with each mix's theme, SoundCloud waveform and artwork URLs. Cached on Netlify's CDN for 5 minutes |
 | `GET /api/stream?urn=soundcloud:tracks:<id>` | `{ url, format }`: a short-lived signed HLS URL (AAC 160k). Only for tracks in the playlist; never cached; rate limited per IP |
+| `POST /api/devices` | Registers an APNs device token for new-mix notifications: `{ token, platform: "ios" }`, the token as hex. 204; rate limited per IP |
+| `DELETE /api/devices` | Unregisters it: `{ token }`. 204 |
 
 Only the functions talk to SoundCloud, so the app credentials never reach clients. The app token is shared between function instances through Netlify Blobs, since SoundCloud caps token requests at 50 per 12 hours. Each `/api/stream` call counts towards SoundCloud's limit of 15,000 stream requests per day, which is why streams are resolved only when playback starts.
+
+### New-mix notifications
+
+An hourly scheduled function (`new-mix-notifications`) fetches the playlist and compares its newest mix with the last one announced, kept in the `push` Blobs store. Each new mix goes to every registered device as "OK Sessions #N is out", with `{ mix: N }` in the payload for the app to play it, and `/api/mixes` is purged from the CDN so the app finds it. The first run only records the newest mix. Tokens Apple reports invalid are deleted.
+
+Pushes go straight to APNs over HTTP/2 with token-based auth, so there's no third-party push service. It needs these Netlify environment variables:
+
+| Variable | Value |
+|---|---|
+| `APNS_KEY_ID` | The APNs key's ID |
+| `APNS_TEAM_ID` | `3B26SQGP8Q` |
+| `APNS_KEY` | The `.p8` key file's contents |
+| `APNS_BUNDLE_ID` | `com.olliekav.oksessions` (the default) |
+| `APNS_HOST` | `api.push.apple.com` for TestFlight and App Store builds (the default), `api.sandbox.push.apple.com` for builds run from Xcode |
+
+Tokens from one environment are rejected by the other's host (and deleted), so point a deploy preview at the sandbox to test with Xcode builds.
 
 SoundCloud's API terms apply to the apps: credit SoundCloud and link to each track, no offline listening or downloads, and no ads or paid unlocks around the mixes.
 

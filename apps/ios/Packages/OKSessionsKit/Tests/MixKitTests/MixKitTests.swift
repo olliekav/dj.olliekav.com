@@ -89,6 +89,28 @@ struct MixAPITests {
         #expect(try await api.waveform(for: mix(waveform: nil)) == nil)
     }
 
+    @Test func registersAndUnregistersTheDeviceToken() async throws {
+        let client = StubClient()
+        client.responses["https://example.test/api/devices"] = (204, Data())
+        let api = MixAPI(baseURL: base, client: client)
+        try await api.registerDevice(Data([0x0A, 0xFF]))
+        try await api.unregisterDevice(Data([0x0A, 0xFF]))
+
+        #expect(client.requests.map(\.httpMethod) == ["POST", "DELETE"])
+        let request = try #require(client.requests.first)
+        #expect(request.value(forHTTPHeaderField: "Content-Type") == "application/json")
+        let body = try JSONDecoder().decode(DeviceRegistration.self, from: try #require(request.httpBody))
+        #expect(body == DeviceRegistration(token: "0aff", platform: "ios"))
+    }
+
+    @Test func surfacesRegistrationErrors() async {
+        let client = StubClient()
+        client.responses["https://example.test/api/devices"] = (429, Data())
+        await #expect(throws: MixAPIError.http(status: 429)) {
+            try await MixAPI(baseURL: base, client: client).registerDevice(Data([1]))
+        }
+    }
+
     @Test func defaultsToProduction() {
         #expect(MixAPI().baseURL.absoluteString == "https://dj.olliekav.com")
     }

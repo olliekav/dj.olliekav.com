@@ -3,6 +3,11 @@ import MixKit
 
 /// Serves the bundled API fixture and a short local tone, so UI tests run without the network.
 struct UITestHTTPClient: HTTPClient {
+    /// Device registration: accepted, and not sent anywhere
+    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+        (Data(), HTTPURLResponse(url: request.url!, statusCode: 204, httpVersion: nil, headerFields: nil)!)
+    }
+
     func data(from url: URL) async throws -> (Data, URLResponse) {
         let ok = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!
         switch url.path() {

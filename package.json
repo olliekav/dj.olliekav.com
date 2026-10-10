@@ -14,6 +14,7 @@
 	},
 	"dependencies": {
 		"@netlify/blobs": "^11.1.4",
+		"@netlify/functions": "^6.0.2",
 		"hls.js": "^1.7.3",
 		"preact": "^11.0.1",
 		"preact-iso": "^2.12.2",
@@ -21,9 +22,9 @@
 		"wavesurfer.js": "^8.0.2"
 	},
 	"devDependencies": {
-		"@netlify/functions": "^6.0.2",
 		"@netlify/vite-plugin": "^3.0.1",
 		"@preact/preset-vite": "^2.10.6",
+		"@types/node": "^22.20.5",
 		"eslint": "^9.39.5",
 		"eslint-config-preact": "^2.0.0",
 		"jsdom": "^29.1.1",

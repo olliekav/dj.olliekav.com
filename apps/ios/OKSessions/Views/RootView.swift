@@ -16,6 +16,9 @@ struct RootView: View {
                 .toolbar(isSearching ? .hidden : .visible, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
+                        NotificationsButton()
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button("Shuffle all", systemImage: "shuffle") { model.shuffleAll() }
                             .disabled(model.library.mixes.isEmpty)
                             .accessibilityIdentifier("shuffle-all")
@@ -40,14 +43,21 @@ struct RootView: View {
                 }
         }
         .safeAreaInset(edge: .bottom) {
-            if model.player.current != nil {
-                MiniPlayer { model.openPlayer() }
-                    .matchedTransitionSource(id: AppModel.miniPlayerSource, in: transition)
-                    .padding(.horizontal)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            VStack(spacing: 12) {
+                if model.alerts.isPromptVisible {
+                    NotificationPrompt()
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+                if model.player.current != nil {
+                    MiniPlayer { model.openPlayer() }
+                        .matchedTransitionSource(id: AppModel.miniPlayerSource, in: transition)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
+            .padding(.horizontal)
         }
         .animation(.spring(duration: 0.4), value: model.player.current != nil)
+        .animation(.spring(duration: 0.4), value: model.alerts.isPromptVisible)
         .fullScreenCover(isPresented: $model.isPlayerPresented) {
             PlayerView()
                 .navigationTransition(.zoom(sourceID: model.playerSource, in: transition))

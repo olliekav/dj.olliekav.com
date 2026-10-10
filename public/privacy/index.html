@@ -79,24 +79,29 @@
 	<body>
 		<main>
 			<h1>Privacy</h1>
-			<p class="updated">OK Sessions website and apps · Last updated 9 October 2026</p>
+			<p class="updated">OK Sessions website and apps · Last updated 10 October 2026</p>
 
 			<p>OK Sessions is a collection of DJ mixes by O:K (olliekav). This page covers the website at dj.olliekav.com and the OK Sessions apps for iPhone, iPad and CarPlay.</p>
 
 			<h2>The short version</h2>
-			<p>There are no accounts, no tracking, no analytics, no ads and no cookies. Nothing you do in the apps or on the site is collected, stored or shared by OK Sessions.</p>
+			<p>There are no accounts, no tracking, no analytics, no ads and no cookies. Nothing you do in the apps or on the site is collected, stored or shared by OK Sessions. The one exception is opt-in: if you turn on new mix notifications, the app's push token is kept so a notification can reach you.</p>
 
 			<h2>What's on your device</h2>
 			<p>The apps may cache the list of mixes and their artwork on your device so they load faster. None of it is sent anywhere. Deleting the app removes it.</p>
 
+			<h2>New mix notifications</h2>
+			<p>The iPhone and iPad app can tell you when a new mix is out. It's off unless you turn it on, and iOS asks your permission first.</p>
+			<p>When it's on, the app sends OK Sessions a push token: a random code from Apple that lets a notification reach this app on your device. It isn't linked to your name, Apple Account or anything else, and isn't used for anything but new mix notifications. It's stored with Netlify (below), along with the date it was sent.</p>
+			<p>The token is deleted when you turn notifications off in the app or in Settings, and when Apple reports it's no longer valid, for example after you delete the app. Notifications are delivered by Apple's push notification service; see <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a>.</p>
+
 			<h2>Services that see your requests</h2>
 			<p>Like any website or app that streams audio, a few services handle the network requests when you browse and listen:</p>
 			<ul>
-				<li><strong>Netlify</strong> hosts the website and the small API that lists the mixes. It receives your IP address with each request and uses it briefly to stop abuse (for example, limiting how often a stream can be requested). See <a href="https://www.netlify.com/privacy/">Netlify's privacy policy</a>.</li>
+				<li><strong>Netlify</strong> hosts the website and the small API that lists the mixes, and stores push tokens for new mix notifications. It receives your IP address with each request and uses it briefly to stop abuse (for example, limiting how often a stream can be requested). See <a href="https://www.netlify.com/privacy/">Netlify's privacy policy</a>.</li>
 				<li><strong>SoundCloud</strong> hosts the mixes. Audio, artwork and waveforms load from SoundCloud's servers, which receive your IP address like any download. See <a href="https://soundcloud.com/pages/privacy">SoundCloud's privacy policy</a>.</li>
 				<li><strong>Adobe Fonts</strong> serves the typeface on the website (not the apps). See <a href="https://www.adobe.com/privacy/policies/adobe-fonts.html">Adobe's Fonts privacy notice</a>.</li>
 			</ul>
-			<p>OK Sessions doesn't receive or keep any of this information.</p>
+			<p>OK Sessions doesn't receive or keep any of this information, apart from the push tokens above.</p>
 
 			<h2>Children</h2>
 			<p>The apps and site don't collect personal information from anyone, including children.</p>

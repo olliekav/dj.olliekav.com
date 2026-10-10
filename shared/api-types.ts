@@ -51,3 +51,16 @@ export interface Waveform {
   height: number;
   samples: number[];
 }
+
+/** Body of POST /api/devices (and DELETE, where only the token is read) */
+export interface DeviceRegistration {
+  /** The APNs device token, as hex */
+  token: string;
+  platform: 'ios';
+}
+
+/** Custom keys in a new-mix push notification, alongside `aps` */
+export interface NewMixPayload {
+  /** The session number, for the app to open and play */
+  mix: number;
+}

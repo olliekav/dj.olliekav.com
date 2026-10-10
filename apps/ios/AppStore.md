@@ -15,7 +15,7 @@ Copy for App Store Connect. Limits are Apple's; counts are included where they'r
 | Support URL | https://dj.olliekav.com |
 | Marketing URL | https://dj.olliekav.com |
 | Copyright | 2026 O:K |
-| App Privacy | Data Not Collected |
+| App Privacy | Identifiers → Device ID (the push token, only if notifications are turned on), for App Functionality, not linked to the user, not used for tracking |
 
 ## Promotional text (170)
 
@@ -32,6 +32,7 @@ Every session is here, from #1 to the latest, each with its own artwork and colo
 • Plays in the background, with lock screen and Control Centre controls
 • AirPlay to speakers and TVs
 • CarPlay for listening on the road
+• A notification when a new mix is out, if you'd like one
 • Search by session number
 
 Mixes stream from SoundCloud, where you can also follow, like and comment on each one.
@@ -46,7 +47,7 @@ dj,mix,techno,drum and bass,dnb,breakbeat,dubstep,garage,bass,electronic,jungle,
 
 ## What's new (1.0)
 
-The first release: every OK Sessions mix, with background playback, AirPlay and CarPlay.
+The first release: every OK Sessions mix, with background playback, AirPlay and CarPlay, and a notification when a new mix is out.
 
 ## Content rights
 
@@ -57,6 +58,8 @@ App Store Connect asks "Does your app contain, show, or access third-party conte
 OK Sessions is the official app for my own DJ mix series (https://dj.olliekav.com). I'm the DJ who made every mix in the app, and I publish them on my own SoundCloud account (https://soundcloud.com/olliekav).
 
 The app doesn't host or serve any audio itself. Every mix streams from SoundCloud through SoundCloud's official public API, under the SoundCloud API Terms of Use, using the app's registered API credentials. Playback in apps through this API is how SoundCloud distributes its catalogue, and is covered by SoundCloud's licensing arrangements for the tracks in each mix. As those terms require, SoundCloud is credited, and every mix links to its SoundCloud page ("Listen on SoundCloud" in the player and in About this mix). The app has no downloads or offline playback, and no ads or paid features.
+
+Notifications are optional and only announce new mixes: turn them on with the bell at the top of the list (the app also offers them once, after a mix has played for two minutes). Tapping one plays that mix.
 
 There's no sign-in, so no demo account is needed. Tap any mix to play it. The player has background audio, lock screen controls, AirPlay and CarPlay (an audio app, using the CarPlay Audio entitlement).
 
