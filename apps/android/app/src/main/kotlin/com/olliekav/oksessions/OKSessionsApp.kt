@@ -10,6 +10,11 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 
 class OKSessionsApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        com.olliekav.oksessions.ui.ArtworkRenderer.init(assets)
+    }
+
     val http = OkHttpClient()
     val api by lazy { MixApi(BuildConfig.API_BASE_URL.toHttpUrl(), http) }
     val library by lazy { MixLibrary(api) }
