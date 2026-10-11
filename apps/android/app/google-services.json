@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "46826266183",
+    "project_id": "ok-sessions",
+    "storage_bucket": "ok-sessions.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46826266183:android:45dc91ee581a52119adb62",
+        "android_client_info": {
+          "package_name": "com.olliekav.oksessions"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWg9zNevPEMDJs26pF-5dOLCPdX9rnT_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -49,6 +49,7 @@ Pushes go straight to APNs over HTTP/2 with token-based auth, so there's no thir
 | `APNS_KEY` | The `.p8` key file's contents |
 | `APNS_BUNDLE_ID` | `com.olliekav.oksessions` (the default) |
 | `APNS_HOST` | `api.push.apple.com` for TestFlight and App Store builds (the default), `api.sandbox.push.apple.com` for builds run from Xcode |
+| `FCM_SERVICE_ACCOUNT` | Android: the Firebase service account JSON (Project settings → Service accounts → Generate new private key). Optional: without it, Android devices aren't notified |
 
 Tokens from one environment are rejected by the other's host (and deleted), so point a deploy preview at the sandbox to test with Xcode builds.
 

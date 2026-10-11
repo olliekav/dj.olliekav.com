@@ -1,13 +1,17 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
 import tracks from '../../../shared/fixtures/soundcloud-tracks.json' with { type: 'json' };
+import { createHash, generateKeyPairSync } from 'node:crypto';
 import { createAPNs, type APNsResponse } from '../apns';
+import { createFCM } from '../fcm';
 import { handleDevices, notifyNewMixes } from '../push';
 import { createSoundCloud } from '../soundcloud';
 import { fakeTransport, json, memoryStore, router, soundcloudRoutes, testKey } from './helpers';
 
 const TOKEN = 'ab'.repeat(32);
 const OTHER = 'cd'.repeat(32);
+const FCM_TOKEN = `dGVzdA:APA91b${  'Z_-'.repeat(50)}`;
+const androidKey = `android/${createHash('sha256').update(FCM_TOKEN).digest('hex')}`;
 
 const devices = (method: string, body: unknown) =>
   new Request('https://dj.olliekav.com/api/devices', {
@@ -39,6 +43,26 @@ describe('handleDevices', () => {
     expect(await status('POST', 'null')).toBe(400);
     expect(await status('POST', { token: TOKEN, platform: 'ios', padding: 'x'.repeat(2000) })).toBe(413);
     expect(await status('PUT', { token: TOKEN, platform: 'ios' })).toBe(405);
+    expect(store.setJSON).not.toHaveBeenCalled();
+  });
+
+  it('registers and unregisters an Android FCM token, keyed by its hash', async () => {
+    const store = memoryStore();
+    expect((await handleDevices(devices('POST', { token: FCM_TOKEN, platform: 'android' }), { store, now: 0 })).status).toBe(204);
+    expect(store.data.get(androidKey)).toEqual({ platform: 'android', registeredAt: '1970-01-01T00:00:00.000Z', token: FCM_TOKEN });
+
+    // DELETE doesn't send the platform; the token's shape says it's Android
+    expect((await handleDevices(devices('DELETE', { token: FCM_TOKEN }), { store })).status).toBe(204);
+    expect(store.data.size).toBe(0);
+  });
+
+  it('refuses Android tokens that are too short or have odd characters', async () => {
+    const store = memoryStore();
+    const status = async (token: string) =>
+      (await handleDevices(devices('POST', { token, platform: 'android' }), { store })).status;
+    expect(await status('short')).toBe(400);
+    expect(await status(`${'a'.repeat(120)  }/../`)).toBe(400);
+    expect(await status('a'.repeat(600))).toBe(400);
     expect(store.setJSON).not.toHaveBeenCalled();
   });
 
@@ -166,6 +190,44 @@ describe('notifyNewMixes', () => {
     expect(await notifyNewMixes(context)).toMatchObject({ announced: [] });
     expect(store.data.get('last-seen')).toEqual({ id: 102, number: 2 });
     expect(transport.send).not.toHaveBeenCalled();
+  });
+
+  it('notifies Android devices through FCM, and forgets ones Google says are gone', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+    const gone = FCM_TOKEN.replace('dGVzdA', 'Z29uZQ');
+    const goneKey = `android/${createHash('sha256').update(gone).digest('hex')}`;
+    const sent: string[] = [];
+    const fcm = createFCM({
+      serviceAccount: { project_id: 'p', client_email: 'e', private_key: privateKey.export({ type: 'pkcs8', format: 'pem' }).toString() },
+      fetchFn: router({
+        'https://oauth2.googleapis.com/token': () => json({ access_token: 'a' }),
+        'https://fcm.googleapis.com/': (_url, init) => {
+          const { message } = JSON.parse(String(init?.body)) as { message: { token: string } };
+          sent.push(message.token);
+          return message.token === gone
+            ? json({ error: { status: 'NOT_FOUND', details: [{ errorCode: 'UNREGISTERED' }] } }, 404)
+            : json({ name: 'ok' });
+        }
+      })
+    });
+    const { context, store, transport } = setup({ seen: { id: 101, number: 1 }, tokens: [TOKEN] });
+    await store.setJSON(androidKey, { platform: 'android', registeredAt: '', token: FCM_TOKEN });
+    await store.setJSON(goneKey, { platform: 'android', registeredAt: '', token: gone });
+
+    expect(await notifyNewMixes({ ...context, fcm })).toMatchObject({ announced: [2], sent: 2, removed: 1 });
+    expect(transport.sent.map(r => r.path)).toEqual([`/3/device/${TOKEN}`]);
+    expect(sent.sort()).toEqual([FCM_TOKEN, gone].sort());
+    expect(store.data.has(goneKey)).toBe(false);
+    expect(store.data.has(androidKey)).toBe(true);
+  });
+
+  it('leaves Android devices alone until FCM is set up', async () => {
+    const { context, store, transport } = setup({ seen: { id: 101, number: 1 }, tokens: [TOKEN] });
+    await store.setJSON(androidKey, { platform: 'android', registeredAt: '', token: FCM_TOKEN });
+    expect(await notifyNewMixes(context)).toMatchObject({ sent: 1, removed: 0 });
+    expect(transport.sent).toHaveLength(1);
+    expect(store.data.has(androidKey)).toBe(true);
   });
 
   it('ignores an empty playlist', async () => {
