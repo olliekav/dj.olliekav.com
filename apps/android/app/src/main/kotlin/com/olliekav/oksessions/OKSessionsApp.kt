@@ -13,6 +13,7 @@ class OKSessionsApp : Application() {
     val http = OkHttpClient()
     val api by lazy { MixApi(BuildConfig.API_BASE_URL.toHttpUrl(), http) }
     val library by lazy { MixLibrary(api) }
+    val newMixAlerts by lazy { NewMixAlerts(this, api) }
 }
 
 /** The list of mixes, shared by the UI and the playback service (Android Auto browses it too). */

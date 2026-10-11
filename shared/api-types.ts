@@ -54,9 +54,9 @@ export interface Waveform {
 
 /** Body of POST /api/devices (and DELETE, where only the token is read) */
 export interface DeviceRegistration {
-  /** The APNs device token, as hex */
+  /** iOS: the APNs device token, as hex. Android: the FCM registration token */
   token: string;
-  platform: 'ios';
+  platform: 'ios' | 'android';
 }
 
 /** Custom keys in a new-mix push notification, alongside `aps` */

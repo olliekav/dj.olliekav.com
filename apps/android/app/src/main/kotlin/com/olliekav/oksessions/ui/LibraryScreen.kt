@@ -16,7 +16,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material3.Button
@@ -66,6 +68,9 @@ fun LibraryScreen(
     onOpen: (Mix) -> Unit,
     onShuffleAll: () -> Unit,
     bottomPadding: PaddingValues,
+    /** Null until notifications are available (Firebase set up) */
+    alertsOn: Boolean? = null,
+    onToggleAlerts: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     var query by rememberSaveable { mutableStateOf("") }
@@ -82,6 +87,14 @@ fun LibraryScreen(
                 LargeTopAppBar(
                     title = { Text("O:K Sessions", fontWeight = FontWeight.Bold) },
                     actions = {
+                        if (alertsOn != null) {
+                            IconButton(onClick = onToggleAlerts, modifier = Modifier.testTag("alerts")) {
+                                Icon(
+                                    if (alertsOn) Icons.Rounded.Notifications else Icons.Outlined.NotificationsOff,
+                                    if (alertsOn) "Turn off new mix notifications" else "Notify me about new mixes",
+                                )
+                            }
+                        }
                         IconButton(onClick = onShuffleAll, enabled = mixes.isNotEmpty(), modifier = Modifier.testTag("shuffle-all")) {
                             Icon(Icons.Rounded.Shuffle, "Shuffle all")
                         }

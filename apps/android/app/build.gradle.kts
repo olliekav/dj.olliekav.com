@@ -5,6 +5,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// New-mix notifications need the Firebase project's config. Without it the app builds and
+// runs as normal, with notifications switched off.
+val hasFirebase = file("google-services.json").exists()
+if (hasFirebase) apply(plugin = libs.plugins.google.services.get().pluginId)
+
 android {
     namespace = "com.olliekav.oksessions"
     compileSdk = 37
@@ -16,6 +21,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "API_BASE_URL", "\"https://dj.olliekav.com\"")
+        buildConfigField("boolean", "HAS_FIREBASE", hasFirebase.toString())
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -69,10 +75,13 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.hls)
     implementation(libs.media3.session)
     implementation(libs.media3.datasource.okhttp)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
     debugImplementation(libs.compose.ui.tooling)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.junit)

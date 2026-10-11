@@ -1,6 +1,7 @@
 import { getStore } from '@netlify/blobs';
 import { purgeCache } from '@netlify/functions';
 import { createAPNs } from './apns';
+import { createFCM, parseServiceAccount } from './fcm';
 import { MIXES_CACHE_TAG } from './handlers';
 import type { PushStore } from './push';
 import { createSoundCloud } from './soundcloud';
@@ -31,5 +32,8 @@ export const notifyContext = () => {
     host: Netlify.env.get('APNS_HOST') || 'api.push.apple.com'
   });
   const purgeMixes = () => purgeCache({ tags: [MIXES_CACHE_TAG] });
-  return { soundcloud, soundcloudStore, store: pushStore(), apns, purgeMixes };
+  // Android: optional until a Firebase project is set up
+  const serviceAccount = Netlify.env.get('FCM_SERVICE_ACCOUNT');
+  const fcm = serviceAccount ? createFCM({ serviceAccount: parseServiceAccount(serviceAccount) }) : undefined;
+  return { soundcloud, soundcloudStore, store: pushStore(), apns, fcm, purgeMixes };
 };

@@ -5,6 +5,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -28,6 +30,20 @@ class MixApi(
 
     suspend fun waveform(mix: Mix): Waveform? = mix.waveformUrl?.let { get(it.toHttpUrl()) }
 
+    /** Registers this device's FCM token for new-mix notifications. */
+    suspend fun registerDevice(token: String) = send("POST", token, platform = "android")
+
+    /** Stops new-mix notifications for this device. */
+    suspend fun unregisterDevice(token: String) = send("DELETE", token, platform = null)
+
+    private suspend fun send(method: String, token: String, platform: String?) = withContext(Dispatchers.IO) {
+        val body = json.encodeToString(DeviceRegistration(token, platform)).toRequestBody(JSON)
+        val request = Request.Builder().url(baseUrl.newBuilder().addPathSegments("api/devices").build()).method(method, body).build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw MixApiException("The server returned an error (${response.code}).")
+        }
+    }
+
     /** Blocking version of [stream], for Media3's loader threads. */
     fun streamBlocking(urn: String): Stream = kotlinx.coroutines.runBlocking { stream(urn) }
 
@@ -40,6 +56,7 @@ class MixApi(
 
     companion object {
         val PRODUCTION = "https://dj.olliekav.com".toHttpUrl()
-        val json = Json { ignoreUnknownKeys = true }
+        val json = Json { ignoreUnknownKeys = true; explicitNulls = false }
+        private val JSON = "application/json".toMediaType()
     }
 }

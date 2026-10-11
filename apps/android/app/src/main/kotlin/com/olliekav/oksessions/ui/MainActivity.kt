@@ -1,6 +1,14 @@
 package com.olliekav.oksessions.ui
 
+import android.Manifest
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.olliekav.oksessions.NewMixAlerts
+import kotlinx.coroutines.delay
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
@@ -32,10 +40,22 @@ import com.olliekav.oksessions.core.hasDarkBackground
 import com.olliekav.oksessions.playback.PlayerConnection
 
 class MainActivity : ComponentActivity() {
+    /** A mix to open from a tapped notification */
+    private val requestedMix = mutableStateOf<Int?>(null)
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        requestedMix.value = intent.mixNumber()
+    }
+
+    private fun Intent.mixNumber() = getStringExtra(NewMixAlerts.EXTRA_MIX)?.toIntOrNull()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) requestedMix.value = intent.mixNumber()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val app = application as OKSessionsApp
+        val alerts = app.newMixAlerts
 
         setContent {
             OKSessionsTheme {
@@ -49,6 +69,35 @@ class MainActivity : ComponentActivity() {
                     player.connect()
                     app.library.refresh()
                 }
+                // Tapped a new-mix notification: play it once the list has it
+                val requested by requestedMix
+                LaunchedEffect(requested, mixes) {
+                    val number = requested ?: return@LaunchedEffect
+                    if (mixes.none { it.number == number }) {
+                        app.library.refresh()
+                        if (app.library.mix(number) == null) return@LaunchedEffect
+                    }
+                    app.library.mix(number)?.let {
+                        player.play(it)
+                        isPlayerOpen = true
+                    }
+                    requestedMix.value = null
+                }
+                // Listening time, for offering notifications
+                LaunchedEffect(player.isPlaying) {
+                    while (player.isPlaying) {
+                        delay(10_000)
+                        if (player.isPlaying) alerts.listened(10)
+                    }
+                }
+                val askPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                    alerts.choose(granted)
+                    if (!granted) openNotificationSettings()
+                }
+                val turnOn = {
+                    if (alerts.hasPermission()) alerts.choose(true)
+                    else askPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
                 DisposableEffect(Unit) { onDispose { player.release() } }
                 BackHandler(isPlayerOpen) { isPlayerOpen = false }
 
@@ -61,6 +110,12 @@ class MainActivity : ComponentActivity() {
                         statusBarStyle = if (lightIcons) SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
                         else SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT),
                     )
+                }
+
+                // Notifications switched on or off in Settings while away
+                LifecycleResumeEffect(Unit) {
+                    alerts.sync()
+                    onPauseOrDispose {}
                 }
 
                 Box(Modifier.fillMaxSize()) {
@@ -78,7 +133,17 @@ class MainActivity : ComponentActivity() {
                             isPlayerOpen = true
                         },
                         bottomPadding = PaddingValues(bottom = if (current != null) 96.dp else 0.dp),
+                        alertsOn = alerts.isOn.takeIf { alerts.isAvailable },
+                        onToggleAlerts = { if (alerts.isOn) alerts.choose(false) else turnOn() },
                     )
+                    if (alerts.showsPrompt && !isPlayerOpen) {
+                        NewMixPrompt(
+                            onNotNow = alerts::dismissPrompt,
+                            onNotifyMe = turnOn,
+                            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding()
+                                .padding(start = 16.dp, end = 16.dp, bottom = if (current != null) 96.dp else 16.dp),
+                        )
+                    }
                     MiniPlayer(
                         player,
                         onOpen = { isPlayerOpen = true },
@@ -94,5 +159,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    /** After a refusal, Android won't ask again; the switch lives in Settings */
+    private fun openNotificationSettings() {
+        startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
     }
 }

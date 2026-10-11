@@ -134,6 +134,20 @@ class MixApiTest {
         assertEquals("soundcloud:tracks:101", server.takeRequest().url.queryParameter("urn"))
     }
 
+    @Test fun registersAndUnregistersTheDevice() = runTest {
+        server.enqueue(MockResponse.Builder().code(204).build())
+        server.enqueue(MockResponse.Builder().code(204).build())
+        api.registerDevice("token:abc")
+        api.unregisterDevice("token:abc")
+        val added = server.takeRequest()
+        assertEquals("POST", added.method)
+        assertEquals("/api/devices", added.url.encodedPath)
+        assertEquals("""{"token":"token:abc","platform":"android"}""", added.body?.utf8())
+        val removed = server.takeRequest()
+        assertEquals("DELETE", removed.method)
+        assertEquals("""{"token":"token:abc"}""", removed.body?.utf8())
+    }
+
     @Test(expected = MixApiException::class)
     fun refusesUrnsThatArentTracks() = runTest { api.stream("soundcloud:playlists:1") }
 

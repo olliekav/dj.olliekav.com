@@ -59,3 +59,7 @@ data class Waveform(val width: Int, val height: Int, val samples: List<Int>) {
         }
     }
 }
+
+/** POST/DELETE /api/devices. Mirrors `DeviceRegistration` in shared/api-types.ts. */
+@Serializable
+data class DeviceRegistration(val token: String, val platform: String? = null)
