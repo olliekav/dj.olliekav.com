@@ -19,11 +19,13 @@ class PushService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         val notification = message.notification ?: return
-        val mix = message.data[NewMixAlerts.EXTRA_MIX]?.toIntOrNull() ?: return
+        // New-mix pushes name the mix to play; anything else just opens the app
+        val mix = message.data[NewMixAlerts.EXTRA_MIX]?.toIntOrNull()
+        val intent = Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        mix?.let { intent.putExtra(NewMixAlerts.EXTRA_MIX, it.toString()) }
         val open = PendingIntent.getActivity(
-            this, mix,
-            Intent(this, MainActivity::class.java).putExtra(NewMixAlerts.EXTRA_MIX, mix.toString())
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            this, mix ?: 0,
+            intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
         val built = NotificationCompat.Builder(this, NewMixAlerts.CHANNEL)
@@ -35,7 +37,7 @@ class PushService : FirebaseMessagingService() {
             .build()
         if (app.newMixAlerts.hasPermission()) {
             @Suppress("MissingPermission")
-            NotificationManagerCompat.from(this).notify("mix-$mix", 0, built)
+            NotificationManagerCompat.from(this).notify(mix?.let { "mix-$it" } ?: message.messageId, 0, built)
         }
     }
 }

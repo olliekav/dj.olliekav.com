@@ -75,6 +75,8 @@ class NewMixAlerts(private val context: Context, private val api: MixApi) {
         scope.launch {
             runCatching {
                 val token = FirebaseMessaging.getInstance().token.await()
+                // For sending a test message from the Firebase console
+                if (BuildConfig.DEBUG) android.util.Log.d("NewMixAlerts", "FCM token: $token")
                 val registered = prefs.getString(KEY_REGISTERED, null)
                 when {
                     wanted && registered != token -> {
