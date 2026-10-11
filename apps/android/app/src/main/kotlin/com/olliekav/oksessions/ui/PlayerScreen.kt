@@ -29,7 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Cast
-import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.FastForward
 import androidx.compose.material.icons.rounded.FastRewind
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -120,8 +120,8 @@ private fun HeaderButtons(mix: Mix, onClose: () -> Unit, onInfo: () -> Unit, mod
         }
         Spacer(Modifier.weight(1f))
         androidx.compose.material3.FilledIconButton(onClick = onInfo, colors = colors, modifier = Modifier.size(44.dp)) {
-            // Material's filled info circle, like iOS's info.circle.fill
-            Icon(Icons.Rounded.Info, "About this mix", Modifier.size(28.dp))
+            // The outlined info circle, like iOS's info.circle
+            Icon(Icons.Outlined.Info, "About this mix", Modifier.size(28.dp))
         }
     }
 }
