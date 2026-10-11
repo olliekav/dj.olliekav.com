@@ -57,6 +57,7 @@ struct PlayerView: View {
             }
             .sheet(isPresented: $showsInfo) {
                 MixInfoView(mix: mix)
+                    .fontDesign(.rounded)
                     .presentationDetents([.medium, .large])
             }
             .accessibilityElement(children: .contain)
