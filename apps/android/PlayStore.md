@@ -7,7 +7,7 @@ Copy and answers for Play Console. Assets are made from the app: see "Graphics" 
 | Field | Value |
 |---|---|
 | App name (30) | O:K Sessions |
-| Short description (80) | UK bass DJ mixes by O:K: techno, drum & bass, breaks, dubstep and garage (74) |
+| Short description (80) | UK bass DJ mixes by O:K: techno, drum & bass, breaks, dubstep and garage (72) |
 | Category | Music & Audio |
 | Tags | Music, DJ mixes |
 | Email | (your support address; required, shown publicly) |
