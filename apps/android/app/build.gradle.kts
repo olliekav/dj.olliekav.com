@@ -18,8 +18,8 @@ android {
         applicationId = "com.olliekav.oksessions"
         minSdk = 29
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "1.1"
         buildConfigField("String", "API_BASE_URL", "\"https://dj.olliekav.com\"")
         buildConfigField("boolean", "HAS_FIREBASE", hasFirebase.toString())
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
