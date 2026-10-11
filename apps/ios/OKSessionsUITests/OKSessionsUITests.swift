@@ -61,7 +61,7 @@ final class OKSessionsUITests: XCTestCase {
         XCTAssertTrue(element("waveform").waitForExistence(timeout: 10))
         let shuffle = app.buttons["shuffle"]
         XCTAssertTrue(shuffle.waitForExistence(timeout: 5))
-        XCTAssertEqual(shuffle.value as? String, "On")
+        waitFor(shuffle, value: "On")
 
         shuffle.tap()
         waitFor(shuffle, value: "Off")
@@ -91,7 +91,7 @@ final class OKSessionsUITests: XCTestCase {
         app.launch()
         let bell = app.buttons["notifications"]
         XCTAssertTrue(bell.waitForExistence(timeout: 10))
-        XCTAssertEqual(bell.value as? String, "Off")
+        waitFor(bell, value: "Off")
         let prompt = element("notification-prompt")
         XCTAssertFalse(prompt.exists)
 
