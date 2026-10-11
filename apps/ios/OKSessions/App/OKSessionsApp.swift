@@ -16,6 +16,8 @@ struct OKSessionsApp: App {
         WindowGroup {
             RootView()
                 .environment(model)
+                // SF Rounded throughout, like the artwork's numbers
+                .fontDesign(.rounded)
                 .task { await model.library.refresh() }
                 // Catch up with notification settings changed while away
                 .onChange(of: scenePhase, initial: true) { _, phase in

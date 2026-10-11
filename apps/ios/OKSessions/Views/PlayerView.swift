@@ -43,7 +43,7 @@ struct PlayerView: View {
                     }
                     .sharedBackgroundVisibility(.hidden)
                     ToolbarItem(placement: .topBarTrailing) {
-                        HeaderButton(tint: theme.foregroundColor, title: "About this mix", systemImage: "info") { showsInfo = true }
+                        HeaderButton(tint: theme.foregroundColor, title: "About this mix", systemImage: "info.circle") { showsInfo = true }
                     }
                     .sharedBackgroundVisibility(.hidden)
                 }
@@ -57,6 +57,7 @@ struct PlayerView: View {
             }
             .sheet(isPresented: $showsInfo) {
                 MixInfoView(mix: mix)
+                    .fontDesign(.rounded)
                     .presentationDetents([.medium, .large])
             }
             .accessibilityElement(children: .contain)
