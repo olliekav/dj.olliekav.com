@@ -8,7 +8,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "1.0"
+    MARKETING_VERSION: "1.1"
     CURRENT_PROJECT_VERSION: "1"
     DEVELOPMENT_TEAM: 3B26SQGP8Q
     ENABLE_USER_SCRIPT_SANDBOXING: YES
@@ -34,6 +34,9 @@ targets:
       path: OKSessions/Info.plist
       properties:
         CFBundleDisplayName: O:K Sessions
+        # From the build settings, so Xcode Cloud's build numbers and MARKETING_VERSION apply
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSApplicationCategoryType: public.app-category.music
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen:
