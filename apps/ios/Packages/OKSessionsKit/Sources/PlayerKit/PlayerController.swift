@@ -229,8 +229,9 @@ public final class PlayerController {
                 status = playWhenReady ? .loading : .paused
             }
         case .time(let time):
-            // Mid-seek the engine still reports the old position; ignore it
-            if pendingSeeks == 0, status != .loading || time > 0 {
+            // While a mix loads the engine is still on the previous one (or not started), and
+            // mid-seek it still reports the old position; either way its times are stale
+            if pendingSeeks == 0, status != .loading {
                 currentTime = time
             }
         case .seeked:

@@ -60,6 +60,7 @@ struct RootView: View {
         .animation(.spring(duration: 0.4), value: model.alerts.isPromptVisible)
         .fullScreenCover(isPresented: $model.isPlayerPresented) {
             PlayerView()
+                .fontDesign(.rounded)
                 .navigationTransition(.zoom(sourceID: model.playerSource, in: transition))
         }
         .tint(model.player.current?.theme.accentColor ?? .primary)

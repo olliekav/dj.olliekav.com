@@ -91,6 +91,8 @@ struct PlayerControllerTests {
         let player = player()
         player.play(mixes[1], in: mixes)
         await until { !engine.loaded.isEmpty }
+        engine.send(.ready)
+        engine.send(.playing(true))
         engine.send(.time(30))
         player.previous()
         #expect(player.current?.id == 2)
@@ -176,6 +178,31 @@ struct PlayerControllerTests {
         #expect(player.currentTime == 85)
         player.skip(by: -500)
         #expect(player.currentTime == 0)
+    }
+
+    @Test func aNewMixStartsAtZeroNotWhereTheLastOneWas() async {
+        let player = player()
+        player.play(mixes[0], in: mixes)
+        await until { engine.loaded.count == 1 }
+        engine.send(.ready)
+        engine.send(.playing(true))
+        engine.send(.time(1800))
+
+        api.holdStreams = true
+        player.next()
+        #expect(player.current?.id == 2)
+        #expect(player.currentTime == 0)
+        // The previous mix keeps reporting its position until the new stream loads
+        engine.send(.time(1800.5))
+        engine.send(.time(1801))
+        #expect(player.currentTime == 0)
+
+        api.holdStreams = false
+        await until { engine.loaded.count == 2 }
+        engine.send(.ready)
+        engine.send(.playing(true))
+        engine.send(.time(0.5))
+        #expect(player.currentTime == 0.5)
     }
 
     @Test func ignoresStaleTimesUntilTheSeekFinishes() async {
