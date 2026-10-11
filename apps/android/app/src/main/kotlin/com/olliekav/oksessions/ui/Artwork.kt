@@ -29,7 +29,14 @@ object ArtworkRenderer {
             addPath(PathParser.createPathFromPathData(Logo.CHEVRON))
         }
     }
-    private val numberTypeface: Typeface = Typeface.create(Typeface.DEFAULT, 900, false)
+    /** Nunito Black for "#12"; set by [init] from the app's assets, until then the system bold */
+    private var numberTypeface: Typeface = Typeface.create(Typeface.DEFAULT, 900, false)
+
+    fun init(assets: android.content.res.AssetManager) {
+        numberTypeface = runCatching {
+            Typeface.Builder(assets, NUNITO).setFontVariationSettings("'wght' 900").build()
+        }.getOrDefault(numberTypeface)
+    }
 
     fun draw(canvas: Canvas, mix: Mix, size: Float, showsNumber: Boolean = true) {
         val scale = size / Logo.CANVAS
