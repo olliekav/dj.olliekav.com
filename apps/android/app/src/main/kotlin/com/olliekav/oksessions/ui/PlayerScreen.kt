@@ -29,9 +29,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Cast
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.FastForward
 import androidx.compose.material.icons.rounded.FastRewind
-import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material.icons.rounded.Shuffle
@@ -58,7 +58,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import com.olliekav.oksessions.core.Formatting
 import com.olliekav.oksessions.core.Mix
@@ -73,9 +76,9 @@ import com.olliekav.oksessions.playback.PlayerConnection
 fun PlayerScreen(player: PlayerConnection, onClose: () -> Unit) {
     val mix = player.current ?: return
     var showsInfo by rememberSaveable { mutableStateOf(false) }
-    val panel = MaterialTheme.colorScheme.background
-
-    BoxWithConstraints(Modifier.fillMaxSize().background(panel).testTag("player")) {
+    // A surface, so text and icons take the panel's colour (white on black in dark mode)
+    androidx.compose.material3.Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    BoxWithConstraints(Modifier.fillMaxSize().testTag("player")) {
         val sideBySide = maxWidth > maxHeight
         val artwork: @Composable (Modifier) -> Unit = { modifier ->
             Box(modifier.background(hexColor(mix.theme.background)), contentAlignment = Alignment.Center) {
@@ -100,6 +103,7 @@ fun PlayerScreen(player: PlayerConnection, onClose: () -> Unit) {
             }
         }
     }
+    }
     if (showsInfo) MixInfoSheet(mix, onDismiss = { showsInfo = false })
 }
 
@@ -112,11 +116,12 @@ private fun HeaderButtons(mix: Mix, onClose: () -> Unit, onInfo: () -> Unit, mod
     )
     Row(modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 12.dp, vertical = 4.dp)) {
         androidx.compose.material3.FilledIconButton(onClick = onClose, colors = colors, modifier = Modifier.size(44.dp).testTag("close-player")) {
-            Icon(Icons.Rounded.KeyboardArrowDown, "Close")
+            Icon(Icons.Rounded.KeyboardArrowDown, "Close", Modifier.size(34.dp))
         }
         Spacer(Modifier.weight(1f))
         androidx.compose.material3.FilledIconButton(onClick = onInfo, colors = colors, modifier = Modifier.size(44.dp)) {
-            Icon(Icons.Rounded.Info, "About this mix")
+            // Material's filled info circle, like iOS's info.circle.fill
+            Icon(Icons.Rounded.Info, "About this mix", Modifier.size(28.dp))
         }
     }
 }

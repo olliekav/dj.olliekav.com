@@ -28,9 +28,10 @@ import com.olliekav.oksessions.core.MixDescription
 @Composable
 fun MixInfoSheet(mix: Mix, onDismiss: () -> Unit) {
     val description = MixDescription.parse(mix.description)
-    val secondary = LocalContentColor.current.copy(alpha = 0.6f)
     val uriHandler = LocalUriHandler.current
     ModalBottomSheet(onDismissRequest = onDismiss) {
+        // Inside the sheet, so it follows the sheet's colours in dark mode
+        val secondary = LocalContentColor.current.copy(alpha = 0.6f)
         LazyColumn(Modifier.padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item { Text(mix.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold) }
             if (description.intro.isNotEmpty()) item { Text(description.intro, style = MaterialTheme.typography.bodyMedium) }
