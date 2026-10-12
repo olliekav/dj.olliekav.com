@@ -103,15 +103,11 @@
   }
 }
 
-.player-track-info-button:focus,
+.player-track-info-button:focus-visible,
 .player-track-info-button:hover {
-  background-color: var(--dark-color);
-  color: var(--light-color);
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--light-color);
-    color: var(--dark-color);
-  }
+  border-color: var(--mix-accent);
+  color: var(--mix-accent);
+  outline: none;
 }
 
 .player-artwork svg {
@@ -230,6 +226,11 @@
 
 .player-button:focus {
   outline: none;
+}
+
+.player-button:not(:disabled):hover > svg,
+.player-button:focus-visible > svg {
+  fill: var(--mix-accent);
 }
 
 .player-button:disabled {

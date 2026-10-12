@@ -148,10 +148,6 @@
     background: #ffffff;
   }
 
-  .player-button:hover>svg {
-    fill: var(--mix-accent);
-  }
-
   input[type=range]::-webkit-slider-thumb {
     background: var(--mix-accent);
   }
