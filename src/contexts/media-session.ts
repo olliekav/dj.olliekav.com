@@ -6,7 +6,6 @@ import { hasNext, hasPrev } from './player-state';
 const FALLBACK_ARTWORK: MediaImage = { src: '/assets/icons/icon-512.png', sizes: '512x512', type: 'image/png' };
 const SKIP_SECONDS = 15;
 
-/** Lock screen and notification details for a mix. */
 export const mediaMetadataFor = (mix: Mix): MediaMetadataInit => ({
   title: mix.title,
   artist: 'O:K',
@@ -17,12 +16,9 @@ export const mediaMetadataFor = (mix: Mix): MediaMetadataInit => ({
 const setHandler = (action: MediaSessionAction, handler: MediaSessionActionHandler | null) => {
   try {
     navigator.mediaSession.setActionHandler(action, handler);
-  } catch {
-    // Browsers throw for actions they don't support
-  }
+  } catch {}
 };
 
-/** Lock screen, notification and hardware media key controls for the player. */
 export const useMediaSession = ({ state, currentMix, wavesurfer, togglePlay, next, prev }: PlayerContextValue) => {
   const supported = typeof navigator !== 'undefined' && 'mediaSession' in navigator;
 
@@ -38,7 +34,6 @@ export const useMediaSession = ({ state, currentMix, wavesurfer, togglePlay, nex
     }
   }, [supported, state.isPlaying]);
 
-  // Handlers close over the latest state, so they're replaced as it changes
   const canPrev = hasPrev(state);
   const canNext = hasNext(state);
   useEffect(() => {
@@ -48,7 +43,6 @@ export const useMediaSession = ({ state, currentMix, wavesurfer, togglePlay, nex
     const handlers: [MediaSessionAction, MediaSessionActionHandler | null][] = [
       ['play', () => !state.isPlaying && togglePlay()],
       ['pause', () => state.isPlaying && togglePlay()],
-      // Without a handler the button is hidden
       ['previoustrack', canPrev ? prev : null],
       ['nexttrack', canNext ? next : null],
       ['seekto', details => details.seekTime !== undefined && wavesurfer?.setTime(details.seekTime)],
@@ -59,7 +53,6 @@ export const useMediaSession = ({ state, currentMix, wavesurfer, togglePlay, nex
     return () => handlers.forEach(([action]) => setHandler(action, null));
   }, [supported, state.isPlaying, canPrev, canNext, wavesurfer, togglePlay, next, prev]);
 
-  // The browser extrapolates the position while playing, so it only needs setting on changes
   useEffect(() => {
     if (!supported || !wavesurfer) {
       return;
@@ -75,9 +68,7 @@ export const useMediaSession = ({ state, currentMix, wavesurfer, togglePlay, nex
           position: Math.min(wavesurfer.getCurrentTime(), duration),
           playbackRate: 1
         });
-      } catch {
-        // Older browsers reject position state
-      }
+      } catch {}
     };
     const unsubscribers = [
       wavesurfer.on('ready', updatePosition),

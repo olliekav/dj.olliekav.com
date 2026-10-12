@@ -23,7 +23,6 @@ export function App() {
 if (typeof window !== 'undefined') {
 	hydrate(<App />, document.getElementById('app')!);
 
-	// Not in development, where a cached shell would hide changes
 	if (import.meta.env.PROD && 'serviceWorker' in navigator) {
 		addEventListener('load', () => {
 			navigator.serviceWorker.register('/sw.js').catch(error => console.warn('Service worker failed to register', error));

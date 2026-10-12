@@ -91,7 +91,6 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
         barRadius: 3,
         barWidth: 4,
         cursorWidth: 0,
-        // Fill the progress row: 4rem on phones, 6rem from 700px
         height: 'auto',
         mediaControls: false,
         normalize: true,

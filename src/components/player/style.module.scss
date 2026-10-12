@@ -4,7 +4,6 @@
   display: flex;
   flex-flow: row wrap;
   height: 11rem;
-  // Clear the home indicator and, in landscape, the notch (all 0 outside full screen)
   padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   position: relative;
   z-index: 100;
@@ -19,7 +18,6 @@
   }
 }
 
-// A line between the controls and the home indicator area: no height without one
 .player::after {
   background-color: var(--dark-color);
   bottom: env(safe-area-inset-bottom);

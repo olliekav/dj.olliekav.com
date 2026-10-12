@@ -1,14 +1,8 @@
-// Service worker: keeps the app shell and the last mix list for offline launches.
-// Audio and stream URLs are never cached: they're signed and short-lived, and
-// SoundCloud's terms don't allow offline listening. Cross-origin requests pass through.
-
 const CACHE = 'ok-sessions-v1';
 const SHELL = '/';
 
-/** Built files referenced by the shell, e.g. /assets/index-RzK1jSrl.js */
 const assetsIn = html => [...new Set(html.match(/\/assets\/[^"'\s)]+/g) ?? [])];
 
-/** Caches a fresh shell and its assets, dropping built files the shell no longer uses. */
 const updateShell = async response => {
 	const cache = await caches.open(CACHE);
 	const assets = assetsIn(await response.clone().text());
@@ -42,7 +36,6 @@ self.addEventListener('activate', event => {
 	);
 });
 
-/** Network first, falling back to the cache (or the shell, for pages) when offline. */
 const networkFirst = async (event, fallback) => {
 	try {
 		const response = await fetch(event.request);
@@ -66,7 +59,6 @@ const networkFirst = async (event, fallback) => {
 	}
 };
 
-/** Built files are content-hashed, so a cached copy is always current. */
 const cacheFirst = async event => {
 	const cached = await caches.match(event.request);
 	if (cached) {
