@@ -91,7 +91,7 @@ final class OKSessionsUITests: XCTestCase {
         app.launch()
         let bell = app.buttons["notifications"]
         XCTAssertTrue(bell.waitForExistence(timeout: 10))
-        waitFor(bell, value: "Off")
+        waitFor(bell, label: "Notify me about new mixes")
         let prompt = element("notification-prompt")
         XCTAssertFalse(prompt.exists)
 
@@ -100,12 +100,15 @@ final class OKSessionsUITests: XCTestCase {
         app.buttons["close-player"].tap()
         XCTAssertTrue(prompt.waitForExistence(timeout: 20))
 
-        // UI tests stand in for the system request, which allows them
-        app.buttons["prompt-notify"].tap()
-        waitFor(bell, value: "On")
+        // UI tests stand in for the system request, which allows them.
+        // The prompt slides up over the mini player, so a tap mid-slide can land on its skip button
+        let notify = app.buttons["prompt-notify"]
+        waitUntilSettled(notify)
+        notify.tap()
+        waitFor(bell, label: "Turn off new mix notifications")
         XCTAssertFalse(prompt.exists)
         bell.tap()
-        waitFor(bell, value: "Off")
+        waitFor(bell, label: "Notify me about new mixes")
     }
 
     func testOpensTheMixFromANotification() {
@@ -128,6 +131,19 @@ final class OKSessionsUITests: XCTestCase {
         let predicate = NSPredicate(format: "value == %@", value)
         let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
         XCTAssertEqual(XCTWaiter().wait(for: [expectation], timeout: 10), .completed, "Expected \(value)", file: file, line: line)
+    }
+
+    /// Waits for an element to stop moving, since SwiftUI transitions don't hold back taps.
+    private func waitUntilSettled(_ element: XCUIElement, file: StaticString = #filePath, line: UInt = #line) {
+        var last = element.frame
+        let deadline = Date().addingTimeInterval(5)
+        while Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+            let frame = element.frame
+            if frame == last { return }
+            last = frame
+        }
+        XCTFail("\(element) kept moving", file: file, line: line)
     }
 
     private func waitFor(_ element: XCUIElement, label: String, file: StaticString = #filePath, line: UInt = #line) {

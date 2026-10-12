@@ -12,8 +12,7 @@ struct NotificationsButton: View {
             Task { await model.alerts.toggle() }
         }
         .contentTransition(.symbolEffect(.replace))
-        .accessibilityLabel("New mix notifications")
-        .accessibilityValue(isOn ? "On" : "Off")
+        // The title is the label, so it carries the state: iOS 27 drops a toolbar button's value
         .accessibilityIdentifier("notifications")
     }
 }
