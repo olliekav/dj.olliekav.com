@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
 import { linkify } from '../../utilities/format';
-import styles from './style.module.scss';
+import styles from './style.module.css';
 
 interface PlayerModalProps {
   isOpen: boolean;

@@ -156,8 +156,4 @@
   input[type=range]::-moz-range-thumb {
     background: var(--mix-accent);
   }
-
-  input[type=range]::-ms-thumb {
-    background: var(--mix-accent);
-  }
 }

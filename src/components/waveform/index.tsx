@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
 import Loader from '../loader';
-import styles from './style.module.scss';
+import styles from './style.module.css';
 
 const WaveformProgress = () => {
   const { state, attachWaveform } = usePlayer();

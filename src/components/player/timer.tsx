@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
 import { prettyTime } from '../../utilities/format';
-import styles from './style.module.scss';
+import styles from './style.module.css';
 
 const Timer = () => {
   const { wavesurfer, currentMix } = usePlayer();

@@ -28,7 +28,6 @@
 		"eslint": "^9.39.5",
 		"eslint-config-preact": "^2.0.0",
 		"jsdom": "^29.1.1",
-		"sass-embedded": "^1.105.1",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.71.1",
 		"vite": "^8.3.4",

@@ -1,4 +1,4 @@
-import styles from './style.module.scss';
+import styles from './style.module.css';
 
 const Loader = ({ inline = false }: { inline?: boolean }) => (
   <div class={`${styles.loader} ${inline ? styles['loader--inline'] : ''}`}>

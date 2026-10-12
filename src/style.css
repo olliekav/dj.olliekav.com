@@ -58,30 +58,19 @@ body {
   }
 }
 
-@-webkit-keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
 .content {
   flex: 1;
   overflow-x: hidden;
   overflow-y: scroll;
   padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
-  -webkit-overflow-scrolling: touch;
 }
 
 .sr-only {
-  clip: rect(0 0 0 0); 
+  clip: rect(0 0 0 0);
   clip-path: inset(50%);
   height: 1px;
   overflow: hidden;
   position: absolute;
-  white-space: nowrap; 
+  white-space: nowrap;
   width: 1px;
 }
