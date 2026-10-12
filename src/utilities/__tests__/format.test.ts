@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { linkify, prettyTime } from '../format';
+import { linkify, prettyDate, prettyTime } from '../format';
+
+describe('prettyDate', () => {
+  it('formats the date in UTC', () => {
+    expect(prettyDate('2019-03-10T12:00:00.000Z')).toBe('10 March 2019');
+    expect(prettyDate('2019-03-10T23:59:00.000Z')).toBe('10 March 2019');
+  });
+});
 
 describe('prettyTime', () => {
   it.each([

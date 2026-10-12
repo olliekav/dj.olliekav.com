@@ -1,0 +1,142 @@
+.mix {
+  min-height: 100%;
+}
+
+.mix-header {
+  background: var(--mix-bg, var(--dark-color));
+  color: var(--mix-fg, var(--light-color));
+  display: grid;
+  gap: 2.4rem;
+  grid-template-columns: 1fr;
+  padding: 2rem 2rem 3rem;
+
+  @media screen and (min-width: 700px) {
+    align-items: end;
+    gap: 3.6rem;
+    grid-template-columns: minmax(20rem, 40rem) 1fr;
+    padding: 2.4rem 4rem 4rem;
+  }
+}
+
+.mix-back {
+  color: inherit;
+  font-weight: 700;
+  grid-column: 1 / -1;
+  justify-self: start;
+  text-decoration: none;
+}
+
+.mix-back:hover,
+.mix-back:focus-visible {
+  text-decoration: underline;
+}
+
+.mix-artwork {
+  align-items: center;
+  aspect-ratio: 1;
+  box-shadow: 0 0 2rem rgba(0, 0, 0, .3);
+  display: flex;
+  justify-content: center;
+  max-width: 40rem;
+  position: relative;
+  width: 100%;
+}
+
+.mix-artwork img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.mix-artwork svg {
+  width: 50%;
+}
+
+.mix-details {
+  min-width: 0;
+}
+
+.mix-title {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 1.2rem;
+
+  @media screen and (min-width: 700px) {
+    font-size: 5.6rem;
+  }
+}
+
+.mix-facts {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 1.6rem;
+  font-weight: 700;
+  gap: .4rem 1.6rem;
+  margin: 0 0 2.4rem;
+
+  @media screen and (min-width: 700px) {
+    font-size: 1.8rem;
+  }
+}
+
+.mix-facts dd {
+  margin: 0;
+}
+
+.mix-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem 2.4rem;
+  margin: 0;
+}
+
+.mix-actions a {
+  color: inherit;
+  font-weight: 700;
+}
+
+.mix-play {
+  background: transparent;
+  border: .3rem solid currentColor;
+  color: inherit;
+  cursor: pointer;
+  font-family: var(--body-font);
+  font-size: 1.8rem;
+  font-weight: 700;
+  min-width: 14rem;
+  padding: 1.2rem 2.4rem;
+  transition: transform .2s ease-in-out;
+}
+
+.mix-play:hover,
+.mix-play:focus-visible {
+  box-shadow: 0 0 2rem rgba(0, 0, 0, .3);
+  transform: scale(1.05);
+}
+
+.mix-description {
+  padding: 3rem 2rem 4rem;
+
+  @media screen and (min-width: 700px) {
+    padding: 4rem;
+  }
+}
+
+.mix-description a {
+  color: inherit;
+}
+
+.mix-description > div {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  max-width: 70rem;
+  white-space: pre-wrap;
+}
+
+.mix-subtitle {
+  font-size: 2.2rem;
+  margin: 0 0 1.6rem;
+}

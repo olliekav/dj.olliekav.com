@@ -4,17 +4,19 @@ import PlayerProvider from './contexts/player-context';
 
 import { NotFound } from './pages/_404';
 import './style.css';
+import MixPage from './pages/Mix';
 import Playlist from './pages/Playlist';
-import { fetchMixes } from './utilities/api';
-import { homeHead, notFoundHead } from './utilities/seo';
+import { mixesForBuild } from './utilities/build-mixes';
+import { headFor, mixSlug } from './utilities/seo';
 
 export function App({ mixes }: { mixes?: Mix[] }) {
 	return (
-		<PlayerProvider initialMixes={mixes}>
+		<PlayerProvider initialMixes={mixes} initialSlug={mixSlug(location.pathname)}>
 			<LocationProvider>
 				<main>
 					<Router>
 						<Route path="/" component={Playlist} />
+						<Route path="/mixes/:slug" component={MixPage} />
 						<Route default component={NotFound} />
 					</Router>
 				</main>
@@ -43,29 +45,13 @@ if (typeof window !== 'undefined') {
 	}
 }
 
-let buildMixes: Promise<Mix[] | undefined> | undefined;
-
-/**
- * The live playlist, rendered into the HTML for search engines. Fetched once per build;
- * without it the page still prerenders, and loads the mixes in the browser.
- */
-const mixesForBuild = () => {
-	// Only runs in Node at build time
-	const apiUrl = (process.env.PRERENDER_API_URL ?? 'https://dj.olliekav.com').replace(/\/$/, '');
-	return (buildMixes ??= fetchMixes(url => fetch(url, { signal: AbortSignal.timeout(15_000) }), apiUrl).catch(error => {
-		console.warn(`Prerendering without mixes: couldn't fetch ${apiUrl}/api/mixes`, error);
-		return undefined;
-	}));
-};
-
 export async function prerender({ url }: { url: string }) {
 	const mixes = await mixesForBuild();
 	const { html, links } = await ssr(<App mixes={mixes} />);
-	const isHome = url === '/';
 	return {
 		html,
 		links,
-		head: isHome ? homeHead(mixes ?? []) : notFoundHead(),
+		head: headFor(url, mixes ?? []),
 		data: mixes && { mixes }
 	};
 }

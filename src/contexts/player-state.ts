@@ -22,6 +22,7 @@ export type PlayerAction =
   | { type: 'refreshed'; mixes: Mix[] }
   | { type: 'failed' }
   | { type: 'select'; index: number }
+  | { type: 'cue'; index: number }
   | { type: 'loading' }
   | { type: 'ready' }
   | { type: 'playing'; isPlaying: boolean }
@@ -71,6 +72,11 @@ export const playerReducer = (state: PlayerState, action: PlayerAction): PlayerS
         autoplay: true,
         playRequest: state.playRequest + 1
       };
+    case 'cue':
+      if (state.autoplay || action.index === state.activeIndex || !state.mixes[action.index]) {
+        return state;
+      }
+      return { ...state, activeIndex: action.index, isReady: false, isPlaying: false };
     case 'loading':
       return { ...state, isReady: false };
     case 'ready':
@@ -82,9 +88,11 @@ export const playerReducer = (state: PlayerState, action: PlayerAction): PlayerS
   }
 };
 
-/** Already loaded when the page was prerendered with the mixes */
-export const stateWith = (mixes: Mix[] | undefined): PlayerState =>
-  mixes?.length ? { ...initialState, status: 'loaded', mixes } : initialState;
+/** Already loaded when the page was prerendered with the mixes, on the mix whose page it is */
+export const stateWith = (mixes: Mix[] | undefined, slug?: string): PlayerState =>
+  mixes?.length
+    ? { ...initialState, status: 'loaded', mixes, activeIndex: Math.max(0, mixes.findIndex(mix => mix.slug === slug)) }
+    : initialState;
 
 export const hasNext = (state: PlayerState) => state.activeIndex < state.mixes.length - 1;
 export const hasPrev = (state: PlayerState) => state.activeIndex > 0;

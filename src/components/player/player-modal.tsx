@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
-import { linkify } from '../../utilities/format';
+import { mixPath } from '../../utilities/seo';
+import Description from '../description';
 import styles from './style.module.css';
 
 interface PlayerModalProps {
@@ -36,14 +37,10 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
     >
       <div class={styles['modal-content']}>
         <h1 id="mix-info-title" class={styles['modal-title']}>{currentMix.title}</h1>
-        <div class={styles['modal-description']}>
-          {linkify(currentMix.description).map((part, i) =>
-            typeof part === 'string' ? part : (
-              <a key={i} href={part.href} target="_blank" rel="noopener noreferrer">{part.text}</a>
-            )
-          )}
-        </div>
+        <Description class={styles['modal-description']} text={currentMix.description} />
         <p class={styles['modal-url']}>
+          <a href={mixPath(currentMix)} onClick={onClose}>About this mix</a>
+          {' · '}
           <a href={currentMix.permalink_url} target="_blank" rel="noopener noreferrer">
             Listen on SoundCloud
           </a>

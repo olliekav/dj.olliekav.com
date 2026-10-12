@@ -49,6 +49,7 @@ export interface PlayerContextValue {
   wavesurfer: WaveSurfer | undefined;
   attachWaveform: (node: HTMLElement) => void;
   playAt: (index: number) => void;
+  cue: (index: number) => void;
   next: () => void;
   prev: () => void;
   togglePlay: () => void;
@@ -65,8 +66,14 @@ export const usePlayer = (): PlayerContextValue => {
   return context;
 };
 
-const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildren; initialMixes?: Mix[] }) => {
-  const [state, dispatch] = useReducer(playerReducer, initialMixes, stateWith);
+interface PlayerProviderProps {
+  children?: ComponentChildren;
+  initialMixes?: Mix[];
+  initialSlug?: string;
+}
+
+const PlayerProvider = ({ children, initialMixes, initialSlug }: PlayerProviderProps) => {
+  const [state, dispatch] = useReducer(playerReducer, initialMixes, mixes => stateWith(mixes, initialSlug));
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer>();
   const currentMix = state.mixes[state.activeIndex];
 
@@ -85,6 +92,8 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
       }
     );
   }, []);
+
+  const cue = useCallback((index: number) => dispatch({ type: 'cue', index }), []);
 
   const attachWaveform = useCallback((container: HTMLElement) => {
     setWavesurfer(
@@ -234,6 +243,7 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
         unlockMedia(wavesurfer?.getMediaElement());
         dispatch({ type: 'select', index });
       },
+      cue,
       next: () => {
         if (hasNext(stateRef.current)) {
           unlockMedia(wavesurfer?.getMediaElement());
@@ -261,7 +271,7 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
         wavesurfer?.setVolume(volume);
       }
     }),
-    [state, currentMix, wavesurfer, attachWaveform]
+    [state, currentMix, wavesurfer, attachWaveform, cue]
   );
 
   useMediaSession(value);

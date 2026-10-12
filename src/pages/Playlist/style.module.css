@@ -48,6 +48,7 @@
   margin: 0;
   padding: 0;
   position: relative;
+  text-decoration: none;
   transform: scale(1);
   transition: transform 0.2s ease-in-out;
 
@@ -61,6 +62,7 @@
 }
 
 .playlist-track-button:hover,
+.playlist-track-button:focus-visible,
 .active-track {
   box-shadow: 0 0 2rem rgba(0, 0, 0, .3);
   transform: scale(1.05);
@@ -122,6 +124,7 @@
 }
 
 .playlist-track-button:hover span,
+.playlist-track-button:focus-visible span,
 .active-track span {
   opacity: 1;
   visibility: visible;
