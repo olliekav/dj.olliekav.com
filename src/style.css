@@ -65,6 +65,10 @@ body {
   padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
 }
 
+main {
+  height: 100%;
+}
+
 .sr-only {
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
