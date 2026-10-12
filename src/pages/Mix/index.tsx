@@ -1,7 +1,7 @@
 import { useEffect } from 'preact/hooks';
 import Logo from '../../components/logo';
 import { usePlayer } from '../../contexts/player-context';
-import { mixJsonLd, mixTitle, scriptJson } from '../../utilities/seo';
+import { mixJsonLd, mixTitle, scriptJson, SITE_NAME } from '../../utilities/seo';
 import { themeStyle } from '../../utilities/theme';
 import { NotFound } from '../_404';
 import playlistStyles from '../Playlist/style.module.css';
@@ -32,8 +32,12 @@ const MixPage = ({ slug }: { slug: string }) => {
     <article class={`${styles['mix']} ${playlistStyles['themed']}`} style={themeStyle(mix.theme)}>
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: scriptJson(mixJsonLd(mix)) }} />
-      <h1 class="sr-only">{mix.title}</h1>
-      <Logo />
+      <div class={styles['mix-logo']}>
+        <Logo />
+        <h1 class={styles['mix-number']}>
+          <span class="sr-only">{SITE_NAME} </span>#{mix.number}
+        </h1>
+      </div>
     </article>
   );
 };
