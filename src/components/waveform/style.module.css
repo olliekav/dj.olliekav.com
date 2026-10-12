@@ -19,11 +19,7 @@
   
   /* Hack to set background color of progress */
   > wave > wave {
-    background-color: var(--light-color);
-
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--dark-color);
-    }
+    background-color: transparent;
   }
 }
 

@@ -1,5 +1,7 @@
 .player {
-  background-color: #fff;
+  -webkit-backdrop-filter: blur(2rem) saturate(1.6);
+  backdrop-filter: blur(2rem) saturate(1.6);
+  background-color: rgb(255 255 255 / .7);
   border-radius: 3rem;
   bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
   box-shadow: 0 0 3rem rgb(0 0 0 / .4);
@@ -17,7 +19,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
+    background-color: rgb(16 16 16 / .7);
   }
 }
 
@@ -77,7 +79,7 @@
 
 .player-track-info-button {
   align-items: center;
-  background-color: var(--light-color);
+  background-color: transparent;
   border-radius: 50%;
   border: 1px solid var(--dark-color);
   cursor: pointer;
@@ -96,7 +98,6 @@
   width: 1.8rem;
 
   @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
     border-color: var(--light-color);
     color: var(--light-color);
   }

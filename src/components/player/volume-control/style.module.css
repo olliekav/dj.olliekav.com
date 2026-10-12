@@ -21,17 +21,14 @@
 }
 
 .player-volume > button {
-  background-color: var(--light-color);
-  border-radius: 0 3rem 3rem 0;
+  background-color: transparent;
   z-index: 102;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
-  }
 }
 
 .player-volume > div {
-  background-color: var(--light-color);
+  -webkit-backdrop-filter: blur(2rem) saturate(1.6);
+  backdrop-filter: blur(2rem) saturate(1.6);
+  background-color: rgb(255 255 255 / .7);
   border-radius: 2.5rem;
   bottom: calc(100% + 1rem);
   box-shadow: -.2rem -.2rem 2rem rgba(0,0,0,.3);
@@ -45,7 +42,7 @@
   z-index: 101;
 
   @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
+    background-color: rgb(16 16 16 / .7);
   }
 }
 
@@ -58,16 +55,12 @@
 }
 
 input[type=range] {
-  background: var(--light-color);
+  background: transparent;
   height: 17px;
   appearance: none;
   margin: 50px 0;
   width: 100px;
   transform: rotate(270deg);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--dark-color);
-  }
 }
 
 input[type=range]:focus {
