@@ -19,6 +19,7 @@ export interface PlayerState {
 
 export type PlayerAction =
   | { type: 'loaded'; mixes: Mix[] }
+  | { type: 'refreshed'; mixes: Mix[] }
   | { type: 'failed' }
   | { type: 'select'; index: number }
   | { type: 'loading' }
@@ -41,8 +42,20 @@ export const playerReducer = (state: PlayerState, action: PlayerAction): PlayerS
   switch (action.type) {
     case 'loaded':
       return { ...state, status: 'loaded', mixes: action.mixes, activeIndex: 0 };
+    case 'refreshed': {
+      // The page was prerendered with mixes; keep the listener's place in the fresh list.
+      // The current mix keeps its object, so a changed play count doesn't reload its audio.
+      const current = state.mixes[state.activeIndex];
+      const index = current ? action.mixes.findIndex(mix => mix.id === current.id) : -1;
+      if (!current || index === -1) {
+        return { ...state, status: 'loaded', mixes: action.mixes, activeIndex: 0 };
+      }
+      const mixes = action.mixes.map((mix, i) => (i === index ? current : mix));
+      return { ...state, status: 'loaded', mixes, activeIndex: index };
+    }
     case 'failed':
-      return { ...state, status: 'error' };
+      // Prerendered mixes are still worth showing
+      return state.status === 'loaded' ? state : { ...state, status: 'error' };
     case 'select':
       if (action.index < 0 || action.index >= state.mixes.length) {
         return state;
@@ -68,6 +81,10 @@ export const playerReducer = (state: PlayerState, action: PlayerAction): PlayerS
       return { ...state, volume: Math.min(1, Math.max(0, action.volume)) };
   }
 };
+
+/** Already loaded when the page was prerendered with the mixes */
+export const stateWith = (mixes: Mix[] | undefined): PlayerState =>
+  mixes?.length ? { ...initialState, status: 'loaded', mixes } : initialState;
 
 export const hasNext = (state: PlayerState) => state.activeIndex < state.mixes.length - 1;
 export const hasPrev = (state: PlayerState) => state.activeIndex > 0;

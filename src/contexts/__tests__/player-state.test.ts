@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Mix } from '../../../shared/api-types';
 import fixture from '../../../shared/fixtures/mixes.json';
-import { hasNext, hasPrev, initialState, playerReducer, type PlayerState } from '../player-state';
+import { hasNext, hasPrev, initialState, playerReducer, stateWith, type PlayerState } from '../player-state';
 
 const mixes: Mix[] = [...fixture.mixes, { ...fixture.mixes[0]!, id: 103, number: 3 }];
 const loaded = playerReducer(initialState, { type: 'loaded', mixes });
@@ -10,6 +10,32 @@ describe('playerReducer', () => {
   it('loads mixes without autoplaying', () => {
     expect(loaded).toMatchObject({ status: 'loaded', activeIndex: 0, autoplay: false });
     expect(playerReducer(initialState, { type: 'failed' }).status).toBe('error');
+  });
+
+  it('starts loaded with prerendered mixes', () => {
+    expect(stateWith(mixes)).toMatchObject({ status: 'loaded', mixes, activeIndex: 0 });
+    expect(stateWith(undefined)).toBe(initialState);
+    expect(stateWith([])).toBe(initialState);
+  });
+
+  it('refreshes prerendered mixes, keeping the current mix and its object', () => {
+    const current = { ...loaded, activeIndex: 1 };
+    const newMix = { ...mixes[0]!, id: 104, number: 4 };
+    const fresh = [newMix, ...mixes.map(mix => ({ ...mix, playback_count: 9999 }))];
+    const refreshed = playerReducer(current, { type: 'refreshed', mixes: fresh });
+    expect(refreshed.activeIndex).toBe(2);
+    expect(refreshed.mixes[2]).toBe(mixes[1]);
+    expect(refreshed.mixes[1]!.playback_count).toBe(9999);
+    expect(refreshed.mixes).toHaveLength(4);
+  });
+
+  it('starts from the top when the current mix is gone from the refresh', () => {
+    const refreshed = playerReducer({ ...loaded, activeIndex: 2 }, { type: 'refreshed', mixes: mixes.slice(0, 2) });
+    expect(refreshed).toMatchObject({ activeIndex: 0, mixes: mixes.slice(0, 2) });
+  });
+
+  it('keeps showing prerendered mixes when the refresh fails', () => {
+    expect(playerReducer(loaded, { type: 'failed' })).toBe(loaded);
   });
 
   it('selects a mix and resets playback', () => {

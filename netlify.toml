@@ -3,10 +3,11 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# Paths without a file get the prerendered 404 page, with a real 404 status for search engines
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "/404/index.html"
+  status = 404
 
 [[headers]]
   for = "/*"
