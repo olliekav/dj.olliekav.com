@@ -43,13 +43,13 @@
   justify-content: center;
   min-width: 0;
   overflow: hidden;
-  padding: 0 1rem;
+  padding: 0 1rem 0 0;
   position: relative;
   white-space: nowrap;
 
   @media screen and (min-width: 700px) {
     flex: 0 0 18rem;
-    padding: 0 1.5rem;
+    padding: 0 1.5rem 0 0;
     width: 18rem;
   }
 
