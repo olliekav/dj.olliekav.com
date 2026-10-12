@@ -3,7 +3,9 @@
   box-shadow: 0 -.2rem 2rem rgba(0,0,0,.4);
   display: flex;
   flex-flow: row wrap;
-  height: 10rem;
+  height: 11rem;
+  // Clear the home indicator and, in landscape, the notch (all 0 outside full screen)
+  padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   position: relative;
   z-index: 100;
 
@@ -14,6 +16,21 @@
 
   @media (prefers-color-scheme: dark) {
     background-color: var(--dark-color);
+  }
+}
+
+// A line between the controls and the home indicator area: no height without one
+.player::after {
+  background-color: var(--dark-color);
+  bottom: env(safe-area-inset-bottom);
+  content: '';
+  height: min(1px, env(safe-area-inset-bottom));
+  left: 0;
+  position: absolute;
+  right: 0;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: rgba(#fff, .1);
   }
 }
 
@@ -130,7 +147,7 @@
   align-items: center;
   border-top: 1px solid var(--dark-color);
   display: flex;
-  height: 4rem;
+  height: 5rem;
   order: 6;
   position: relative;
   width: 100%;

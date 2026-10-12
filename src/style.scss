@@ -72,6 +72,7 @@ body {
   flex: 1;
   overflow-x: hidden;
   overflow-y: scroll;
+  padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
   -webkit-overflow-scrolling: touch;
 }
 

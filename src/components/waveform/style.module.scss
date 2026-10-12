@@ -1,13 +1,18 @@
 .waveform-wrapper {
-  bottom: 0;
-  height: 100%;
+  bottom: .8rem;
   left: .3rem;
   opacity: 0;
   position: absolute;
   right: .3rem;
-  top: 0;
+  top: .8rem;
   transition: all .3s ease-in-out;
   visibility: hidden;
+
+  // Edge to edge once the player is one row
+  @media screen and (min-width: 700px) {
+    bottom: 0;
+    top: 0;
+  }
 
   &--loaded {
     cursor: pointer;
