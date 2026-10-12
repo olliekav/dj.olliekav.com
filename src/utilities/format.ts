@@ -9,9 +9,6 @@ export const prettyTime = (seconds: number): string => {
   return `${Math.floor(total / 3600)}:${pad(Math.floor((total % 3600) / 60))}:${pad(total % 60)}`;
 };
 
-export const prettyDate = (iso: string): string =>
-  new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-
 export type DescriptionPart = string | { href: string; text: string };
 
 const LINKS = /(https?:\/\/[^\s<>"]+[^\s<>".,;:!?)\]])|(?<![\w@])@([A-Za-z0-9_-]+)/g;
