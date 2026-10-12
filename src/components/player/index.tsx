@@ -1,11 +1,11 @@
 import { useState } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
-import playlistStyles from '../../pages/Playlist/style.module.scss';
+import playlistStyles from '../../pages/Playlist/style.module.css';
 import { themeStyle } from '../../utilities/theme';
 import Logo from '../logo';
 import WaveformProgress from '../waveform';
 import PlayerModal from './player-modal';
-import styles from './style.module.scss';
+import styles from './style.module.css';
 import Timer from './timer';
 import { NextButton, PlayButton, PrevButton } from './transport-buttons';
 import VolumeControl from './volume-control';

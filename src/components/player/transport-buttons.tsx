@@ -1,6 +1,6 @@
 import { hasNext, hasPrev } from '../../contexts/player-state';
 import { usePlayer } from '../../contexts/player-context';
-import styles from './style.module.scss';
+import styles from './style.module.css';
 
 export const PrevButton = () => {
   const { state, prev } = usePlayer();

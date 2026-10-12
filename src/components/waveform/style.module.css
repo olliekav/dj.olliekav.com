@@ -13,17 +13,11 @@
     top: 0;
   }
 
-  &--loaded {
-    cursor: pointer;
-    opacity: 1;
-    visibility: visible;
-  }
-
   > wave {
     cursor: pointer !important;
   }
   
-  // Hack to set background color of progress
+  /* Hack to set background color of progress */
   > wave > wave {
     background-color: var(--light-color);
 
@@ -31,4 +25,10 @@
       background-color: var(--dark-color);
     }
   }
+}
+
+.waveform-wrapper--loaded {
+  cursor: pointer;
+  opacity: 1;
+  visibility: visible;
 }

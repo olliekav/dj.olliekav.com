@@ -2,7 +2,7 @@ import { LocationProvider, Router, Route, hydrate, prerender as ssr } from 'prea
 import PlayerProvider from './contexts/player-context';
 
 import { NotFound } from './pages/_404';
-import './style.scss';
+import './style.css';
 import Playlist from './pages/Playlist';
 
 export function App() {

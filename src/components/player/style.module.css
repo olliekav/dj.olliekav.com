@@ -28,7 +28,7 @@
   right: 0;
 
   @media (prefers-color-scheme: dark) {
-    background-color: rgba(#fff, .1);
+    background-color: rgb(255 255 255 / .1);
   }
 }
 
@@ -40,10 +40,6 @@
   height: 6rem;
   justify-content: center;
   width: 6rem;
-
-  // @media (prefers-color-scheme: dark) {
-  //   filter: brightness(90%);
-  // }
 }
 
 .player-track-details {
@@ -65,7 +61,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    border-color: rgba(#fff, .1);
+    border-color: rgb(255 255 255 / .1);
   }
 }
 
@@ -136,7 +132,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    border-color: rgba(#fff, .1);
+    border-color: rgb(255 255 255 / .1);
   }
 }
 
@@ -161,7 +157,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    border-color: rgba(#fff, .1);
+    border-color: rgb(255 255 255 / .1);
   }
 }
 
@@ -248,7 +244,6 @@
   span {
     opacity: 0;
     animation: ellipsisDot 1s infinite;
-    -webkit-animation: ellipsisDot 1s infinite;
   }
 
   span:nth-child(1) {
@@ -278,21 +273,7 @@
   }
 }
 
-@-webkit-keyframes ellipsisDot {
-  0% {
-    opacity: 0;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-// Modal window
+/* Modal window */
 
 .modal {
   background-color: var(--light-color);

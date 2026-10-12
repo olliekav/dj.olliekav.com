@@ -2,7 +2,7 @@ import Logo from '../../components/logo';
 import { usePlayer } from '../../contexts/player-context';
 import { prettyTime } from '../../utilities/format';
 import { themeStyle } from '../../utilities/theme';
-import styles from './style.module.scss';
+import styles from './style.module.css';
 
 const Playlist = () => {
 	const { state, currentMix, playAt } = usePlayer();
