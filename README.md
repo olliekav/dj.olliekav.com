@@ -25,6 +25,8 @@ npm run typecheck && npm run lint
 
 The functions need `SOUNDCLOUD_CLIENT_ID` and `SOUNDCLOUD_CLIENT_SECRET`: set them in Netlify, and in a root `.env` for local development.
 
+`npm run build` prerenders the page with the live playlist from `https://dj.olliekav.com/api/mixes` (or `PRERENDER_API_URL`), so search engines and link previews see every mix along with the head tags and JSON-LD from `src/utilities/seo.ts`. The browser then fetches the latest playlist in case a mix came out after the deploy. If the build can't reach the API, the page is prerendered without mixes and loads them in the browser instead.
+
 ## API
 
 | Path | Returns |

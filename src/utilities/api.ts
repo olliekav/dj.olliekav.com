@@ -13,8 +13,8 @@ const getJson = async <T>(url: string, fetchFn: Fetch): Promise<T> => {
   return (await response.json()) as T;
 };
 
-export const fetchMixes = async (fetchFn: Fetch = fetch): Promise<Mix[]> =>
-  (await getJson<MixList>(`${API_URL}/api/mixes`, fetchFn)).mixes;
+export const fetchMixes = async (fetchFn: Fetch = fetch, baseUrl = API_URL): Promise<Mix[]> =>
+  (await getJson<MixList>(`${baseUrl}/api/mixes`, fetchFn)).mixes;
 
 /** A short-lived HLS URL for the mix; request it when playback starts. */
 export const fetchStream = (mix: Pick<Mix, 'urn'>, fetchFn: Fetch = fetch): Promise<Stream> =>

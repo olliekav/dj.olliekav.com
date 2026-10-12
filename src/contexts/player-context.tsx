@@ -7,7 +7,7 @@ import Loader from '../components/loader';
 import Player from '../components/player';
 import { fetchMixes, fetchPeaks, fetchStream } from '../utilities/api';
 import { useMediaSession } from './media-session';
-import { hasNext, hasPrev, initialState, playerReducer, type PlayerState } from './player-state';
+import { hasNext, hasPrev, playerReducer, stateWith, type PlayerState } from './player-state';
 
 const FALLBACK_ACCENT = '#CA46A7';
 
@@ -65,8 +65,8 @@ export const usePlayer = (): PlayerContextValue => {
   return context;
 };
 
-const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
-  const [state, dispatch] = useReducer(playerReducer, initialState);
+const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildren; initialMixes?: Mix[] }) => {
+  const [state, dispatch] = useReducer(playerReducer, initialMixes, stateWith);
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer>();
   const currentMix = state.mixes[state.activeIndex];
 
@@ -74,9 +74,11 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
   const stateRef = useRef(state);
   stateRef.current = state;
 
+  // Prerendered mixes may be a deploy old, so fetch the latest either way
   useEffect(() => {
+    const prerendered = stateRef.current.status === 'loaded';
     fetchMixes().then(
-      mixes => dispatch({ type: 'loaded', mixes }),
+      mixes => dispatch({ type: prerendered ? 'refreshed' : 'loaded', mixes }),
       error => {
         console.error('Error fetching mixes:', error);
         dispatch({ type: 'failed' });
