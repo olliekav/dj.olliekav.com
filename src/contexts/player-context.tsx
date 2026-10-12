@@ -116,7 +116,7 @@ const PlayerProvider = ({ children, initialMixes, initialSlug }: PlayerProviderP
       return;
     }
     const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
-    const applyScheme = () => wavesurfer.setOptions({ waveColor: darkMode.matches ? 'rgba(255, 255, 255, .2)' : 'rgba(0, 0, 0, .25)' });
+    const applyScheme = () => wavesurfer.setOptions({ waveColor: darkMode.matches ? '#fff' : '#000' });
     applyScheme();
     darkMode.addEventListener('change', applyScheme);
 

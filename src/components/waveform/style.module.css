@@ -11,6 +11,10 @@
   > wave {
     cursor: pointer !important;
   }
+
+  ::part(canvases) {
+    opacity: .18;
+  }
 }
 
 .waveform-wrapper--loaded {
