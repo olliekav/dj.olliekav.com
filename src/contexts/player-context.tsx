@@ -6,6 +6,7 @@ import type { Mix } from '../../shared/api-types';
 import Loader from '../components/loader';
 import Player from '../components/player';
 import { fetchMixes, fetchPeaks, fetchStream } from '../utilities/api';
+import { useMediaSession } from './media-session';
 import { hasNext, hasPrev, initialState, playerReducer, type PlayerState } from './player-state';
 
 const FALLBACK_ACCENT = '#CA46A7';
@@ -90,7 +91,7 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
         barRadius: 3,
         barWidth: 4,
         cursorWidth: 0,
-        height: 60,
+        height: 'auto',
         mediaControls: false,
         normalize: true,
         progressColor: FALLBACK_ACCENT
@@ -260,6 +261,8 @@ const PlayerProvider = ({ children }: { children?: ComponentChildren }) => {
     }),
     [state, currentMix, wavesurfer, attachWaveform]
   );
+
+  useMediaSession(value);
 
   if (state.status === 'loading') {
     return <Loader />;
