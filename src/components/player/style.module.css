@@ -23,17 +23,14 @@
 
 .player-artwork {
   align-items: center;
-  border-radius: 3rem 0 0 0;
+  border-radius: 50%;
   display: flex;
-  flex: 0 0 6rem;
+  flex: 0 0 4.8rem;
   flex-direction: column;
-  height: 6rem;
+  height: 4.8rem;
   justify-content: center;
-  width: 6rem;
-
-  @media screen and (min-width: 700px) {
-    border-radius: 3rem 0 0 3rem;
-  }
+  margin: .6rem .6rem .6rem .8rem;
+  width: 4.8rem;
 }
 
 .player-track-details {
@@ -117,8 +114,8 @@
 }
 
 .player-artwork svg {
-  height: 5rem;
-  width: 5rem;
+  height: 3.8rem;
+  width: 3.8rem;
 }
 
 .player-controls {
