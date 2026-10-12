@@ -1,25 +1,15 @@
 .waveform-wrapper {
-  bottom: .8rem;
+  bottom: 10%;
   left: .3rem;
   opacity: 0;
   position: absolute;
   right: .3rem;
-  top: .8rem;
+  top: 10%;
   transition: all .3s ease-in-out;
   visibility: hidden;
 
-  @media screen and (min-width: 700px) {
-    bottom: 0;
-    top: 0;
-  }
-
   > wave {
     cursor: pointer !important;
-  }
-  
-  /* Hack to set background color of progress */
-  > wave > wave {
-    background-color: transparent;
   }
 }
 
