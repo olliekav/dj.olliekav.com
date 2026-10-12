@@ -2,7 +2,7 @@
   background-color: #fff;
   border-radius: 3rem;
   bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
-  box-shadow: 0 0 3rem color-mix(in srgb, var(--mix-accent, #000) 55%, transparent), 0 .4rem 2rem rgb(0 0 0 / .25);
+  box-shadow: 0 0 3rem rgb(0 0 0 / .4);
   display: flex;
   flex-flow: row wrap;
   height: var(--player-height);
