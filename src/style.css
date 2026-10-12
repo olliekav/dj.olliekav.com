@@ -3,6 +3,14 @@
   --body-font: ff-din-round-web, sans-serif;
   --dark-color: #101010;
   --light-color: #ffffff;
+  --player-gap: 1rem;
+  --player-height: 11rem;
+  --player-space: calc(var(--player-height) + 2 * var(--player-gap) + env(safe-area-inset-bottom));
+
+  @media screen and (min-width: 700px) {
+    --player-gap: 1.6rem;
+    --player-height: 6rem;
+  }
 }
 
 html,
@@ -39,6 +47,7 @@ body {
 
 .wrapper {
   flex: 1;
+  position: relative;
   display: flex;
   flex-flow: column nowrap;
   width: 100%;

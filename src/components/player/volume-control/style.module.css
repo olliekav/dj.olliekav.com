@@ -11,8 +11,18 @@
   }
 }
 
+.player-volume::before {
+  bottom: 100%;
+  content: '';
+  height: 1rem;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
 .player-volume > button {
   background-color: var(--light-color);
+  border-radius: 0 3rem 3rem 0;
   z-index: 102;
 
   @media (prefers-color-scheme: dark) {
@@ -22,8 +32,8 @@
 
 .player-volume > div {
   background-color: var(--light-color);
-  bottom: 100%;
-  border-radius: 1rem 0 0 0;
+  border-radius: 2.5rem;
+  bottom: calc(100% + 1rem);
   box-shadow: -.2rem -.2rem 2rem rgba(0,0,0,.3);
   display: flex;
   max-height: 0;

@@ -1,16 +1,19 @@
 .player {
   background-color: #fff;
-  box-shadow: 0 -.2rem 2rem rgba(0,0,0,.4);
+  border-radius: 3rem;
+  bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
+  box-shadow: 0 0 3rem color-mix(in srgb, var(--mix-accent, #000) 55%, transparent), 0 .4rem 2rem rgb(0 0 0 / .25);
   display: flex;
   flex-flow: row wrap;
-  height: 11rem;
-  padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  position: relative;
+  height: var(--player-height);
+  left: calc(var(--player-gap) + env(safe-area-inset-left));
+  position: absolute;
+  right: calc(var(--player-gap) + env(safe-area-inset-right));
   z-index: 100;
 
   @media screen and (min-width: 700px) {
+    border-radius: calc(var(--player-height) / 2);
     flex-flow: row nowrap;
-    height: 6rem;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -18,41 +21,34 @@
   }
 }
 
-.player::after {
-  background-color: var(--dark-color);
-  bottom: env(safe-area-inset-bottom);
-  content: '';
-  height: min(1px, env(safe-area-inset-bottom));
-  left: 0;
-  position: absolute;
-  right: 0;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: rgb(255 255 255 / .1);
-  }
-}
-
 .player-artwork {
   align-items: center;
+  border-radius: 3rem 0 0 0;
   display: flex;
   flex: 0 0 6rem;
   flex-direction: column;
   height: 6rem;
   justify-content: center;
   width: 6rem;
+
+  @media screen and (min-width: 700px) {
+    border-radius: 3rem 0 0 3rem;
+  }
 }
 
 .player-track-details {
   border-right: 1px solid var(--dark-color);
   display: flex;
-  flex: 1 1 13rem;
+  flex: 1 1 0;
   font-weight: 500;
   flex-direction: column;
   height: 6rem;
   justify-content: center;
+  min-width: 0;
+  overflow: hidden;
   padding: 0 1rem;
   position: relative;
-  width: 13rem;
+  white-space: nowrap;
 
   @media screen and (min-width: 700px) {
     flex: 0 0 18rem;
@@ -65,10 +61,13 @@
   }
 }
 
-.player-track-title { 
+.player-track-title {
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0 0 .4rem;
+  overflow: hidden;
+  padding-right: 2.2rem;
+  text-overflow: ellipsis;
 
   @media screen and (min-width: 700px) {
     font-size: 1.6rem;
@@ -142,12 +141,16 @@
   border-top: 1px solid var(--dark-color);
   display: flex;
   height: 5rem;
+  border-radius: 0 0 3rem 3rem;
   order: 6;
+  overflow: hidden;
   position: relative;
   width: 100%;
 
   @media screen and (min-width: 700px) {
+    border-radius: 0;
     border-top: 0;
+    overflow: visible;
     border-right: 1px solid var(--dark-color);
     flex-basis: auto;
     flex-grow: 1;
@@ -209,8 +212,13 @@
   background: transparent;
   cursor: pointer;
   border: 0;
-  padding: 0 1rem;
-  width: 5rem;
+  padding: 0 .8rem;
+  width: 4.2rem;
+
+  @media screen and (min-width: 500px) {
+    padding: 0 1rem;
+    width: 5rem;
+  }
 }
 
 .player-button > svg {
@@ -231,7 +239,11 @@
 }
 
 .play-button {
-  width: 4rem;
+  width: 3.6rem;
+
+  @media screen and (min-width: 500px) {
+    width: 4rem;
+  }
 }
 
 .play-button > svg {
