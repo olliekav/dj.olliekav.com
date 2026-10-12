@@ -32,6 +32,9 @@ const MixPage = ({ slug }: { slug: string }) => {
     <article class={`${styles['mix']} ${playlistStyles['themed']}`} style={themeStyle(mix.theme)}>
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: scriptJson(mixJsonLd(mix)) }} />
+      <a class={styles['mix-back']} href="/">
+        <span aria-hidden="true">←</span> All mixes
+      </a>
       <div class={styles['mix-logo']}>
         <Logo />
         <h1 class={styles['mix-number']}>
