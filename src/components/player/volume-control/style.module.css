@@ -28,7 +28,7 @@
 .player-volume > div {
   -webkit-backdrop-filter: blur(2rem) saturate(1.6);
   backdrop-filter: blur(2rem) saturate(1.6);
-  background-color: rgb(255 255 255 / .7);
+  background-color: rgb(255 255 255 / .55);
   border-radius: 2.5rem;
   bottom: calc(100% + 1rem);
   box-shadow: -.2rem -.2rem 2rem rgba(0,0,0,.3);
@@ -42,7 +42,7 @@
   z-index: 101;
 
   @media (prefers-color-scheme: dark) {
-    background-color: rgb(16 16 16 / .7);
+    background-color: rgb(16 16 16 / .55);
   }
 }
 
