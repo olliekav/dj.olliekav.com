@@ -2,6 +2,11 @@
   view-transition-name: player;
 }
 
+/* Safari leaves the frosting unblurred after a transition until something repaints it */
+:global(.view-transition-ended) .player::before {
+  transform: translateZ(0);
+}
+
 .player {
   border-radius: 0;
   bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
