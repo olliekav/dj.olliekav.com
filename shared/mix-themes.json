@@ -9,7 +9,7 @@
     "background": "#EC1C24",
     "foreground": "#2A10A6",
     "dark": false,
-    "accent": "#EC1C24"
+    "accent": "#2A10A6"
   },
   "3": {
     "background": "#28C517",
@@ -27,7 +27,7 @@
     "background": "#FFF100",
     "foreground": "#652D90",
     "dark": false,
-    "accent": "#FFF100"
+    "accent": "#652D90"
   },
   "6": {
     "background": "#EC297B",
@@ -45,7 +45,7 @@
     "background": "#FF8300",
     "foreground": "#2E3094",
     "dark": false,
-    "accent": "#FF8300"
+    "accent": "#2E3094"
   },
   "9": {
     "background": "#FFFFE3",
@@ -63,13 +63,13 @@
     "background": "#7300AA",
     "foreground": "#B9EB02",
     "dark": false,
-    "accent": "#7300AA"
+    "accent": "#B9EB02"
   },
   "12": {
     "background": "#42A942",
     "foreground": "#FFFFFF",
     "dark": false,
-    "accent": "#42A942"
+    "accent": "#FFFFFF"
   },
   "13": {
     "background": "#000000",
@@ -81,13 +81,13 @@
     "background": "#F8D1E3",
     "foreground": "#292125",
     "dark": false,
-    "accent": "#F8D1E3"
+    "accent": "#292125"
   },
   "15": {
     "background": "#D81927",
     "foreground": "#FFFFFF",
     "dark": false,
-    "accent": "#D81927"
+    "accent": "#FFFFFF"
   },
   "16": {
     "background": "#B4BD00",
@@ -194,7 +194,7 @@
   "33": {
     "background": "#015635",
     "foreground": "#93F0FE",
-    "accent": "#015635",
+    "accent": "#93F0FE",
     "dark": false
   },
   "34": {
@@ -260,7 +260,7 @@
   "44": {
     "background": "#4D6900",
     "foreground": "#FFB294",
-    "accent": "#4D6900",
+    "accent": "#FFB294",
     "dark": false
   },
   "45": {
@@ -783,6 +783,6 @@
     "background": "#F2E793",
     "foreground": "#2155E4",
     "dark": false,
-    "accent": "#F2E793"
+    "accent": "#2155E4"
   }
 }
