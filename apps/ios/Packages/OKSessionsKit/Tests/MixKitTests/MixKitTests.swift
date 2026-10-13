@@ -211,15 +211,21 @@ struct FormattingTests {
         let pinkOnPurple = Theme(background: "#2A10A6", foreground: "#EC00A5", accent: "#EC00A5", dark: true)
         #expect(pinkOnPurple.lighterColor == Color(hex: "#EC00A5"))
     }
-    @Test func waveformKeepsTheAccentUnlessItDisappears() {
+    @Test func playerAccentFallsBackWhenItIsTheBackground() {
         let pinkOnPurple = Theme(background: "#2A10A6", foreground: "#EC00A5", accent: "#EC00A5", dark: true)
-        #expect(pinkOnPurple.waveformColor(onDarkPanel: false) == Color(hex: "#EC00A5"))
-        // Yellow on white is too faint, so the purple logo colour takes over
-        let purpleOnYellow = Theme(background: "#FFF000", foreground: "#652D90", accent: "#FFF000", dark: false)
-        #expect(purpleOnYellow.waveformColor(onDarkPanel: false) == Color(hex: "#652D90"))
-        #expect(purpleOnYellow.waveformColor(onDarkPanel: true) == Color(hex: "#FFF000"))
+        #expect(pinkOnPurple.playerAccent == "#EC00A5")
+        // The accent is the background the player sits on, so the purple logo colour takes over
+        let purpleOnYellow = Theme(background: "#FFF000", foreground: "#652D90", accent: "#fff000", dark: false)
+        #expect(purpleOnYellow.playerAccent == "#652D90")
     }
 
+    @Test func playerLinesMixTheForegroundIntoTheBackground() {
+        let pinkOnPurple = Theme(background: "#2A10A6", foreground: "#EC00A5", accent: "#EC00A5", dark: true)
+        // 30% of (236, 0, 165) into (42, 16, 166)
+        #expect(pinkOnPurple.playerLine == "#640BA6")
+        #expect(mixHex("#FFFFFF", into: "#000000", amount: 0.3) == "#4D4D4D")
+        #expect(mixHex("nope", into: "#123456", amount: 0.3) == "#123456")
+    }
 
     @Test func parsesHexColours() {
         #expect(Color(hex: "#FF0000") == Color(red: 1, green: 0, blue: 0))

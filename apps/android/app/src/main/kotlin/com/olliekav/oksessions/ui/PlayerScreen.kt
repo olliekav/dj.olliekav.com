@@ -6,7 +6,6 @@ import android.media.MediaRouter2
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -23,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
@@ -65,19 +65,24 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import com.olliekav.oksessions.core.Formatting
 import com.olliekav.oksessions.core.Mix
-import com.olliekav.oksessions.core.waveformColor
+import com.olliekav.oksessions.core.playerAccent
+import com.olliekav.oksessions.core.playerLine
 import com.olliekav.oksessions.playback.PlayerConnection
 
 /**
- * The full-screen player: the artwork on the mix's colour above, the controls on a plain white
- * (or black, in dark mode) panel below. Side by side when the window is wider than it is tall.
+ * The full-screen player, all on the mix's colour as on the website: the artwork above, a line,
+ * then the controls in the mix's foreground. Side by side when the window is wider than it is tall.
  */
 @Composable
 fun PlayerScreen(player: PlayerConnection, onClose: () -> Unit) {
     val mix = player.current ?: return
     var showsInfo by rememberSaveable { mutableStateOf(false) }
-    // A surface, so text and icons take the panel's colour (white on black in dark mode)
-    androidx.compose.material3.Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    // A surface, so text and icons take the mix's foreground
+    androidx.compose.material3.Surface(
+        Modifier.fillMaxSize(),
+        color = hexColor(mix.theme.background),
+        contentColor = hexColor(mix.theme.foreground),
+    ) {
     BoxWithConstraints(Modifier.fillMaxSize().testTag("player")) {
         val sideBySide = maxWidth > maxHeight
         val artwork: @Composable (Modifier) -> Unit = { modifier ->
@@ -91,14 +96,18 @@ fun PlayerScreen(player: PlayerConnection, onClose: () -> Unit) {
                 Controls(player, mix, compact = sideBySide, modifier = Modifier.widthIn(max = 560.dp).navigationBarsPadding())
             }
         }
+        // A solid line between the two, like the website's player dividers
+        val line = hexColor(mix.theme.playerLine)
         if (sideBySide) {
             Row(Modifier.fillMaxSize()) {
                 artwork(Modifier.weight(1f).fillMaxHeight())
+                Box(Modifier.fillMaxHeight().width(1.dp).background(line))
                 controls(Modifier.weight(1f).fillMaxHeight().padding(horizontal = 24.dp, vertical = 8.dp))
             }
         } else {
             Column(Modifier.fillMaxSize()) {
                 artwork(Modifier.weight(1f).fillMaxWidth())
+                Box(Modifier.fillMaxWidth().height(1.dp).background(line))
                 controls(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 28.dp))
             }
         }
@@ -107,11 +116,11 @@ fun PlayerScreen(player: PlayerConnection, onClose: () -> Unit) {
     if (showsInfo) MixInfoSheet(mix, onDismiss = { showsInfo = false })
 }
 
-/** Close and info: translucent circles with icons in the mix's logo colour. */
+/** Close and info: icons in the mix's foreground on clear circles, so the background shows through. */
 @Composable
 private fun HeaderButtons(mix: Mix, onClose: () -> Unit, onInfo: () -> Unit, modifier: Modifier) {
     val colors = IconButtonDefaults.filledIconButtonColors(
-        containerColor = Color.White.copy(alpha = 0.14f),
+        containerColor = Color.Transparent,
         contentColor = hexColor(mix.theme.foreground),
     )
     Row(modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 12.dp, vertical = 4.dp)) {
@@ -128,9 +137,9 @@ private fun HeaderButtons(mix: Mix, onClose: () -> Unit, onInfo: () -> Unit, mod
 
 @Composable
 private fun Controls(player: PlayerConnection, mix: Mix, compact: Boolean, modifier: Modifier) {
-    val dark = isSystemInDarkTheme()
-    val accent = hexColor(mix.theme.waveformColor(onDarkPanel = dark))
-    val secondary = LocalContentColor.current.copy(alpha = 0.55f)
+    val foreground = hexColor(mix.theme.foreground)
+    val accent = hexColor(mix.theme.playerAccent)
+    val secondary = foreground.copy(alpha = 0.7f)
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
 
@@ -142,7 +151,8 @@ private fun Controls(player: PlayerConnection, mix: Mix, compact: Boolean, modif
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             WaveformBar(
                 player.waveform, player.progress,
-                played = accent, unplayed = if (dark) unplayedDark else unplayedLight,
+                // The website's unplayed bars: the foreground at 30%
+                played = accent, unplayed = foreground.copy(alpha = 0.3f),
                 onSeek = player::seek,
                 modifier = Modifier.fillMaxWidth().height(if (compact) 44.dp else 60.dp).testTag("waveform"),
             )

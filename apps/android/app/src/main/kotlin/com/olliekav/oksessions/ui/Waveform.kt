@@ -48,19 +48,23 @@ fun WaveformBar(
                 ) { change, _ -> dragProgress = (change.position.x / size.width).coerceIn(0f, 1f) }
             },
     ) {
-        // Matches the website's wavesurfer bars
-        val barWidth = 4.dp.toPx()
-        val gap = 2.dp.toPx()
-        val count = maxOf(1, (size.width / (barWidth + gap)).toInt())
-        val peaks = waveform?.peaks(count) ?: List(count) { 0.08 }
+        // Matches the website's wavesurfer bars: 2dp with a 1dp gap, scaled to the loudest peak,
+        // and centred, with any space left over split between the two ends
+        val barWidth = 2.dp.toPx()
+        val gap = 1.dp.toPx()
+        val count = maxOf(1, ((size.width + gap) / (barWidth + gap)).toInt())
+        val inset = (size.width - (count * (barWidth + gap) - gap)) / 2
+        val raw = waveform?.peaks(count) ?: List(count) { 0.08 }
+        val loudest = raw.maxOrNull() ?: 0.0
+        val peaks = if (loudest > 0) raw.map { it / loudest } else raw
         val shown = dragProgress ?: progress
         peaks.forEachIndexed { i, peak ->
             val height = maxOf(2.dp.toPx(), peak.toFloat() * size.height)
             drawRoundRect(
                 color = if (i.toFloat() / count < shown) played else unplayed,
-                topLeft = Offset(i * (barWidth + gap), (size.height - height) / 2),
+                topLeft = Offset(inset + i * (barWidth + gap), (size.height - height) / 2),
                 size = Size(barWidth, height),
-                cornerRadius = CornerRadius(minOf(3.dp.toPx(), height / 2)),
+                cornerRadius = CornerRadius(1.dp.toPx()),
             )
         }
     }

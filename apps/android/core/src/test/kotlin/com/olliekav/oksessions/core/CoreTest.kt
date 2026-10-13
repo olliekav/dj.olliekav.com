@@ -94,14 +94,21 @@ class FormattingTest {
         assertEquals(1, Formatting.gridColumns(150f))
     }
 
-    @Test fun waveformKeepsTheAccentUnlessItDisappears() {
+    @Test fun playerAccentFallsBackWhenItIsTheBackground() {
         val pinkOnPurple = Theme("#2A10A6", "#EC00A5", "#EC00A5", dark = true)
-        assertEquals("#EC00A5", pinkOnPurple.waveformColor(onDarkPanel = false))
-        val purpleOnYellow = Theme("#FFF100", "#652D90", "#FFF100", dark = false)
-        assertEquals("#652D90", purpleOnYellow.waveformColor(onDarkPanel = false))
-        assertEquals("#FFF100", purpleOnYellow.waveformColor(onDarkPanel = true))
+        assertEquals("#EC00A5", pinkOnPurple.playerAccent)
+        // The accent is the background the player sits on, so the purple logo colour takes over
+        val purpleOnYellow = Theme("#FFF100", "#652D90", "#fff100", dark = false)
+        assertEquals("#652D90", purpleOnYellow.playerAccent)
         assertTrue(pinkOnPurple.hasDarkBackground)
         assertFalse(purpleOnYellow.hasDarkBackground)
+    }
+
+    @Test fun playerLinesMixTheForegroundIntoTheBackground() {
+        // 30% of (236, 0, 165) into (42, 16, 166)
+        assertEquals("#640BA6", Theme("#2A10A6", "#EC00A5", "#EC00A5", dark = true).playerLine)
+        assertEquals("#4D4D4D", mixHex("#FFFFFF", into = "#000000", amount = 0.3))
+        assertEquals("#123456", mixHex("nope", into = "#123456", amount = 0.3))
     }
 
     @Test fun parsesHexColours() {
