@@ -1,8 +1,5 @@
 .player {
-  -webkit-backdrop-filter: blur(2rem) saturate(1.6);
-  backdrop-filter: blur(2rem) saturate(1.6);
-  background-color: rgb(255 255 255 / .7);
-  border-radius: 3rem;
+  border-radius: 0;
   bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
   box-shadow: 0 0 3rem rgb(0 0 0 / .4);
   display: flex;
@@ -14,9 +11,22 @@
   z-index: 100;
 
   @media screen and (min-width: 700px) {
-    border-radius: calc(var(--player-height) / 2);
+    border-radius: 0;
     flex-flow: row nowrap;
   }
+
+}
+
+/* The frosting is on a layer behind the bar, so the bar itself doesn't stop the volume popup's own blur */
+.player::before {
+  -webkit-backdrop-filter: blur(2rem) saturate(1.6);
+  backdrop-filter: blur(2rem) saturate(1.6);
+  background-color: rgb(255 255 255 / .7);
+  border-radius: inherit;
+  content: '';
+  inset: 0;
+  position: absolute;
+  z-index: -1;
 
   @media (prefers-color-scheme: dark) {
     background-color: rgb(16 16 16 / .7);
@@ -25,14 +35,14 @@
 
 .player-artwork {
   align-items: center;
-  border-radius: 50%;
+  border-radius: 0;
   display: flex;
-  flex: 0 0 4.8rem;
+  flex: 0 0 6rem;
   flex-direction: column;
-  height: 4.8rem;
+  height: 6rem;
   justify-content: center;
-  margin: .6rem .6rem .6rem .8rem;
-  width: 4.8rem;
+  margin: 0;
+  width: 6rem;
 }
 
 .player-track-details {
@@ -45,13 +55,13 @@
   justify-content: center;
   min-width: 0;
   overflow: hidden;
-  padding: 0 1rem 0 0;
+  padding: 0 1rem;
   position: relative;
   white-space: nowrap;
 
   @media screen and (min-width: 700px) {
     flex: 0 0 18rem;
-    padding: 0 1.5rem 0 0;
+    padding: 0 1.5rem;
     width: 18rem;
   }
 
@@ -111,8 +121,8 @@
 }
 
 .player-artwork svg {
-  height: 3.8rem;
-  width: 3.8rem;
+  height: 4.2rem;
+  width: 4.2rem;
 }
 
 .player-controls {
@@ -135,7 +145,7 @@
   border-top: 1px solid var(--dark-color);
   display: flex;
   height: 5rem;
-  border-radius: 0 0 3rem 3rem;
+  border-radius: 0;
   order: 6;
   overflow: hidden;
   position: relative;

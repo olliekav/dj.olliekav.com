@@ -1,4 +1,4 @@
-export const BAR_WIDTH = 4;
+export const BAR_WIDTH = 2;
 /** Wavesurfer's default gap: half a bar, after each bar */
 const BAR_GAP = BAR_WIDTH / 2;
 const SLOT = BAR_WIDTH + BAR_GAP;

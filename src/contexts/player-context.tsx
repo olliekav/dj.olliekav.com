@@ -100,7 +100,7 @@ const PlayerProvider = ({ children, initialMixes, initialSlug }: PlayerProviderP
     setWavesurfer(
       WaveSurfer.create({
         container,
-        barRadius: 3,
+        barRadius: 1,
         barWidth: BAR_WIDTH,
         cursorWidth: 0,
         height: 'auto',
