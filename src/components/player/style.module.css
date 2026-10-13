@@ -46,7 +46,7 @@
 }
 
 .player-track-details {
-  border-right: 1px solid var(--dark-color);
+  border-right: 1px solid rgb(0 0 0 / .1);
   display: flex;
   flex: 1 1 0;
   font-weight: 500;
@@ -131,7 +131,7 @@
   height: 6rem;
 
   @media screen and (min-width: 500px) {
-    border-right: 1px solid var(--dark-color);
+    border-right: 1px solid rgb(0 0 0 / .1);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -142,7 +142,7 @@
 .player-progress {
   background-size: cover;
   align-items: center;
-  border-top: 1px solid var(--dark-color);
+  border-top: 1px solid rgb(0 0 0 / .1);
   display: flex;
   height: 5rem;
   border-radius: 0;
@@ -155,7 +155,7 @@
     border-radius: 0;
     border-top: 0;
     overflow: visible;
-    border-right: 1px solid var(--dark-color);
+    border-right: 1px solid rgb(0 0 0 / .1);
     flex-basis: auto;
     flex-grow: 1;
     height: 6rem;

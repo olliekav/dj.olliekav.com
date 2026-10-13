@@ -30,14 +30,13 @@
   backdrop-filter: blur(2rem) saturate(1.6);
   background-color: rgb(255 255 255 / .7);
   bottom: 100%;
-  box-shadow: -.2rem -.2rem 2rem rgba(0,0,0,.3);
+  box-shadow: -0.8rem -0.8rem 2rem rgba(0,0,0,.2);
   display: flex;
   max-height: 0;
   overflow: hidden;
   justify-content: center;
   position: absolute;
   width: 100%;
-  z-index: 101;
 
   @media (prefers-color-scheme: dark) {
     background-color: rgb(16 16 16 / .7);
@@ -48,7 +47,7 @@
   .player-volume:hover > div,
   .player-volume:active > div,
   .player-volume:focus > div {
-    border-bottom: 1px solid var(--dark-color);
+    border-bottom: 1px solid rgb(0 0 0 / .1);
     max-height: 12rem;
 
     @media (prefers-color-scheme: dark) {
@@ -70,18 +69,23 @@ input[type=range]:focus {
   outline: none;
 }
 
+input[type=range] {
+  --track: var(--dark-color);
+  /* Up to the middle of the 16px thumb */
+  --filled: calc(8px + var(--volume, 0) * (100% - 16px));
+
+  @media (prefers-color-scheme: dark) {
+    --track: var(--light-color);
+  }
+}
+
 input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 5px;
   cursor: pointer;
-  box-shadow: 0px 0px 0px var(--dark-color);
-  background: var(--dark-color);
+  background: linear-gradient(to right, var(--mix-accent, var(--track)) var(--filled), var(--track) var(--filled));
   border-radius: 3rem;
-  border: 0px solid var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--light-color);
-  }
+  border: 0;
 }
 
 input[type=range]::-webkit-slider-thumb {
@@ -101,14 +105,6 @@ input[type=range]::-webkit-slider-thumb {
   }
 }
 
-input[type=range]:focus::-webkit-slider-runnable-track {
-  background: var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--light-color);
-  }
-}
-
 input[type=range]::-moz-range-track {
   width: 100%;
   height: 5px;
@@ -122,6 +118,12 @@ input[type=range]::-moz-range-track {
     background: var(--light-color);
     border-color: var(--light-color);
   }
+}
+
+input[type=range]::-moz-range-progress {
+  background: var(--mix-accent, var(--track));
+  border-radius: 3rem;
+  height: 5px;
 }
 
 input[type=range]::-moz-range-thumb {
