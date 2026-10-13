@@ -30,9 +30,9 @@ const Playlist = () => {
 
 	return (
 		<>
-			<header class="sr-only">
-				<h1>{SITE_NAME}</h1>
-				<p>{DESCRIPTION}</p>
+			<header class={`sr-only ${styles['playlist-header']}`}>
+				<h1 class={styles['playlist-heading']}>{SITE_NAME}</h1>
+				<p class="sr-only">{DESCRIPTION}</p>
 			</header>
 			{/* A JSON data block, escaped by scriptJson; never parsed as HTML */}
 			{/* eslint-disable-next-line react/no-danger */}

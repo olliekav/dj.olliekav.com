@@ -9,7 +9,7 @@
 
 .player {
   border-radius: 0;
-  bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
+  bottom: var(--player-bottom);
   box-shadow: 0 0 0 1px rgb(0 0 0 / .03), 0 0 3rem rgb(0 0 0 / .4);
   display: flex;
   flex-flow: row wrap;

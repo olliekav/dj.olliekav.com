@@ -4,10 +4,13 @@
   --dark-color: #101010;
   --light-color: #ffffff;
   --player-gap: 1rem;
+  /* Extra room on phones, so the bar's square corners stay clear of the screen's rounded ones */
+  --player-bottom: calc(var(--player-gap) + 1.2rem + env(safe-area-inset-bottom));
   --player-height: 11rem;
-  --player-space: calc(var(--player-height) + 2 * var(--player-gap) + env(safe-area-inset-bottom));
+  --player-space: calc(var(--player-height) + var(--player-gap) + var(--player-bottom));
 
   @media screen and (min-width: 700px) {
+    --player-bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
     --player-gap: 1.6rem;
     --player-height: 6rem;
   }
@@ -69,8 +72,6 @@ body {
 
 .content {
   flex: 1;
-  /* Start below the status bar rather than scrolling under it, where iOS blurs whatever passes beneath */
-  margin-top: env(safe-area-inset-top);
   overflow-x: hidden;
   overflow-y: scroll;
   padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);

@@ -16,7 +16,7 @@
   left: 2rem;
   position: absolute;
   text-decoration: none;
-  top: 2rem;
+  top: calc(2rem + env(safe-area-inset-top));
 }
 
 .mix-back:hover,

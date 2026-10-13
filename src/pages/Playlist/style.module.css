@@ -1,3 +1,36 @@
+/* Only for screen readers in a browser tab, which shows the name itself. Installed, it's a title
+   like the native apps', and a solid bar for the system's blur under the status bar to sit over */
+.playlist-header:global(.sr-only) {
+  @media (display-mode: standalone) {
+    background-color: var(--body-bg-color);
+    clip: auto;
+    clip-path: none;
+    height: auto;
+    overflow: visible;
+    /* Under the status bar too, which the page runs under, then the room the native apps leave
+       above their large title for the toolbar */
+    padding: calc(5.6rem + env(safe-area-inset-top)) 2rem 1.2rem;
+    position: sticky;
+    top: 0;
+    white-space: normal;
+    width: auto;
+    /* Above the current mix's raised tile */
+    z-index: 101;
+
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--dark-color);
+    }
+  }
+}
+
+.playlist-heading {
+  font-size: 3.4rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
 .playlist {
   counter-reset: session;
   list-style: none;
