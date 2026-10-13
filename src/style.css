@@ -87,3 +87,19 @@ main {
   white-space: nowrap;
   width: 1px;
 }
+
+/* The player bar swaps straight to its new state rather than fading through the page change.
+   Captured on its own, its background blur has nothing behind it, so blur behind its layer instead */
+::view-transition-group(player) {
+  /* Over the browser's own animation of this from the bar, which has no backdrop-filter itself */
+  -webkit-backdrop-filter: blur(1rem) !important;
+  backdrop-filter: blur(1rem) !important;
+}
+
+::view-transition-old(player) {
+  display: none;
+}
+
+::view-transition-new(player) {
+  animation: none;
+}

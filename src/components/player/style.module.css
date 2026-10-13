@@ -1,3 +1,7 @@
+:global(.view-transition) .player {
+  view-transition-name: player;
+}
+
 .player {
   border-radius: 0;
   bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
