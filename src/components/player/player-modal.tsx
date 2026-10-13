@@ -15,8 +15,9 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
 
   useEffect(() => {
     const dialog = dialogRef.current;
-    if (isOpen && !dialog?.open) {
-      dialog?.showModal();
+    if (isOpen && dialog && !dialog.open) {
+      dialog.showModal();
+      dialog.scrollTop = 0;
     } else if (!isOpen && dialog?.open) {
       dialog.close();
     }
