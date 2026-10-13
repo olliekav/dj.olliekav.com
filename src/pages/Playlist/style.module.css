@@ -76,16 +76,20 @@
 .playlist-track-title {
   font-size: 5.2vw;
   font-weight: 700;
-  padding-left: 9vw;
+  left: 53%;
+  letter-spacing: -.03em;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
 
   @media screen and (min-width: 700px) {
     font-size: 4.2vw;
-    padding-left: 7vw;
   }
 
   @media screen and (min-width: 1200px) {
     font-size: 3.2vw;
-    padding-left: 6vw;
   }
 
   @media screen and (min-width: 1600px) {

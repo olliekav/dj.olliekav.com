@@ -43,6 +43,11 @@
 .mix-number {
   font-size: 12cqw;
   font-weight: 700;
+  left: 53%;
+  letter-spacing: -.03em;
   margin: 0;
-  padding-left: 20cqw;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
 }
