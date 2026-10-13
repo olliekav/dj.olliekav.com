@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
-import { mixPath } from '../../utilities/seo';
 import { themeStyle } from '../../utilities/theme';
 import Description from '../description';
 import styles from './style.module.css';
@@ -46,8 +45,6 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
         <h1 id="mix-info-title" class={styles['modal-title']}>{currentMix.title}</h1>
         <Description class={styles['modal-description']} text={currentMix.description} />
         <p class={styles['modal-url']}>
-          <a href={mixPath(currentMix)} onClick={onClose}>About this mix</a>
-          {' · '}
           <a href={currentMix.permalink_url} target="_blank" rel="noopener noreferrer">
             Listen on SoundCloud
           </a>
