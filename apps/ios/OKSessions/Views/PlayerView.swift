@@ -44,12 +44,12 @@ struct PlayerView: View {
                 .onGeometryChange(for: Bool.self) { $0.size.width > $0.size.height } action: { isLandscape = $0 }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        HeaderButton(tint: theme.foregroundColor, title: "Close", systemImage: "chevron.down") { dismiss() }
+                        HeaderButton(tint: theme.foregroundColor, background: theme.backgroundColor, title: "Close", systemImage: "chevron.down") { dismiss() }
                             .accessibilityIdentifier("close-player")
                     }
                     .sharedBackgroundVisibility(.hidden)
                     ToolbarItem(placement: .topBarTrailing) {
-                        HeaderButton(tint: theme.foregroundColor, title: "About this mix", systemImage: "info.circle") { showsInfo = true }
+                        HeaderButton(tint: theme.foregroundColor, background: theme.backgroundColor, title: "About this mix", systemImage: "info.circle") { showsInfo = true }
                     }
                     .sharedBackgroundVisibility(.hidden)
                 }
@@ -198,10 +198,12 @@ private struct ShuffleButton: View {
     }
 }
 
-/// A circular glass button tinted with the mix's foreground, the same size whatever its symbol.
+/// A circular glass button in the mix's colour, the same size whatever its symbol.
 private struct HeaderButton: View {
     /// The mix's logo colour, for the icon
     let tint: Color
+    /// The mix's background, which the glass takes on
+    let background: Color
     let title: String
     let systemImage: String
     let action: () -> Void
@@ -216,8 +218,8 @@ private struct HeaderButton: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(tint)
-        // Glass tinted with the same colour, so the circle reads on any mix
-        .glassEffect(.clear.tint(tint.opacity(0.2)).interactive(), in: .circle)
+        // Glass in the mix's own colour, so the background shows through rather than a white or tinted fill
+        .glassEffect(.clear.tint(background.opacity(0.5)).interactive(), in: .circle)
         .accessibilityLabel(title)
     }
 }

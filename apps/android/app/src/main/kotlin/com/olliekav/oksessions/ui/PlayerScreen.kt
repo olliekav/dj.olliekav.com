@@ -116,13 +116,12 @@ fun PlayerScreen(player: PlayerConnection, onClose: () -> Unit) {
     if (showsInfo) MixInfoSheet(mix, onDismiss = { showsInfo = false })
 }
 
-/** Close and info: circles tinted with the mix's foreground, with icons in it. */
+/** Close and info: icons in the mix's foreground on clear circles, so the background shows through. */
 @Composable
 private fun HeaderButtons(mix: Mix, onClose: () -> Unit, onInfo: () -> Unit, modifier: Modifier) {
-    val foreground = hexColor(mix.theme.foreground)
     val colors = IconButtonDefaults.filledIconButtonColors(
-        containerColor = foreground.copy(alpha = 0.15f),
-        contentColor = foreground,
+        containerColor = Color.Transparent,
+        contentColor = hexColor(mix.theme.foreground),
     )
     Row(modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 12.dp, vertical = 4.dp)) {
         androidx.compose.material3.FilledIconButton(onClick = onClose, colors = colors, modifier = Modifier.size(44.dp).testTag("close-player")) {
