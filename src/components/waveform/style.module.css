@@ -1,10 +1,10 @@
 .waveform-wrapper {
-  bottom: 25%;
-  left: .8rem;
+  bottom: 20%;
+  left: 1rem;
   opacity: 0;
   position: absolute;
-  right: .8rem;
-  top: 10%;
+  right: 1rem;
+  top: 20%;
   transition: all .3s ease-in-out;
   visibility: hidden;
 
@@ -12,6 +12,7 @@
     bottom: 10%;
     left: .3rem;
     right: .3rem;
+    top: 10%;
   }
 
   > wave {
