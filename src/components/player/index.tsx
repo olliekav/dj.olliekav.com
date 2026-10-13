@@ -1,7 +1,8 @@
 import { useState } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
 import playlistStyles from '../../pages/Playlist/style.module.css';
-import { themeStyle } from '../../utilities/theme';
+import { mixPath } from '../../utilities/seo';
+import { barAccent, themeStyle } from '../../utilities/theme';
 import Logo from '../logo';
 import WaveformProgress from '../waveform';
 import PlayerModal from './player-modal';
@@ -16,12 +17,23 @@ const Player = () => {
 
   return (
     <>
-      <div class={`${styles['player']} ${playlistStyles['themed']}`} style={themeStyle(currentMix?.theme)}>
-        <div class={`${styles['player-artwork']} ${playlistStyles['player-artwork']}`}>
+      <div
+        class={`${styles['player']} ${playlistStyles['themed']}`}
+        style={currentMix ? { ...themeStyle(currentMix.theme), '--mix-accent': barAccent(currentMix.theme) } : undefined}
+      >
+        {/* The title link is the one for keyboards and screen readers */}
+        <a
+          class={`${styles['player-artwork']} ${playlistStyles['player-artwork']}`}
+          href={currentMix ? mixPath(currentMix) : '/'}
+          tabIndex={-1}
+          aria-hidden="true"
+        >
           <Logo />
-        </div>
+        </a>
         <div class={`${styles['player-track-details']} ${state.isReady ? 'loaded' : ''}`}>
-          <h2 class={styles['player-track-title']}>{currentMix?.title ?? ''}</h2>
+          <h2 class={styles['player-track-title']}>
+            {currentMix ? <a href={mixPath(currentMix)}>{currentMix.title}</a> : ''}
+          </h2>
           {state.isReady ? (
             <Timer />
           ) : (

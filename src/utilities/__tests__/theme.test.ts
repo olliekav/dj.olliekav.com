@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Theme } from '../../../shared/api-types';
 import themesJson from '../../../shared/mix-themes.json';
-import { themeStyle } from '../theme';
+import { barAccent, themeStyle } from '../theme';
 
 const themes: Record<string, Theme> = themesJson;
 
@@ -21,6 +21,16 @@ describe('themeStyle', () => {
 
   it('handles missing themes', () => {
     expect(themeStyle(undefined)).toEqual({});
+  });
+});
+
+describe('barAccent', () => {
+  it('keeps an accent that stands out from the background', () => {
+    expect(barAccent({ ...themes['1']!, accent: '#EC00A5' })).toBe('#EC00A5');
+  });
+
+  it('uses the foreground when the accent is the background', () => {
+    expect(barAccent({ background: '#28C517', foreground: '#FFF100', accent: '#28c517', dark: false })).toBe('#FFF100');
   });
 });
 

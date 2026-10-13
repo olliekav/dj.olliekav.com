@@ -29,7 +29,7 @@ const MixPage = ({ slug }: { slug: string }) => {
   }
 
   return (
-    <article class={`${styles['mix']} ${playlistStyles['themed']}`} style={themeStyle(mix.theme)}>
+    <article class={`${styles['mix']} ${playlistStyles['themed']}`} style={themeStyle(mix.theme)} data-page="mix">
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: scriptJson(mixJsonLd(mix)) }} />
       <a class={styles['mix-back']} href="/">

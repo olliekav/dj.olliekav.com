@@ -1,7 +1,7 @@
 .player {
   border-radius: 0;
   bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
-  box-shadow: 0 0 3rem rgb(0 0 0 / .4);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / .03), 0 0 3rem rgb(0 0 0 / .4);
   display: flex;
   flex-flow: row wrap;
   height: var(--player-height);
@@ -15,13 +15,69 @@
     flex-flow: row nowrap;
   }
 
+  @media (prefers-color-scheme: dark) {
+    box-shadow: 0 0 0 1px rgb(255 255 255 / .1), 0 0 3rem rgb(0 0 0 / .4);
+  }
+}
+
+/* The bar in the current mix's colours */
+:global(.wrapper) {
+  .player {
+    --bar-line: color-mix(in srgb, var(--mix-fg) 15%, transparent);
+    box-shadow: 0 0 0 1px var(--bar-line), 0 0 3rem rgb(0 0 0 / .4);
+    color: var(--mix-fg);
+  }
+
+  /* Much softer glow on a mix's page, where the bar sits on the same colour */
+  &:has([data-page='mix']) .player {
+    box-shadow: 0 0 0 1px var(--bar-line), 0 0 3rem rgb(0 0 0 / .1);
+  }
+
+  .player::before {
+    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(1rem);
+    background: color-mix(in srgb, var(--mix-bg) 85%, transparent);
+  }
+
+  .player-track-details,
+  .player-controls,
+  .player-progress,
+  .player-artwork {
+    border-color: var(--bar-line);
+  }
+
+  .player-track-info-button {
+    border-color: currentColor;
+    color: inherit;
+  }
+
+  .player-button {
+    color: inherit;
+  }
+
+  .player-button > svg {
+    fill: currentColor;
+  }
+
+  .player-track-info-button:focus-visible,
+  .player-track-info-button:hover {
+    border-color: currentColor;
+    color: inherit;
+    opacity: .6;
+  }
+
+  .player-button:not(:disabled):hover > svg,
+  .player-button:focus-visible > svg {
+    fill: currentColor;
+    opacity: .6;
+  }
 }
 
 /* The frosting is on a layer behind the bar, so the bar itself doesn't stop the volume popup's own blur */
 .player::before {
   -webkit-backdrop-filter: blur(2rem) saturate(1.6);
   backdrop-filter: blur(2rem) saturate(1.6);
-  background-color: rgb(255 255 255 / .7);
+  background-color: rgb(255 255 255 / .5);
   border-radius: inherit;
   content: '';
   inset: 0;
@@ -29,12 +85,13 @@
   z-index: -1;
 
   @media (prefers-color-scheme: dark) {
-    background-color: rgb(16 16 16 / .7);
+    background-color: rgb(16 16 16 / .5);
   }
 }
 
 .player-artwork {
   align-items: center;
+  border-right: 1px solid rgb(0 0 0 / .1);
   border-radius: 0;
   display: flex;
   flex: 0 0 6rem;
@@ -43,6 +100,10 @@
   justify-content: center;
   margin: 0;
   width: 6rem;
+
+  @media (prefers-color-scheme: dark) {
+    border-color: rgb(255 255 255 / .1);
+  }
 }
 
 .player-track-details {
@@ -68,6 +129,18 @@
   @media (prefers-color-scheme: dark) {
     border-color: rgb(255 255 255 / .1);
   }
+}
+
+.player-artwork:hover,
+.player-track-title a:hover,
+.player-track-title a:focus-visible {
+  opacity: .6;
+  outline: none;
+}
+
+.player-track-title a {
+  color: inherit;
+  text-decoration: none;
 }
 
 .player-track-title {
@@ -121,8 +194,8 @@
 }
 
 .player-artwork svg {
-  height: 4.2rem;
-  width: 4.2rem;
+  height: 5.2rem;
+  width: 5.2rem;
 }
 
 .player-controls {
@@ -297,13 +370,13 @@
 /* Modal window */
 
 .modal {
-  -webkit-backdrop-filter: blur(2rem) saturate(1.6);
-  backdrop-filter: blur(2rem) saturate(1.6);
-  background-color: rgb(255 255 255 / .7);
+  -webkit-backdrop-filter: blur(1rem);
+  backdrop-filter: blur(1rem);
+  background-color: color-mix(in srgb, var(--mix-bg) 85%, transparent);
   border: 0;
-  box-shadow: 0 0 5rem rgba(0, 0, 0, .4);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--mix-fg) 15%, transparent), 0 0 5rem rgba(0, 0, 0, .4);
   box-sizing: border-box;
-  color: inherit;
+  color: var(--mix-fg);
   margin: auto;
   max-height: 50vh;
   max-width: min(68rem, calc(100vw - 2 * var(--player-gap) - env(safe-area-inset-left) - env(safe-area-inset-right)));
@@ -328,10 +401,6 @@
   &::backdrop {
     background: transparent;
   }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: rgb(16 16 16 / .7);
-  }
 }
 
 .modal-content {
@@ -339,15 +408,11 @@
 }
 
 .modal-content a {
-  color: var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    color: var(--light-color);
-  }
+  color: inherit;
 }
 
 .modal-content a:hover {
-  text-decoration: none;
+  opacity: .6;
 }
 
 .modal-title {
@@ -372,9 +437,9 @@
 
 .modal-close {
   align-items: center;
-  background-color: var(--light-color);
-  border: 1px solid var(--dark-color);
-  color: var(--dark-color);
+  background-color: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
   cursor: pointer;
   display: flex;
   font-family: var(--body-font);
@@ -390,22 +455,12 @@
   width: 3rem;
 
   svg {
-    fill: var(--dark-color);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
-    border-color: var(--light-color);
-    color: var(--light-color);
-
-    svg {
-      fill: var(--light-color);
-    }
+    fill: currentColor;
   }
 }
 
-.modal-close:active,
-.modal-close:focus {
-  background-color: transparent;
-  color: #fff;
+.modal-close:hover,
+.modal-close:focus-visible {
+  opacity: .6;
+  outline: none;
 }

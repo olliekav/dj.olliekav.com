@@ -6,6 +6,7 @@ import type { Mix } from '../../shared/api-types';
 import Loader from '../components/loader';
 import Player from '../components/player';
 import { fetchMixes, fetchPeaks, fetchStream } from '../utilities/api';
+import { barAccent } from '../utilities/theme';
 import { BAR_WIDTH } from '../utilities/waveform';
 import { useMediaSession } from './media-session';
 import { hasNext, hasPrev, playerReducer, stateWith, type PlayerState } from './player-state';
@@ -116,11 +117,6 @@ const PlayerProvider = ({ children, initialMixes, initialSlug }: PlayerProviderP
     if (!wavesurfer) {
       return;
     }
-    const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
-    const applyScheme = () => wavesurfer.setOptions({ waveColor: darkMode.matches ? '#fff' : '#000' });
-    applyScheme();
-    darkMode.addEventListener('change', applyScheme);
-
     const media = wavesurfer.getMediaElement();
     const onMediaError = () => {
       if (media?.error && media.currentSrc) {
@@ -148,11 +144,23 @@ const PlayerProvider = ({ children, initialMixes, initialSlug }: PlayerProviderP
     ];
 
     return () => {
-      darkMode.removeEventListener('change', applyScheme);
       unsubscribers.forEach(unsubscribe => unsubscribe());
       wavesurfer.destroy();
     };
   }, [wavesurfer]);
+
+  // Unplayed bars in the mix's foreground, or black or white for the colour scheme before one loads
+  useEffect(() => {
+    if (!wavesurfer) {
+      return;
+    }
+    const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
+    const foreground = currentMix?.theme.foreground;
+    const applyColour = () => wavesurfer.setOptions({ waveColor: foreground ?? (darkMode.matches ? '#fff' : '#000') });
+    applyColour();
+    darkMode.addEventListener('change', applyColour);
+    return () => darkMode.removeEventListener('change', applyColour);
+  }, [wavesurfer, currentMix]);
 
   // The stream currently loaded into the media element, if any
   const streamFor = useRef<string | null>(null);
@@ -167,7 +175,7 @@ const PlayerProvider = ({ children, initialMixes, initialSlug }: PlayerProviderP
     let cancelled = false;
     let hls: Hls | undefined;
     const wantsStream = state.autoplay;
-    wavesurfer.setOptions({ progressColor: currentMix.theme.accent });
+    wavesurfer.setOptions({ progressColor: barAccent(currentMix.theme) });
     dispatch({ type: 'loading' });
 
     (async () => {

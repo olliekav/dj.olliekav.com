@@ -39,6 +39,7 @@
 }
 
 .loader--inline > div {
+  background-color: currentColor;
   border-radius: 2px;
   margin-right: 2px;
   width: 4px;

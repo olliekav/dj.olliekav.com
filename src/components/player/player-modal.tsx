@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
 import { mixPath } from '../../utilities/seo';
+import { themeStyle } from '../../utilities/theme';
 import Description from '../description';
 import styles from './style.module.css';
 
@@ -17,7 +18,11 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
     const dialog = dialogRef.current;
     if (isOpen && dialog && !dialog.open) {
       dialog.showModal();
+      // Safari can ignore this while the dialog's opening transition starts, so again next frame
       dialog.scrollTop = 0;
+      requestAnimationFrame(() => {
+        dialog.scrollTop = 0;
+      });
     } else if (!isOpen && dialog?.open) {
       dialog.close();
     }
@@ -31,6 +36,7 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
     <dialog
       ref={dialogRef}
       class={styles['modal']}
+      style={themeStyle(currentMix.theme)}
       onClose={onClose}
       // Clicks on the backdrop land on the dialog element itself
       onClick={event => event.target === event.currentTarget && onClose()}

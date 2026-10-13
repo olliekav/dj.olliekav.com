@@ -71,12 +71,12 @@ input[type=range]:focus {
 
 input[type=range] {
   /* Matches the unplayed waveform */
-  --track: rgb(0 0 0 / .18);
+  --track: rgb(0 0 0 / .3);
   /* Up to the middle of the 16px thumb */
   --filled: calc(8px + var(--volume, 0) * (100% - 16px));
 
   @media (prefers-color-scheme: dark) {
-    --track: rgb(255 255 255 / .18);
+    --track: rgb(255 255 255 / .3);
   }
 }
 
@@ -134,5 +134,30 @@ input[type=range]::-moz-range-thumb {
   @media (prefers-color-scheme: dark) {
     background: var(--light-color);
     border-color: var(--dark-color);
+  }
+}
+
+:global(.wrapper) {
+  .player-volume > div {
+    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(1rem);
+    background-color: color-mix(in srgb, var(--mix-bg) 85%, transparent);
+    border-bottom-color: var(--bar-line);
+    box-shadow: none;
+  }
+
+  @media (hover: hover) {
+    /* Top and sides only: its bottom border is the divider with the bar */
+    .player-volume:is(:hover, :active, :focus) > div {
+      box-shadow:
+        -1px -1px 0 0 var(--bar-line),
+        1px -1px 0 0 var(--bar-line),
+        -1px 0 0 0 var(--bar-line),
+        1px 0 0 0 var(--bar-line);
+    }
+  }
+
+  input[type=range] {
+    --track: color-mix(in srgb, var(--mix-fg) 30%, transparent);
   }
 }

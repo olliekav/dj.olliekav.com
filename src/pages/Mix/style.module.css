@@ -21,7 +21,8 @@
 
 .mix-back:hover,
 .mix-back:focus-visible {
-  text-decoration: underline;
+  opacity: .6;
+  outline: none;
 }
 
 .mix-logo {
