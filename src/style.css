@@ -88,18 +88,13 @@ main {
   width: 1px;
 }
 
-/* The player bar swaps straight to its new state rather than fading through the page change.
-   Captured on its own, its background blur has nothing behind it, so blur behind its layer instead */
+/* The player bar crossfades to the new mix on its own, in time with the card, rather than
+   with the whole page. Captured on its own, its background blur has nothing behind it, so blur
+   behind its layer instead */
 ::view-transition-group(player) {
   /* Over the browser's own animation of this from the bar, which has no backdrop-filter itself */
   -webkit-backdrop-filter: blur(1rem) !important;
   backdrop-filter: blur(1rem) !important;
-}
-
-::view-transition-old(player) {
-  display: none;
-}
-
-::view-transition-new(player) {
-  animation: none;
+  /* Above the card growing into (or shrinking out of) the page */
+  z-index: 1;
 }

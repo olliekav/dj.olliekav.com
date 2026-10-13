@@ -11,8 +11,8 @@ import { headFor, mixSlug } from './utilities/seo';
 
 export function App({ mixes }: { mixes?: Mix[] }) {
 	return (
-		<LocationProvider>
-			<PlayerProvider initialMixes={mixes} initialSlug={mixSlug(location.pathname)}>
+		<PlayerProvider initialMixes={mixes} initialSlug={mixSlug(location.pathname)}>
+			<LocationProvider>
 				<main>
 					<Router>
 						<Route path="/" component={Playlist} />
@@ -20,8 +20,8 @@ export function App({ mixes }: { mixes?: Mix[] }) {
 						<Route default component={NotFound} />
 					</Router>
 				</main>
-			</PlayerProvider>
-		</LocationProvider>
+			</LocationProvider>
+		</PlayerProvider>
 	);
 }
 

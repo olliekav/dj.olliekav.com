@@ -1,17 +1,17 @@
 import { useLocation } from 'preact-iso';
 import { useLayoutEffect } from 'preact/hooks';
 import Logo from '../../components/logo';
-import { usePlayer } from '../../contexts/player-context';
+import { unlockMedia, usePlayer } from '../../contexts/player-context';
 import { prettyTime } from '../../utilities/format';
 import { DESCRIPTION, HOME_TITLE, mixPath, playlistJsonLd, scriptJson, SITE_NAME } from '../../utilities/seo';
 import { themeStyle } from '../../utilities/theme';
-import { isPlainClick, mixTransitionNames, routeWithTransition } from '../../utilities/view-transition';
+import { isPlainClick, mixTransitionNames, nameTile, routeWithTransition } from '../../utilities/view-transition';
 import styles from './style.module.css';
 
 let savedScroll = 0;
 
 const Playlist = () => {
-	const { state, currentMix, playAt } = usePlayer();
+	const { state, currentMix, playAt, wavesurfer } = usePlayer();
 	const { route } = useLocation();
 
 	useLayoutEffect(() => {
@@ -57,8 +57,17 @@ const Playlist = () => {
 								// Route here, inside the transition, rather than in the router's own click handler
 								event.preventDefault();
 								event.stopPropagation();
-								playAt(i);
-								routeWithTransition(route, mixPath(mix));
+								// Play once the transition has captured the player as it was, so it
+								// changes with the card rather than before it
+								if (!names) {
+									const tile = event.currentTarget.parentElement;
+									if (tile) {
+										nameTile(tile, mix.number);
+									}
+								}
+								// Safari only lets media start from the click itself
+								unlockMedia(wavesurfer?.getMediaElement());
+								routeWithTransition(route, mixPath(mix), () => playAt(i));
 							}}
 							aria-current={currentMix?.id === mix.id ? 'true' : undefined}
 						>

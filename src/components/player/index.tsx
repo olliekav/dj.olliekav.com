@@ -1,10 +1,9 @@
-import { useLocation } from 'preact-iso';
 import { useState } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
 import playlistStyles from '../../pages/Playlist/style.module.css';
 import { mixPath } from '../../utilities/seo';
 import { barAccent, themeStyle } from '../../utilities/theme';
-import { isPlainClick, routeWithTransition } from '../../utilities/view-transition';
+import { isPlainClick, routeFromOutside, routeWithTransition } from '../../utilities/view-transition';
 import Logo from '../logo';
 import WaveformProgress from '../waveform';
 import PlayerModal from './player-modal';
@@ -16,13 +15,12 @@ import VolumeControl from './volume-control';
 const Player = () => {
   const { state, currentMix } = usePlayer();
   const [showModal, setShowModal] = useState(false);
-  const { route } = useLocation();
   const href = currentMix ? mixPath(currentMix) : '/';
   const openMixPage = (event: MouseEvent) => {
     if (isPlainClick(event)) {
       event.preventDefault();
       event.stopPropagation();
-      routeWithTransition(route, href);
+      routeWithTransition(routeFromOutside, href);
     }
   };
 
