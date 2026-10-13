@@ -70,12 +70,13 @@ input[type=range]:focus {
 }
 
 input[type=range] {
-  --track: var(--dark-color);
+  /* Matches the unplayed waveform */
+  --track: rgb(0 0 0 / .18);
   /* Up to the middle of the 16px thumb */
   --filled: calc(8px + var(--volume, 0) * (100% - 16px));
 
   @media (prefers-color-scheme: dark) {
-    --track: var(--light-color);
+    --track: rgb(255 255 255 / .18);
   }
 }
 
@@ -110,14 +111,9 @@ input[type=range]::-moz-range-track {
   height: 5px;
   cursor: pointer;
   box-shadow: 0px 0px 0px var(--dark-color);
-  background: var(--dark-color);
+  background: var(--track);
   border-radius: 3rem;
-  border: 0px solid var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--light-color);
-    border-color: var(--light-color);
-  }
+  border: 0;
 }
 
 input[type=range]::-moz-range-progress {
