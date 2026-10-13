@@ -23,7 +23,7 @@
 /* The bar in the current mix's colours */
 :global(.wrapper) {
   .player {
-    --bar-line: color-mix(in srgb, var(--mix-fg) 15%, transparent);
+    --bar-line: color-mix(in srgb, var(--mix-fg) 30%, transparent);
     box-shadow: 0 0 0 1px var(--bar-line), 0 0 3rem rgb(0 0 0 / .4);
     color: var(--mix-fg);
   }
@@ -374,7 +374,7 @@
   backdrop-filter: blur(1rem);
   background-color: color-mix(in srgb, var(--mix-bg) 85%, transparent);
   border: 0;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--mix-fg) 15%, transparent), 0 0 5rem rgba(0, 0, 0, .4);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--mix-fg) 30%, transparent), 0 0 5rem rgba(0, 0, 0, .4);
   box-sizing: border-box;
   color: var(--mix-fg);
   margin: auto;
