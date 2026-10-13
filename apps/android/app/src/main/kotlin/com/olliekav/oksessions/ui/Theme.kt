@@ -19,10 +19,6 @@ import com.olliekav.oksessions.core.argb
 /** A colour from "#RRGGBB". */
 fun hexColor(hex: String) = Color(argb(hex))
 
-/** The website's unplayed waveform bars: light grey, or near black in dark mode. */
-val unplayedLight = Color(0xFFCCCCCC)
-val unplayedDark = Color(0xFF262626)
-
 /**
  * Nunito, a rounded sans like iOS's SF Rounded (the artwork's DIN Round can't be bundled).
  * One variable font file in assets, with each weight picked on its wght axis.

@@ -2,8 +2,8 @@ import MixKit
 import PlayerKit
 import SwiftUI
 
-/// The full-screen player: the artwork on the mix's colour above, the controls on a plain
-/// white (or black, in dark mode) panel below. Side by side in landscape.
+/// The full-screen player, all on the mix's colour as on the website: the artwork above, a line,
+/// then the controls in the mix's foreground. Side by side in landscape.
 struct PlayerView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -27,14 +27,20 @@ struct PlayerView: View {
                         .background { theme.backgroundColor.ignoresSafeArea() }
                         .layoutPriority(1)
 
-                    // Everything else, on a plain panel
+                    // A solid line between the two, like the website's player dividers
+                    Rectangle()
+                        .fill(theme.playerLineColor)
+                        .frame(width: sideBySide ? 1 : nil, height: sideBySide ? nil : 1)
+                        .ignoresSafeArea(edges: sideBySide ? .vertical : .horizontal)
+
+                    // Everything else, in the mix's foreground
                     PlayerControls(mix: mix, compact: verticalSizeClass == .compact)
                         .padding(.horizontal, 24)
                         .padding(.vertical, verticalSizeClass == .compact ? 8 : 28)
                         .frame(maxWidth: 560)
                         .frame(maxWidth: .infinity)
                 }
-                .background(Color(uiColor: .systemBackground).ignoresSafeArea())
+                .background(theme.backgroundColor.ignoresSafeArea())
                 .onGeometryChange(for: Bool.self) { $0.size.width > $0.size.height } action: { isLandscape = $0 }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -53,7 +59,6 @@ struct PlayerView: View {
                 .toolbarBackground(theme.backgroundColor, for: .navigationBar)
                 .toolbarBackgroundVisibility(sideBySide ? .hidden : .visible, for: .navigationBar)
                 .toolbarColorScheme(theme.hasDarkBackground ? .dark : .light, for: .navigationBar)
-                .foregroundStyle(.primary)
             }
             .sheet(isPresented: $showsInfo) {
                 MixInfoView(mix: mix)
@@ -71,13 +76,14 @@ struct PlayerView: View {
 /// Title, waveform, times, transport and footer.
 private struct PlayerControls: View {
     @Environment(AppModel.self) private var model
-    @Environment(\.colorScheme) private var colorScheme
     let mix: Mix
     /// Tighter, for short screens
     var compact = false
 
     var body: some View {
         let player = model.player
+        let theme = mix.theme
+        let secondary = theme.foregroundColor.opacity(0.7)
         VStack(alignment: .leading, spacing: compact ? 10 : 20) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(mix.title)
@@ -85,7 +91,7 @@ private struct PlayerControls: View {
                 if let genre = mix.genre {
                     Text(genre)
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(secondary)
                 }
             }
 
@@ -93,8 +99,9 @@ private struct PlayerControls: View {
                 WaveformView(
                     waveform: player.waveform,
                     progress: player.progress,
-                    played: mix.theme.waveformColor(onDarkPanel: colorScheme == .dark),
-                    unplayed: WaveformView.unplayedColor
+                    played: theme.playerAccentColor,
+                    // The website's unplayed bars: the foreground at 30%
+                    unplayed: theme.foregroundColor.opacity(0.3)
                 ) { fraction in
                     player.seek(to: fraction * player.duration)
                 }
@@ -106,13 +113,13 @@ private struct PlayerControls: View {
                 }
                 .font(.caption.weight(.semibold))
                 .monospacedDigit()
-                .foregroundStyle(.secondary)
+                .foregroundStyle(secondary)
             }
 
             if case .failed(let message) = player.status {
                 Label(message, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(secondary)
             }
 
             TransportControls()
@@ -122,18 +129,18 @@ private struct PlayerControls: View {
                     Label("Listen on SoundCloud", systemImage: "arrow.up.right")
                         .font(.footnote.weight(.semibold))
                 }
-                .foregroundStyle(.secondary)
+                .foregroundStyle(secondary)
                 Spacer()
-                ShuffleButton(accent: mix.theme.waveformColor(onDarkPanel: colorScheme == .dark))
+                ShuffleButton(accent: theme.playerAccentColor, foreground: theme.foregroundColor)
                 // The picker draws its icon small; scaled up to sit with the transport controls
-                RoutePicker(tint: .label)
+                RoutePicker(tint: UIColor(theme.foregroundColor))
                     .frame(width: 44, height: 44)
                     .scaleEffect(1.5)
                     .accessibilityLabel("AirPlay")
             }
         }
-        .foregroundStyle(.primary)
-        .tint(.primary)
+        .foregroundStyle(theme.foregroundColor)
+        .tint(theme.foregroundColor)
     }
 }
 
@@ -168,6 +175,7 @@ private struct TransportControls: View {
 private struct ShuffleButton: View {
     @Environment(AppModel.self) private var model
     let accent: Color
+    let foreground: Color
 
     var body: some View {
         let isOn = model.player.isShuffled
@@ -176,7 +184,7 @@ private struct ShuffleButton: View {
         } label: {
             Image(systemName: "shuffle")
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(isOn ? accent : .primary)
+                .foregroundStyle(isOn ? accent : foreground)
                 .frame(width: 44, height: 44)
                 .background(accent.opacity(isOn ? 0.15 : 0), in: .circle)
                 .contentShape(.circle)
@@ -190,7 +198,7 @@ private struct ShuffleButton: View {
     }
 }
 
-/// A circular glass button, the same size whatever its symbol.
+/// A circular glass button tinted with the mix's foreground, the same size whatever its symbol.
 private struct HeaderButton: View {
     /// The mix's logo colour, for the icon
     let tint: Color
@@ -208,7 +216,8 @@ private struct HeaderButton: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(tint)
-        .glassEffect(.clear.interactive(), in: .circle)
+        // Glass tinted with the same colour, so the circle reads on any mix
+        .glassEffect(.clear.tint(tint.opacity(0.2)).interactive(), in: .circle)
         .accessibilityLabel(title)
     }
 }

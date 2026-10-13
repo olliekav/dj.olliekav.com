@@ -1,7 +1,6 @@
 package com.olliekav.oksessions.core
 
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.pow
 
 object Formatting {
@@ -39,17 +38,26 @@ fun luminance(hex: String): Double? {
 val Theme.hasDarkBackground: Boolean get() = (luminance(background) ?: 1.0) < 0.179
 
 /**
- * The colour for the played part of the waveform on a plain white (or black) panel: the accent,
- * like the website, unless it nearly disappears there; then whichever theme colour stands out more.
+ * The player's accent, as on the website: the theme's accent, unless that's the background the
+ * player sits on; then the foreground, so the played waveform and shuffle still show.
  */
-fun Theme.waveformColor(onDarkPanel: Boolean): String {
-    val panel = if (onDarkPanel) 0.0 else 1.0
-    fun contrast(hex: String): Double {
-        val l = luminance(hex) ?: 0.5
-        return (max(l, panel) + 0.05) / (min(l, panel) + 0.05)
+val Theme.playerAccent: String get() = if (accent.equals(background, ignoreCase = true)) foreground else accent
+
+/**
+ * Lines between the parts of the player, as on the website: the foreground mixed 30% into the
+ * background, a solid colour rather than a translucent one.
+ */
+val Theme.playerLine: String get() = mixHex(foreground, into = background, amount = 0.3)
+
+/** [amount] of one "#RRGGBB" colour mixed into another, like CSS `color-mix(in srgb, …)`; the second if either is malformed. */
+fun mixHex(hex: String, into: String, amount: Double): String {
+    fun rgb(hex: String): Long? = hex.removePrefix("#").takeIf { it.length == 6 }?.toLongOrNull(16)
+    val a = rgb(hex) ?: return into
+    val b = rgb(into) ?: return into
+    val channels = listOf(16, 8, 0).map { shift ->
+        Math.round((a shr shift and 0xFF) * amount + (b shr shift and 0xFF) * (1 - amount))
     }
-    if (contrast(accent) >= 2) return accent
-    return if (contrast(foreground) >= contrast(background)) foreground else background
+    return "#%02X%02X%02X".format(channels[0], channels[1], channels[2])
 }
 
 /** The OK logo (ring and chevron) as SVG path data, on a 1024-unit canvas like the artwork. */

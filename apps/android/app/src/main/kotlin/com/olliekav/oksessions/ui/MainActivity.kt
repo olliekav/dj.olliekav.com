@@ -101,15 +101,17 @@ class MainActivity : ComponentActivity() {
                 DisposableEffect(Unit) { onDispose { player.release() } }
                 BackHandler(isPlayerOpen) { isPlayerOpen = false }
 
-                // Status bar icons follow what's under them: the mix's colour in the player
+                // System bar icons follow what's under them: the mix's colour in the player, which
+                // runs to the bottom of the screen, so the navigation bar's too
                 val dark = isSystemInDarkTheme()
                 val current = player.current
                 LaunchedEffect(isPlayerOpen, current, dark) {
-                    val lightIcons = if (isPlayerOpen && current != null) current.theme.hasDarkBackground else dark
-                    enableEdgeToEdge(
-                        statusBarStyle = if (lightIcons) SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
-                        else SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT),
-                    )
+                    val inPlayer = isPlayerOpen && current != null
+                    val lightIcons = if (inPlayer) current.theme.hasDarkBackground else dark
+                    val style = if (lightIcons) SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                    else SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+                    if (inPlayer) enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
+                    else enableEdgeToEdge(statusBarStyle = style)
                 }
 
                 // Notifications switched on or off in Settings while away

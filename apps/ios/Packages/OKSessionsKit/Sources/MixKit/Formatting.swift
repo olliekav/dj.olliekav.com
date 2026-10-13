@@ -74,6 +74,21 @@ public enum Formatting {
     }
 }
 
+/// `amount` of one "#RRGGBB" colour mixed into another, like CSS `color-mix(in srgb, …)`;
+/// the second colour if either is malformed.
+func mixHex(_ hex: String, into base: String, amount: Double) -> String {
+    func rgb(_ hex: String) -> UInt32? {
+        let value = hex.hasPrefix("#") ? String(hex.dropFirst()) : hex
+        return value.count == 6 ? UInt32(value, radix: 16) : nil
+    }
+    guard let a = rgb(hex), let b = rgb(base) else { return base }
+    let channels = [16, 8, 0].map { shift -> Int in
+        let x = Double(a >> UInt32(shift) & 0xFF), y = Double(b >> UInt32(shift) & 0xFF)
+        return Int((x * amount + y * (1 - amount)).rounded())
+    }
+    return String(format: "#%02X%02X%02X", channels[0], channels[1], channels[2])
+}
+
 /// Relative luminance (WCAG) of "#RRGGBB"; nil if malformed.
 func luminance(_ hex: String) -> Double? {
     let value = hex.hasPrefix("#") ? String(hex.dropFirst()) : hex
@@ -92,18 +107,19 @@ extension Theme {
         (luminance(background) ?? 1) < 0.179
     }
 
-    /// The colour for the played part of the waveform on a plain white (or black) panel: the
-    /// accent, like the website, unless it nearly disappears there (yellow on white, navy on
-    /// black); then whichever of the two colours stands out more.
-    public func waveformColor(onDarkPanel: Bool) -> Color {
-        let panel = onDarkPanel ? 0.0 : 1.0
-        func contrast(_ hex: String) -> Double {
-            let l = luminance(hex) ?? 0.5
-            return (max(l, panel) + 0.05) / (min(l, panel) + 0.05)
-        }
-        if contrast(accent) >= 2 { return accentColor }
-        return contrast(foreground) >= contrast(background) ? foregroundColor : backgroundColor
+    /// The player's accent, as on the website: the theme's accent, unless that's the background
+    /// the player sits on; then the foreground, so the played waveform and shuffle still show.
+    public var playerAccent: String {
+        accent.caseInsensitiveCompare(background) == .orderedSame ? foreground : accent
     }
+
+    public var playerAccentColor: Color { Color(hex: playerAccent) }
+
+    /// Lines between the parts of the player, as on the website: the foreground mixed 30% into
+    /// the background, a solid colour rather than a translucent one.
+    public var playerLine: String { mixHex(foreground, into: background, amount: 0.3) }
+
+    public var playerLineColor: Color { Color(hex: playerLine) }
 
     /// The lighter of the two colours, for text and controls on a darkened background
     public var lighterColor: Color {
