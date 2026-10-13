@@ -297,7 +297,9 @@
 /* Modal window */
 
 .modal {
-  background-color: var(--light-color);
+  -webkit-backdrop-filter: blur(2rem) saturate(1.6);
+  backdrop-filter: blur(2rem) saturate(1.6);
+  background-color: rgb(255 255 255 / .7);
   border: 0;
   box-shadow: 0 0 5rem rgba(0, 0, 0, .4);
   color: inherit;
@@ -327,7 +329,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
+    background-color: rgb(16 16 16 / .7);
   }
 }
 
