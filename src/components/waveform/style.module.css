@@ -1,17 +1,12 @@
 .waveform-wrapper {
-  bottom: 20%;
+  bottom: 10%;
   left: 1.2rem;
   opacity: 0;
   position: absolute;
   right: 1.2rem;
-  top: 20%;
+  top: 10%;
   transition: all .3s ease-in-out;
   visibility: hidden;
-
-  @media screen and (min-width: 700px) {
-    bottom: 10%;
-    top: 10%;
-  }
 
   > wave {
     cursor: pointer !important;
