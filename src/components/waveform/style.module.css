@@ -1,17 +1,15 @@
 .waveform-wrapper {
   bottom: 20%;
-  left: 1rem;
+  left: 1.2rem;
   opacity: 0;
   position: absolute;
-  right: 1rem;
+  right: 1.2rem;
   top: 20%;
   transition: all .3s ease-in-out;
   visibility: hidden;
 
   @media screen and (min-width: 700px) {
     bottom: 10%;
-    left: .3rem;
-    right: .3rem;
     top: 10%;
   }
 
@@ -22,6 +20,10 @@
   ::part(canvases) {
     opacity: .18;
   }
+}
+
+.waveform {
+  height: 100%;
 }
 
 .waveform-wrapper--loaded {

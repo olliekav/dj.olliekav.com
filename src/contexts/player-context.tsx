@@ -6,6 +6,7 @@ import type { Mix } from '../../shared/api-types';
 import Loader from '../components/loader';
 import Player from '../components/player';
 import { fetchMixes, fetchPeaks, fetchStream } from '../utilities/api';
+import { BAR_WIDTH } from '../utilities/waveform';
 import { useMediaSession } from './media-session';
 import { hasNext, hasPrev, playerReducer, stateWith, type PlayerState } from './player-state';
 
@@ -100,7 +101,7 @@ const PlayerProvider = ({ children, initialMixes, initialSlug }: PlayerProviderP
       WaveSurfer.create({
         container,
         barRadius: 3,
-        barWidth: 4,
+        barWidth: BAR_WIDTH,
         cursorWidth: 0,
         height: 'auto',
         mediaControls: false,
