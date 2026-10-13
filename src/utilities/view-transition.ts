@@ -19,7 +19,14 @@ export const routeWithTransition = (route: (url: string) => void, url: string, u
     // Preact renders the new route on the next tick; the transition captures it after this
     await new Promise(resolve => setTimeout(resolve));
   });
-  transition.finished.finally(() => document.documentElement.classList.remove('view-transition'));
+  transition.finished.finally(() => {
+    const root = document.documentElement;
+    root.classList.remove('view-transition');
+    // Safari leaves the player's background blur unpainted after the transition until
+    // something repaints it, so change its layer for a frame (see the player's styles)
+    root.classList.add('view-transition-ended');
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('view-transition-ended')));
+  });
 };
 
 /**
