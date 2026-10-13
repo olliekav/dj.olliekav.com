@@ -29,6 +29,7 @@
   -webkit-backdrop-filter: blur(2rem) saturate(1.6);
   backdrop-filter: blur(2rem) saturate(1.6);
   background-color: rgb(255 255 255 / .7);
+  border-bottom: 1px solid transparent;
   bottom: 100%;
   box-shadow: -.2rem -.2rem 2rem rgba(0,0,0,.3);
   display: flex;
@@ -48,7 +49,12 @@
   .player-volume:hover > div,
   .player-volume:active > div,
   .player-volume:focus > div {
+    border-bottom-color: var(--dark-color);
     max-height: 12rem;
+
+    @media (prefers-color-scheme: dark) {
+      border-bottom-color: rgb(255 255 255 / .1);
+    }
   }
 }
 
