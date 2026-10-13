@@ -28,6 +28,13 @@
   width: 100%;
 }
 
+/* The current mix's tile has a view-transition-name, which makes it a stacking context:
+   raise the tile itself so its enlarged card still sits above its neighbours */
+.playlist-track:has(.active-track) {
+  position: relative;
+  z-index: 100;
+}
+
 .playlist-track:before {
   content: '';
   display: block;
