@@ -14,3 +14,7 @@ export const themeStyle = (theme: Theme | undefined): Record<string, string> => 
     '--mix-accent': theme.accent
   };
 };
+
+/** The accent, unless it matches the background the bar is drawn on: then the foreground */
+export const barAccent = (theme: Theme) =>
+  theme.accent.toLowerCase() === theme.background.toLowerCase() ? theme.foreground : theme.accent;

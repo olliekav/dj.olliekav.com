@@ -28,6 +28,13 @@
   width: 100%;
 }
 
+/* The current mix's tile has a view-transition-name, which makes it a stacking context:
+   raise the tile itself so its enlarged card still sits above its neighbours */
+.playlist-track:has(.active-track) {
+  position: relative;
+  z-index: 100;
+}
+
 .playlist-track:before {
   content: '';
   display: block;
@@ -48,6 +55,7 @@
   margin: 0;
   padding: 0;
   position: relative;
+  text-decoration: none;
   transform: scale(1);
   transition: transform 0.2s ease-in-out;
 
@@ -61,6 +69,7 @@
 }
 
 .playlist-track-button:hover,
+.playlist-track-button:focus-visible,
 .active-track {
   box-shadow: 0 0 2rem rgba(0, 0, 0, .3);
   transform: scale(1.05);
@@ -74,16 +83,20 @@
 .playlist-track-title {
   font-size: 5.2vw;
   font-weight: 700;
-  padding-left: 9vw;
+  left: 50%;
+  letter-spacing: -.03em;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
 
   @media screen and (min-width: 700px) {
     font-size: 4.2vw;
-    padding-left: 7vw;
   }
 
   @media screen and (min-width: 1200px) {
     font-size: 3.2vw;
-    padding-left: 6vw;
   }
 
   @media screen and (min-width: 1600px) {
@@ -122,6 +135,7 @@
 }
 
 .playlist-track-button:hover span,
+.playlist-track-button:focus-visible span,
 .active-track span {
   opacity: 1;
   visibility: visible;
@@ -143,10 +157,6 @@
 
   .player-progress-bar {
     background: #ffffff;
-  }
-
-  .player-button:hover>svg {
-    fill: var(--mix-accent);
   }
 
   input[type=range]::-webkit-slider-thumb {

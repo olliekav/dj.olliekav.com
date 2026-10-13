@@ -6,6 +6,8 @@ import type { Mix } from '../../shared/api-types';
 import Loader from '../components/loader';
 import Player from '../components/player';
 import { fetchMixes, fetchPeaks, fetchStream } from '../utilities/api';
+import { barAccent } from '../utilities/theme';
+import { BAR_WIDTH } from '../utilities/waveform';
 import { useMediaSession } from './media-session';
 import { hasNext, hasPrev, playerReducer, stateWith, type PlayerState } from './player-state';
 
@@ -49,6 +51,7 @@ export interface PlayerContextValue {
   wavesurfer: WaveSurfer | undefined;
   attachWaveform: (node: HTMLElement) => void;
   playAt: (index: number) => void;
+  cue: (index: number) => void;
   next: () => void;
   prev: () => void;
   togglePlay: () => void;
@@ -65,8 +68,14 @@ export const usePlayer = (): PlayerContextValue => {
   return context;
 };
 
-const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildren; initialMixes?: Mix[] }) => {
-  const [state, dispatch] = useReducer(playerReducer, initialMixes, stateWith);
+interface PlayerProviderProps {
+  children?: ComponentChildren;
+  initialMixes?: Mix[];
+  initialSlug?: string;
+}
+
+const PlayerProvider = ({ children, initialMixes, initialSlug }: PlayerProviderProps) => {
+  const [state, dispatch] = useReducer(playerReducer, initialMixes, mixes => stateWith(mixes, initialSlug));
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer>();
   const currentMix = state.mixes[state.activeIndex];
 
@@ -86,12 +95,14 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
     );
   }, []);
 
+  const cue = useCallback((index: number) => dispatch({ type: 'cue', index }), []);
+
   const attachWaveform = useCallback((container: HTMLElement) => {
     setWavesurfer(
       WaveSurfer.create({
         container,
-        barRadius: 3,
-        barWidth: 4,
+        barRadius: 1,
+        barWidth: BAR_WIDTH,
         cursorWidth: 0,
         height: 'auto',
         mediaControls: false,
@@ -106,11 +117,6 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
     if (!wavesurfer) {
       return;
     }
-    const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
-    const applyScheme = () => wavesurfer.setOptions({ waveColor: darkMode.matches ? '#262626' : '#CCCCCC' });
-    applyScheme();
-    darkMode.addEventListener('change', applyScheme);
-
     const media = wavesurfer.getMediaElement();
     const onMediaError = () => {
       if (media?.error && media.currentSrc) {
@@ -138,11 +144,23 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
     ];
 
     return () => {
-      darkMode.removeEventListener('change', applyScheme);
       unsubscribers.forEach(unsubscribe => unsubscribe());
       wavesurfer.destroy();
     };
   }, [wavesurfer]);
+
+  // Unplayed bars in the mix's foreground, or black or white for the colour scheme before one loads
+  useEffect(() => {
+    if (!wavesurfer) {
+      return;
+    }
+    const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
+    const foreground = currentMix?.theme.foreground;
+    const applyColour = () => wavesurfer.setOptions({ waveColor: foreground ?? (darkMode.matches ? '#fff' : '#000') });
+    applyColour();
+    darkMode.addEventListener('change', applyColour);
+    return () => darkMode.removeEventListener('change', applyColour);
+  }, [wavesurfer, currentMix]);
 
   // The stream currently loaded into the media element, if any
   const streamFor = useRef<string | null>(null);
@@ -157,7 +175,7 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
     let cancelled = false;
     let hls: Hls | undefined;
     const wantsStream = state.autoplay;
-    wavesurfer.setOptions({ progressColor: currentMix.theme.accent });
+    wavesurfer.setOptions({ progressColor: barAccent(currentMix.theme) });
     dispatch({ type: 'loading' });
 
     (async () => {
@@ -234,6 +252,7 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
         unlockMedia(wavesurfer?.getMediaElement());
         dispatch({ type: 'select', index });
       },
+      cue,
       next: () => {
         if (hasNext(stateRef.current)) {
           unlockMedia(wavesurfer?.getMediaElement());
@@ -261,7 +280,7 @@ const PlayerProvider = ({ children, initialMixes }: { children?: ComponentChildr
         wavesurfer?.setVolume(volume);
       }
     }),
-    [state, currentMix, wavesurfer, attachWaveform]
+    [state, currentMix, wavesurfer, attachWaveform, cue]
   );
 
   useMediaSession(value);

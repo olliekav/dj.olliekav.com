@@ -1,7 +1,9 @@
 import { useState } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
 import playlistStyles from '../../pages/Playlist/style.module.css';
-import { themeStyle } from '../../utilities/theme';
+import { mixPath } from '../../utilities/seo';
+import { barAccent, themeStyle } from '../../utilities/theme';
+import { isPlainClick, routeFromOutside, routeWithTransition } from '../../utilities/view-transition';
 import Logo from '../logo';
 import WaveformProgress from '../waveform';
 import PlayerModal from './player-modal';
@@ -13,15 +15,35 @@ import VolumeControl from './volume-control';
 const Player = () => {
   const { state, currentMix } = usePlayer();
   const [showModal, setShowModal] = useState(false);
+  const href = currentMix ? mixPath(currentMix) : '/';
+  const openMixPage = (event: MouseEvent) => {
+    if (isPlainClick(event)) {
+      event.preventDefault();
+      event.stopPropagation();
+      routeWithTransition(routeFromOutside, href);
+    }
+  };
 
   return (
     <>
-      <div class={`${styles['player']} ${playlistStyles['themed']}`} style={themeStyle(currentMix?.theme)}>
-        <div class={`${styles['player-artwork']} ${playlistStyles['player-artwork']}`}>
+      <div
+        class={`${styles['player']} ${playlistStyles['themed']}`}
+        style={currentMix ? { ...themeStyle(currentMix.theme), '--mix-accent': barAccent(currentMix.theme) } : undefined}
+      >
+        {/* The title link is the one for keyboards and screen readers */}
+        <a
+          class={`${styles['player-artwork']} ${playlistStyles['player-artwork']}`}
+          href={href}
+          onClick={openMixPage}
+          tabIndex={-1}
+          aria-hidden="true"
+        >
           <Logo />
-        </div>
+        </a>
         <div class={`${styles['player-track-details']} ${state.isReady ? 'loaded' : ''}`}>
-          <h2 class={styles['player-track-title']}>{currentMix?.title ?? ''}</h2>
+          <h2 class={styles['player-track-title']}>
+            {currentMix ? <a href={href} onClick={openMixPage}>{currentMix.title}</a> : ''}
+          </h2>
           {state.isReady ? (
             <Timer />
           ) : (

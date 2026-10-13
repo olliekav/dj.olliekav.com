@@ -3,7 +3,7 @@ import type { Mix, MixList, Stream, Waveform } from '../../shared/api-types';
 type Fetch = typeof fetch;
 
 // Same origin on the website; the native apps use https://dj.olliekav.com
-export const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+export const API_URL = (import.meta.env?.VITE_API_URL ?? '').replace(/\/$/, '');
 
 const getJson = async <T>(url: string, fetchFn: Fetch): Promise<T> => {
   const response = await fetchFn(url);

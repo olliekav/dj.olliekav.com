@@ -1,7 +1,17 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import preact from '@preact/preset-vite';
 import netlify from '@netlify/vite-plugin';
 import mkcert from 'vite-plugin-mkcert';
+import { mixesForBuild } from './src/utilities/build-mixes';
+import { sitemapXml } from './src/utilities/sitemap';
+
+const sitemap = (): Plugin => ({
+	name: 'ok-sessions:sitemap',
+	apply: 'build',
+	async generateBundle() {
+		this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemapXml((await mixesForBuild()) ?? []) });
+	},
+});
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,10 +23,11 @@ export default defineConfig({
 			prerender: {
 				enabled: true,
 				renderTarget: '#app',
-				additionalPrerenderRoutes: ['/404'],
+				additionalPrerenderRoutes: ['/404.html', '/404'],
 				previewMiddlewareEnabled: true,
 				previewMiddlewareFallback: '/404',
 			},
 		}),
+		sitemap(),
 	],
 });

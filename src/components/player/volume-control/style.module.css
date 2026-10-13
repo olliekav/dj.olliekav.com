@@ -11,77 +11,88 @@
   }
 }
 
-.player-volume > button {
-  background-color: var(--light-color);
-  z-index: 102;
+.player-volume::before {
+  bottom: 100%;
+  content: '';
+  height: 1rem;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
 
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
-  }
+.player-volume > button {
+  background-color: transparent;
+  z-index: 102;
 }
 
 .player-volume > div {
-  background-color: var(--light-color);
+  -webkit-backdrop-filter: blur(2rem) saturate(1.6);
+  backdrop-filter: blur(2rem) saturate(1.6);
+  background-color: rgb(255 255 255 / .7);
   bottom: 100%;
-  border-radius: 1rem 0 0 0;
-  box-shadow: -.2rem -.2rem 2rem rgba(0,0,0,.3);
+  box-shadow: -0.8rem -0.8rem 2rem rgba(0,0,0,.2);
   display: flex;
   max-height: 0;
   overflow: hidden;
   justify-content: center;
   position: absolute;
-  transition: all .2s ease-in-out;
   width: 100%;
-  z-index: 101;
 
   @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
+    background-color: rgb(16 16 16 / .7);
   }
 }
 
-@media screen and (min-width: 800px) {
+@media (hover: hover) {
   .player-volume:hover > div,
   .player-volume:active > div,
   .player-volume:focus > div {
+    border-bottom: 1px solid rgb(0 0 0 / .1);
     max-height: 12rem;
+
+    @media (prefers-color-scheme: dark) {
+      border-bottom-color: rgb(255 255 255 / .1);
+    }
   }
 }
 
 input[type=range] {
-  background: var(--light-color);
+  background: transparent;
   height: 17px;
   appearance: none;
   margin: 50px 0;
   width: 100px;
   transform: rotate(270deg);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--dark-color);
-  }
 }
 
 input[type=range]:focus {
   outline: none;
 }
 
+input[type=range] {
+  /* Matches the unplayed waveform */
+  --track: rgb(0 0 0 / .3);
+  /* Up to the middle of the 16px thumb */
+  --filled: calc(8px + var(--volume, 0) * (100% - 16px));
+
+  @media (prefers-color-scheme: dark) {
+    --track: rgb(255 255 255 / .3);
+  }
+}
+
 input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 5px;
   cursor: pointer;
-  box-shadow: 0px 0px 0px var(--dark-color);
-  background: var(--dark-color);
+  background: linear-gradient(to right, var(--mix-accent, var(--track)) var(--filled), var(--track) var(--filled));
   border-radius: 3rem;
-  border: 0px solid var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--light-color);
-  }
+  border: 0;
 }
 
 input[type=range]::-webkit-slider-thumb {
   background: var(--dark-color);
   box-shadow: 0px 0px 0px var(--dark-color);
-  border: 2px solid var(--light-color);
+  /* border: 2px solid var(--light-color); */
   height: 16px;
   width: 16px;
   border-radius: 50%;
@@ -95,32 +106,25 @@ input[type=range]::-webkit-slider-thumb {
   }
 }
 
-input[type=range]:focus::-webkit-slider-runnable-track {
-  background: var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--light-color);
-  }
-}
-
 input[type=range]::-moz-range-track {
   width: 100%;
   height: 5px;
   cursor: pointer;
   box-shadow: 0px 0px 0px var(--dark-color);
-  background: var(--dark-color);
+  background: var(--track);
   border-radius: 3rem;
-  border: 0px solid var(--dark-color);
+  border: 0;
+}
 
-  @media (prefers-color-scheme: dark) {
-    background: var(--light-color);
-    border-color: var(--light-color);
-  }
+input[type=range]::-moz-range-progress {
+  background: var(--mix-accent, var(--track));
+  border-radius: 3rem;
+  height: 5px;
 }
 
 input[type=range]::-moz-range-thumb {
   box-shadow: 0px 0px 0px var(--dark-color);
-  border: 1px solid var(--light-color);
+  /* border: 1px solid var(--light-color); */
   height: 16px;
   width: 16px;
   border-radius: 50%;
@@ -130,5 +134,30 @@ input[type=range]::-moz-range-thumb {
   @media (prefers-color-scheme: dark) {
     background: var(--light-color);
     border-color: var(--dark-color);
+  }
+}
+
+:global(.wrapper) {
+  .player-volume > div {
+    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(1rem);
+    background-color: color-mix(in srgb, var(--mix-bg) 85%, transparent);
+    border-bottom-color: var(--bar-line);
+    box-shadow: none;
+  }
+
+  @media (hover: hover) {
+    /* Top and sides only: its bottom border is the divider with the bar */
+    .player-volume:is(:hover, :active, :focus) > div {
+      box-shadow:
+        -1px -1px 0 0 var(--bar-line),
+        1px -1px 0 0 var(--bar-line),
+        -1px 0 0 0 var(--bar-line),
+        1px 0 0 0 var(--bar-line);
+    }
+  }
+
+  input[type=range] {
+    --track: color-mix(in srgb, var(--mix-fg) 30%, transparent);
   }
 }

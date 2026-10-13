@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { usePlayer } from '../../contexts/player-context';
-import { linkify } from '../../utilities/format';
+import { mixPath } from '../../utilities/seo';
+import { themeStyle } from '../../utilities/theme';
+import Description from '../description';
 import styles from './style.module.css';
 
 interface PlayerModalProps {
@@ -14,8 +16,13 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
 
   useEffect(() => {
     const dialog = dialogRef.current;
-    if (isOpen && !dialog?.open) {
-      dialog?.showModal();
+    if (isOpen && dialog && !dialog.open) {
+      dialog.showModal();
+      // Safari can ignore this while the dialog's opening transition starts, so again next frame
+      dialog.scrollTop = 0;
+      requestAnimationFrame(() => {
+        dialog.scrollTop = 0;
+      });
     } else if (!isOpen && dialog?.open) {
       dialog.close();
     }
@@ -29,6 +36,7 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
     <dialog
       ref={dialogRef}
       class={styles['modal']}
+      style={themeStyle(currentMix.theme)}
       onClose={onClose}
       // Clicks on the backdrop land on the dialog element itself
       onClick={event => event.target === event.currentTarget && onClose()}
@@ -36,14 +44,10 @@ const PlayerModal = ({ isOpen, onClose }: PlayerModalProps) => {
     >
       <div class={styles['modal-content']}>
         <h1 id="mix-info-title" class={styles['modal-title']}>{currentMix.title}</h1>
-        <div class={styles['modal-description']}>
-          {linkify(currentMix.description).map((part, i) =>
-            typeof part === 'string' ? part : (
-              <a key={i} href={part.href} target="_blank" rel="noopener noreferrer">{part.text}</a>
-            )
-          )}
-        </div>
+        <Description class={styles['modal-description']} text={currentMix.description} />
         <p class={styles['modal-url']}>
+          <a href={mixPath(currentMix)} onClick={onClose}>About this mix</a>
+          {' · '}
           <a href={currentMix.permalink_url} target="_blank" rel="noopener noreferrer">
             Listen on SoundCloud
           </a>

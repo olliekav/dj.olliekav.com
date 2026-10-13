@@ -40,6 +40,7 @@ const VolumeControl = () => {
           max="1"
           step="0.01"
           value={state.volume}
+          style={{ '--volume': String(state.volume) }}
           id="volume-control"
         />
       </div>

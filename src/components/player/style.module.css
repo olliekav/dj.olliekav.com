@@ -1,58 +1,128 @@
+:global(.view-transition) .player {
+  view-transition-name: player;
+}
+
 .player {
-  background-color: #fff;
-  box-shadow: 0 -.2rem 2rem rgba(0,0,0,.4);
+  border-radius: 0;
+  bottom: calc(var(--player-gap) + env(safe-area-inset-bottom));
+  box-shadow: 0 0 0 1px rgb(0 0 0 / .03), 0 0 3rem rgb(0 0 0 / .4);
   display: flex;
   flex-flow: row wrap;
-  height: 11rem;
-  padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  position: relative;
+  height: var(--player-height);
+  left: calc(var(--player-gap) + env(safe-area-inset-left));
+  position: absolute;
+  right: calc(var(--player-gap) + env(safe-area-inset-right));
   z-index: 100;
 
   @media screen and (min-width: 700px) {
+    border-radius: 0;
     flex-flow: row nowrap;
-    height: 6rem;
   }
 
   @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
+    box-shadow: 0 0 0 1px rgb(255 255 255 / .1), 0 0 3rem rgb(0 0 0 / .4);
   }
 }
 
-.player::after {
-  background-color: var(--dark-color);
-  bottom: env(safe-area-inset-bottom);
+/* The bar in the current mix's colours */
+:global(.wrapper) {
+  .player {
+    --bar-line: color-mix(in srgb, var(--mix-fg) 30%, var(--mix-bg));
+    box-shadow: 0 0 0 1px var(--bar-line), 0 0 3rem rgb(0 0 0 / .4);
+    color: var(--mix-fg);
+  }
+
+  /* Much softer glow on a mix's page, where the bar sits on the same colour */
+  &:has([data-page='mix']) .player {
+    box-shadow: 0 0 0 1px var(--bar-line), 0 0 3rem rgb(0 0 0 / .1);
+  }
+
+  .player::before {
+    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(1rem);
+    background: color-mix(in srgb, var(--mix-bg) 85%, transparent);
+  }
+
+  .player-track-details,
+  .player-controls,
+  .player-progress,
+  .player-artwork {
+    border-color: var(--bar-line);
+  }
+
+  .player-track-info-button {
+    border-color: currentColor;
+    color: inherit;
+  }
+
+  .player-button {
+    color: inherit;
+  }
+
+  .player-button > svg {
+    fill: currentColor;
+  }
+
+  .player-track-info-button:focus-visible,
+  .player-track-info-button:hover {
+    border-color: currentColor;
+    color: inherit;
+    opacity: .6;
+  }
+
+  .player-button:not(:disabled):hover > svg,
+  .player-button:focus-visible > svg {
+    fill: currentColor;
+    opacity: .6;
+  }
+}
+
+/* The frosting is on a layer behind the bar, so the bar itself doesn't stop the volume popup's own blur */
+.player::before {
+  -webkit-backdrop-filter: blur(2rem) saturate(1.6);
+  backdrop-filter: blur(2rem) saturate(1.6);
+  background-color: rgb(255 255 255 / .5);
+  border-radius: inherit;
   content: '';
-  height: min(1px, env(safe-area-inset-bottom));
-  left: 0;
+  inset: 0;
   position: absolute;
-  right: 0;
+  z-index: -1;
 
   @media (prefers-color-scheme: dark) {
-    background-color: rgb(255 255 255 / .1);
+    background-color: rgb(16 16 16 / .5);
   }
 }
 
 .player-artwork {
   align-items: center;
+  border-right: 1px solid rgb(0 0 0 / .1);
+  border-radius: 0;
   display: flex;
   flex: 0 0 6rem;
   flex-direction: column;
   height: 6rem;
   justify-content: center;
+  margin: 0;
   width: 6rem;
+
+  @media (prefers-color-scheme: dark) {
+    border-color: rgb(255 255 255 / .1);
+  }
 }
 
 .player-track-details {
-  border-right: 1px solid var(--dark-color);
+  border-right: 1px solid rgb(0 0 0 / .1);
   display: flex;
-  flex: 1 1 13rem;
+  flex: 1 1 0;
   font-weight: 500;
   flex-direction: column;
   height: 6rem;
   justify-content: center;
+  min-width: 0;
+  overflow: hidden;
   padding: 0 1rem;
   position: relative;
-  width: 13rem;
+  white-space: nowrap;
 
   @media screen and (min-width: 700px) {
     flex: 0 0 18rem;
@@ -65,10 +135,25 @@
   }
 }
 
-.player-track-title { 
+.player-artwork:hover,
+.player-track-title a:hover,
+.player-track-title a:focus-visible {
+  opacity: .6;
+  outline: none;
+}
+
+.player-track-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.player-track-title {
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0 0 .4rem;
+  overflow: hidden;
+  padding-right: 2.2rem;
+  text-overflow: ellipsis;
 
   @media screen and (min-width: 700px) {
     font-size: 1.6rem;
@@ -81,7 +166,7 @@
 
 .player-track-info-button {
   align-items: center;
-  background-color: var(--light-color);
+  background-color: transparent;
   border-radius: 50%;
   border: 1px solid var(--dark-color);
   cursor: pointer;
@@ -100,26 +185,21 @@
   width: 1.8rem;
 
   @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
     border-color: var(--light-color);
     color: var(--light-color);
   }
 }
 
-.player-track-info-button:focus,
+.player-track-info-button:focus-visible,
 .player-track-info-button:hover {
-  background-color: var(--dark-color);
-  color: var(--light-color);
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--light-color);
-    color: var(--dark-color);
-  }
+  border-color: var(--mix-accent);
+  color: var(--mix-accent);
+  outline: none;
 }
 
 .player-artwork svg {
-  height: 5rem;
-  width: 5rem;
+  height: 5.2rem;
+  width: 5.2rem;
 }
 
 .player-controls {
@@ -128,7 +208,7 @@
   height: 6rem;
 
   @media screen and (min-width: 500px) {
-    border-right: 1px solid var(--dark-color);
+    border-right: 1px solid rgb(0 0 0 / .1);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -139,16 +219,20 @@
 .player-progress {
   background-size: cover;
   align-items: center;
-  border-top: 1px solid var(--dark-color);
+  border-top: 1px solid rgb(0 0 0 / .1);
   display: flex;
   height: 5rem;
+  border-radius: 0;
   order: 6;
+  overflow: hidden;
   position: relative;
   width: 100%;
 
   @media screen and (min-width: 700px) {
+    border-radius: 0;
     border-top: 0;
-    border-right: 1px solid var(--dark-color);
+    overflow: visible;
+    border-right: 1px solid rgb(0 0 0 / .1);
     flex-basis: auto;
     flex-grow: 1;
     height: 6rem;
@@ -209,8 +293,13 @@
   background: transparent;
   cursor: pointer;
   border: 0;
-  padding: 0 1rem;
-  width: 5rem;
+  padding: 0 .8rem;
+  width: 4.2rem;
+
+  @media screen and (min-width: 500px) {
+    padding: 0 1rem;
+    width: 5rem;
+  }
 }
 
 .player-button > svg {
@@ -226,12 +315,21 @@
   outline: none;
 }
 
+.player-button:not(:disabled):hover > svg,
+.player-button:focus-visible > svg {
+  fill: var(--mix-accent);
+}
+
 .player-button:disabled {
   opacity: .2;
 }
 
 .play-button {
-  width: 4rem;
+  width: 3.6rem;
+
+  @media screen and (min-width: 500px) {
+    width: 4rem;
+  }
 }
 
 .play-button > svg {
@@ -276,13 +374,16 @@
 /* Modal window */
 
 .modal {
-  background-color: var(--light-color);
+  -webkit-backdrop-filter: blur(1rem);
+  backdrop-filter: blur(1rem);
+  background-color: color-mix(in srgb, var(--mix-bg) 85%, transparent);
   border: 0;
-  box-shadow: 0 0 5rem rgba(0, 0, 0, .4);
-  color: inherit;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--mix-fg) 30%, var(--mix-bg)), 0 0 5rem rgba(0, 0, 0, .4);
+  box-sizing: border-box;
+  color: var(--mix-fg);
   margin: auto;
   max-height: 50vh;
-  max-width: min(62rem, calc(100vw - 6rem));
+  max-width: min(68rem, calc(100vw - 2 * var(--player-gap) - env(safe-area-inset-left) - env(safe-area-inset-right)));
   padding: 3rem;
   overflow: auto;
   outline: none;
@@ -304,10 +405,6 @@
   &::backdrop {
     background: transparent;
   }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
-  }
 }
 
 .modal-content {
@@ -315,15 +412,11 @@
 }
 
 .modal-content a {
-  color: var(--dark-color);
-
-  @media (prefers-color-scheme: dark) {
-    color: var(--light-color);
-  }
+  color: inherit;
 }
 
 .modal-content a:hover {
-  text-decoration: none;
+  opacity: .6;
 }
 
 .modal-title {
@@ -348,9 +441,9 @@
 
 .modal-close {
   align-items: center;
-  background-color: var(--light-color);
-  border: 1px solid var(--dark-color);
-  color: var(--dark-color);
+  background-color: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
   cursor: pointer;
   display: flex;
   font-family: var(--body-font);
@@ -366,22 +459,12 @@
   width: 3rem;
 
   svg {
-    fill: var(--dark-color);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--dark-color);
-    border-color: var(--light-color);
-    color: var(--light-color);
-
-    svg {
-      fill: var(--light-color);
-    }
+    fill: currentColor;
   }
 }
 
-.modal-close:active,
-.modal-close:focus {
-  background-color: transparent;
-  color: #fff;
+.modal-close:hover,
+.modal-close:focus-visible {
+  opacity: .6;
+  outline: none;
 }

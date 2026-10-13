@@ -18,6 +18,26 @@ describe('playerReducer', () => {
     expect(stateWith([])).toBe(initialState);
   });
 
+  it('starts on the mix whose page it is', () => {
+    expect(stateWith(mixes, 'ok-sessions-2').activeIndex).toBe(1);
+    expect(stateWith(mixes, 'nope').activeIndex).toBe(0);
+  });
+
+  it('cues a mix without playing it', () => {
+    expect(playerReducer({ ...loaded, isReady: true }, { type: 'cue', index: 1 })).toMatchObject({
+      activeIndex: 1,
+      isReady: false,
+      autoplay: false
+    });
+  });
+
+  it("doesn't cue over a mix the listener chose, or an unknown one", () => {
+    const chosen = playerReducer(loaded, { type: 'select', index: 2 });
+    expect(playerReducer(chosen, { type: 'cue', index: 1 })).toBe(chosen);
+    expect(playerReducer(loaded, { type: 'cue', index: 0 })).toBe(loaded);
+    expect(playerReducer(loaded, { type: 'cue', index: 5 })).toBe(loaded);
+  });
+
   it('refreshes prerendered mixes, keeping the current mix and its object', () => {
     const current = { ...loaded, activeIndex: 1 };
     const newMix = { ...mixes[0]!, id: 104, number: 4 };
