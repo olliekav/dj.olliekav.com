@@ -302,10 +302,11 @@
   background-color: rgb(255 255 255 / .7);
   border: 0;
   box-shadow: 0 0 5rem rgba(0, 0, 0, .4);
+  box-sizing: border-box;
   color: inherit;
   margin: auto;
   max-height: 50vh;
-  max-width: min(62rem, calc(100vw - 6rem));
+  max-width: min(68rem, calc(100vw - 2 * var(--player-gap) - env(safe-area-inset-left) - env(safe-area-inset-right)));
   padding: 3rem;
   overflow: auto;
   outline: none;
