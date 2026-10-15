@@ -784,5 +784,11 @@
     "foreground": "#2155E4",
     "dark": false,
     "accent": "#2155E4"
+  },
+  "132": {
+    "background": "#2D453D",
+    "foreground": "#869ED5",
+    "dark": true,
+    "accent": "#869ED5"
   }
 }
