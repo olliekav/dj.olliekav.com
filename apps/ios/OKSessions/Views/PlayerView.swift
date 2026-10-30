@@ -207,6 +207,7 @@ private struct HeaderButton: View {
     let title: String
     let systemImage: String
     let action: () -> Void
+    @State private var isPressed = false
 
     var body: some View {
         Button(action: action) {
@@ -216,11 +217,33 @@ private struct HeaderButton: View {
                 // The whole circle is tappable, not just the glyph
                 .contentShape(.circle)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressReportingButtonStyle(isPressed: $isPressed))
         .foregroundStyle(tint)
         // Glass in the mix's own colour, so the background shows through rather than a white or tinted fill
         .glassEffect(.clear.tint(background.opacity(0.5)).interactive(), in: .circle)
+        // The glass's own edge is shaded on its sides only, and on some mix colours that leaves it
+        // looking oval. A ring in the mix's background hides that edge, leaving just the round glass.
+        // It sits outside the glass, which would otherwise brighten it
+        .overlay {
+            Circle()
+                .strokeBorder(background, lineWidth: 1)
+                .padding(-1)
+                .allowsHitTesting(false)
+                // The glass swells over it when pressed, and takes a moment to settle afterwards
+                .opacity(isPressed ? 0 : 1)
+                .animation(isPressed ? nil : .easeIn(duration: 0.2).delay(0.25), value: isPressed)
+        }
         .accessibilityLabel(title)
+    }
+}
+
+/// Like `.plain`, but tells the view outside the button when it's pressed.
+private struct PressReportingButtonStyle: ButtonStyle {
+    @Binding var isPressed: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .onChange(of: configuration.isPressed) { _, pressed in isPressed = pressed }
     }
 }
 
