@@ -10,6 +10,8 @@ struct RootView: View {
 
     var body: some View {
         @Bindable var model = model
+        // The header icons are plain, taking the mix's colour only while they're on
+        let activeTint = model.player.current?.theme.accentColor ?? .primary
         NavigationStack {
             LibraryContent(mixes: model.library.search(query), isSearching: !query.isEmpty, transition: transition)
                 .navigationTitle("O:K Sessions")
@@ -17,16 +19,19 @@ struct RootView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         NotificationsButton()
+                            .tint(model.alerts.isOn ? activeTint : .primary)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Shuffle all", systemImage: "shuffle") { model.shuffleAll() }
                             .disabled(model.library.mixes.isEmpty)
+                            .tint(model.player.isShuffled ? activeTint : .primary)
                             .accessibilityIdentifier("shuffle-all")
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Search", systemImage: "magnifyingglass") {
                             withAnimation(.spring(duration: 0.35)) { isSearching = true }
                         }
+                        .tint(.primary)
                         .accessibilityIdentifier("search-button")
                     }
                 }
