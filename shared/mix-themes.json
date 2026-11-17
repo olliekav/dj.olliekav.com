@@ -796,5 +796,11 @@
     "foreground": "#EE64F1",
     "dark": false,
     "accent": "#EE64F1"
+  },
+  "134": {
+    "background": "#A30082",
+    "foreground": "#63C78E",
+    "dark": false,
+    "accent": "#A30082"
   }
 }
